@@ -89,17 +89,28 @@ app.post('/api/report', async (req, res) => {
     const description = `${text}\n\n---\nDiscovered: ${meta?.discovered || '?'} elements\nBrowser: ${meta?.browser || 'unknown'}\nScreen: ${meta?.screen || '?'}\nTime: ${meta?.timestamp || new Date().toISOString()}`;
 
     if (ARTIFICER_KEY) {
-      await fetch(ARTIFICER_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': ARTIFICER_KEY },
-        body: JSON.stringify({
-          source: 'eureka',
-          priority: 'medium',
-          title: `[Eureka] ${title}`,
-          description,
-          reporter: 'Eureka Player (voice)',
-          ticket_type: ticket_type || 'bug',
-        })
+      const https = require('https');
+      const payload = JSON.stringify({
+        source: 'eureka',
+        priority: 'medium',
+        title: `[Eureka] ${title}`,
+        description,
+        reporter: 'Eureka Player (voice)',
+        ticket_type: ticket_type || 'bug',
+      });
+      await new Promise((resolve, reject) => {
+        const url = new URL(ARTIFICER_WEBHOOK);
+        const opts = {
+          hostname: url.hostname, port: 443, path: url.pathname,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': ARTIFICER_KEY, 'Content-Length': Buffer.byteLength(payload) }
+        };
+        const r = https.request(opts, (resp) => {
+          let d = ''; resp.on('data', c => d += c); resp.on('end', () => resolve(d));
+        });
+        r.on('error', reject);
+        r.write(payload);
+        r.end();
       });
     }
 
