@@ -800,6 +800,104 @@ body {
 .unlock-toast-text { color: var(--gold); }
 .unlock-toast-sub { font-size: 10px; color: var(--muted); font-weight: 700; }
 
+/* ── CLOUD SAVE MODAL ── */
+.save-overlay {
+  position: fixed; inset: 0; z-index: 250;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(8,8,15,0.88);
+  backdrop-filter: blur(20px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.save-overlay.show { opacity: 1; pointer-events: all; }
+.save-card {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 24px 22px 20px;
+  max-width: 320px; width: 90%;
+  border: 1px solid rgba(255,210,63,0.15);
+  text-align: center;
+}
+.save-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px; color: var(--gold);
+  margin-bottom: 4px;
+}
+.save-sub { font-size: 11px; color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+.save-code-display {
+  background: var(--card2);
+  border: 2px dashed rgba(255,210,63,0.3);
+  border-radius: 14px;
+  padding: 14px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 28px; letter-spacing: 4px;
+  color: var(--gold);
+  margin-bottom: 6px;
+  min-height: 54px;
+  display: flex; align-items: center; justify-content: center;
+}
+.save-code-hint { font-size: 10px; color: var(--muted); font-weight: 700; margin-bottom: 16px; }
+.save-divider {
+  height: 1px; background: var(--border); margin: 16px 0;
+  position: relative;
+}
+.save-divider::after {
+  content: 'or'; position: absolute;
+  top: -8px; left: 50%; transform: translateX(-50%);
+  background: var(--card); padding: 0 10px;
+  font-size: 10px; font-weight: 800; color: var(--muted);
+  text-transform: uppercase;
+}
+.save-input {
+  width: 100%; padding: 12px 14px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px; letter-spacing: 3px;
+  color: var(--text);
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.save-input::placeholder {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; letter-spacing: 0;
+  color: var(--muted); font-weight: 700;
+}
+.save-input:focus { border-color: rgba(255,210,63,0.4); }
+.save-btn-row { display: flex; gap: 8px; }
+.save-btn {
+  flex: 1; border: none; border-radius: 12px;
+  padding: 12px; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 900;
+  cursor: pointer; transition: transform 0.15s, opacity 0.15s;
+  color: white;
+}
+.save-btn:active { transform: scale(0.97); }
+.save-btn.primary { background: linear-gradient(135deg, var(--spark), #FF3B6B); }
+.save-btn.secondary { background: rgba(255,255,255,0.08); color: var(--muted); }
+.save-btn:disabled { opacity: 0.4; cursor: default; }
+.save-status {
+  font-size: 11px; font-weight: 800;
+  margin-top: 10px; min-height: 16px;
+  transition: opacity 0.2s;
+}
+.save-status.ok { color: var(--teal); }
+.save-status.err { color: var(--danger); }
+.cloud-pill {
+  border-radius: 99px; padding: 5px 10px;
+  font-size: 11px; font-weight: 900;
+  cursor: pointer; display: flex; align-items: center; gap: 4px;
+  background: rgba(77,159,255,0.12);
+  border: 1px solid rgba(77,159,255,0.25);
+  color: var(--blue);
+  transition: background 0.2s;
+}
+.cloud-pill:active { opacity: 0.7; }
+
 </style>
 </head>
 <body>
@@ -812,6 +910,7 @@ body {
     <div class="stats-row">
       <div class="stat-pill gold" id="discPill" onclick="showEncyclo()">🔬 <span id="discCount">0</span></div>
       <div class="stat-pill danger" id="dangerPill" onclick="showEncyclo('danger')">☠️ <span id="dangerCount">0</span></div>
+      <div class="cloud-pill" onclick="showSaveModal()">☁️ Sync</div>
     </div>
   </div>
 
@@ -881,6 +980,26 @@ body {
     <div class="encyclo-close" onclick="hideEncyclo()">✕</div>
   </div>
   <div class="encyclo-sections" id="encycloSections"></div>
+</div>
+
+<!-- CLOUD SAVE -->
+<div class="save-overlay" id="saveOverlay" onclick="if(event.target===this)hideSaveModal()">
+  <div class="save-card">
+    <div class="save-title">☁️ Cloud Sync</div>
+    <div class="save-sub">Save your progress or load it on another device</div>
+    <div class="save-code-display" id="saveCodeDisplay">—</div>
+    <div class="save-code-hint" id="saveCodeHint">Your save code appears here</div>
+    <div class="save-btn-row" style="margin-bottom:0">
+      <button class="save-btn primary" onclick="cloudSave()">Save Progress</button>
+    </div>
+    <div class="save-divider"></div>
+    <input class="save-input" id="loadCodeInput" type="text" maxlength="8" placeholder="Enter a save code to load">
+    <div class="save-btn-row">
+      <button class="save-btn primary" onclick="cloudLoad()">Load</button>
+      <button class="save-btn secondary" onclick="hideSaveModal()">Close</button>
+    </div>
+    <div class="save-status" id="saveStatus"></div>
+  </div>
 </div>
 
 <!-- UNLOCK TOAST -->
@@ -1796,6 +1915,86 @@ function lighten(hex) {
     const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
     return `rgb(${Math.min(255,r+55)},${Math.min(255,g+55)},${Math.min(255,b+55)})`;
   } catch(e) { return hex; }
+}
+
+// ═══════════════════════════════════════════════════════
+// CLOUD SAVE / LOAD
+// ═══════════════════════════════════════════════════════
+let currentSaveCode = localStorage.getItem('eureka_save_code') || null;
+
+function showSaveModal() {
+  const display = document.getElementById('saveCodeDisplay');
+  const hint = document.getElementById('saveCodeHint');
+  document.getElementById('saveStatus').textContent = '';
+  document.getElementById('loadCodeInput').value = '';
+  if (currentSaveCode) {
+    display.textContent = currentSaveCode;
+    hint.textContent = 'Your save code — write it down!';
+  } else {
+    display.textContent = '—';
+    hint.textContent = 'Hit Save to get a code';
+  }
+  document.getElementById('saveOverlay').classList.add('show');
+}
+
+function hideSaveModal() {
+  document.getElementById('saveOverlay').classList.remove('show');
+}
+
+async function cloudSave() {
+  const status = document.getElementById('saveStatus');
+  status.className = 'save-status';
+  status.textContent = 'Saving...';
+  try {
+    const res = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: currentSaveCode, discovered: [...discovered] })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+    currentSaveCode = data.code;
+    localStorage.setItem('eureka_save_code', currentSaveCode);
+    document.getElementById('saveCodeDisplay').textContent = currentSaveCode;
+    document.getElementById('saveCodeHint').textContent = 'Your save code — write it down!';
+    status.className = 'save-status ok';
+    status.textContent = 'Saved!';
+  } catch (err) {
+    status.className = 'save-status err';
+    status.textContent = err.message;
+  }
+}
+
+async function cloudLoad() {
+  const code = document.getElementById('loadCodeInput').value.trim().toUpperCase();
+  const status = document.getElementById('saveStatus');
+  if (!code || code.length < 6) {
+    status.className = 'save-status err';
+    status.textContent = 'Enter a valid save code';
+    return;
+  }
+  status.className = 'save-status';
+  status.textContent = 'Loading...';
+  try {
+    const res = await fetch('/api/load/' + encodeURIComponent(code));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Load failed');
+    discovered = new Set(data.discovered);
+    STARTER_ATOMS.forEach(a => discovered.add(a));
+    saveState();
+    currentSaveCode = code;
+    localStorage.setItem('eureka_save_code', code);
+    document.getElementById('saveCodeDisplay').textContent = code;
+    document.getElementById('saveCodeHint').textContent = 'Your save code — write it down!';
+    renderTray();
+    updateCounts();
+    clearCanvas();
+    status.className = 'save-status ok';
+    status.textContent = 'Loaded! ' + data.discovered.length + ' elements restored.';
+  } catch (err) {
+    status.className = 'save-status err';
+    status.textContent = err.message;
+  }
 }
 
 function clearCanvas() {
