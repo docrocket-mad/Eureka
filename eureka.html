@@ -947,21 +947,21 @@ const E = {
         fact:'78% of the air you breathe is nitrogen. You are literally swimming in it right now. You just can\'t use it without help.' },
 
   // ── UNLOCKABLE ATOMS ──
-  Na: { id:'Na', name:'Sodium',     symbol:'Na', sub:'',  emoji:'✨', tier:'atom', color:'#FFD23F', shadow:'rgba(255,210,63,0.5)', tc:'#333', unlockedBy:'NaCl',
+  Na: { id:'Na', name:'Sodium',     symbol:'Na', sub:'',  emoji:'✨', tier:'atom', color:'#FFD23F', shadow:'rgba(255,210,63,0.5)', tc:'#333', unlockedBy:'CO2',
         fact:'A soft metal that EXPLODES when it touches water. Yes, explodes. And yet you eat it every day in salt. Chemistry is wild.' },
-  Cl: { id:'Cl', name:'Chlorine',   symbol:'Cl', sub:'',  emoji:'💚', tier:'atom', color:'#00CC88', shadow:'rgba(0,204,136,0.5)', tc:'#002', unlockedBy:'NaCl',
+  Cl: { id:'Cl', name:'Chlorine',   symbol:'Cl', sub:'',  emoji:'💚', tier:'atom', color:'#00CC88', shadow:'rgba(0,204,136,0.5)', tc:'#002', unlockedBy:'NH3',
         fact:'A toxic, yellow-green gas used as a chemical weapon in WWI. Combined with sodium it makes table salt. Perspective is everything.' },
-  S:  { id:'S',  name:'Sulfur',     symbol:'S',  sub:'',  emoji:'💛', tier:'atom', color:'#FFAA00', shadow:'rgba(255,170,0,0.5)', tc:'#332', unlockedBy:'H2S',
+  S:  { id:'S',  name:'Sulfur',     symbol:'S',  sub:'',  emoji:'💛', tier:'atom', color:'#FFAA00', shadow:'rgba(255,170,0,0.5)', tc:'#332', unlockedBy:'H2O',
         fact:'Smells like rotten eggs. Found around volcanoes. Used in gunpowder. Makes your hair curly. Busy atom.' },
-  Fe: { id:'Fe', name:'Iron',       symbol:'Fe', sub:'',  emoji:'⚙️', tier:'atom', color:'#BB6633', shadow:'rgba(187,102,51,0.5)', tc:'white', unlockedBy:'STEEL',
+  Fe: { id:'Fe', name:'Iron',       symbol:'Fe', sub:'',  emoji:'⚙️', tier:'atom', color:'#BB6633', shadow:'rgba(187,102,51,0.5)', tc:'white', unlockedBy:'NaCl',
         fact:'Makes your blood red by carrying oxygen around your body. Also makes up most of Earth\'s core. It\'s doing a lot.' },
-  Ca: { id:'Ca', name:'Calcium',    symbol:'Ca', sub:'',  emoji:'🦴', tier:'atom', color:'#CCCCCC', shadow:'rgba(180,180,180,0.5)', tc:'#333', unlockedBy:'BONES',
+  Ca: { id:'Ca', name:'Calcium',    symbol:'Ca', sub:'',  emoji:'🦴', tier:'atom', color:'#CCCCCC', shadow:'rgba(180,180,180,0.5)', tc:'#333', unlockedBy:'ATMOSPHERE',
         fact:'Your bones are basically calcium. Your teeth too. Milk is basically liquid bones. You\'re welcome for that image.' },
-  P:  { id:'P',  name:'Phosphorus', symbol:'P',  sub:'',  emoji:'🔴', tier:'atom', color:'#FF7722', shadow:'rgba(255,119,34,0.5)', tc:'white', unlockedBy:'BONES',
+  P:  { id:'P',  name:'Phosphorus', symbol:'P',  sub:'',  emoji:'🔴', tier:'atom', color:'#FF7722', shadow:'rgba(255,119,34,0.5)', tc:'white', unlockedBy:'H2S',
         fact:'Glows in the dark. Essential for DNA. Used in matches and fertilizers. White phosphorus is also terrifyingly flammable. Don\'t touch it.' },
-  K:  { id:'K',  name:'Potassium',  symbol:'K',  sub:'',  emoji:'🍌', tier:'atom', color:'#FFCC44', shadow:'rgba(255,200,60,0.5)', tc:'#333', unlockedBy:'OCEAN',
+  K:  { id:'K',  name:'Potassium',  symbol:'K',  sub:'',  emoji:'🍌', tier:'atom', color:'#FFCC44', shadow:'rgba(255,200,60,0.5)', tc:'#333', unlockedBy:'BONES',
         fact:'Your heart literally cannot beat without potassium. It\'s in bananas. Eat bananas. Also explodes in water even more violently than sodium.' },
-  Mg: { id:'Mg', name:'Magnesium',  symbol:'Mg', sub:'',  emoji:'⚡', tier:'atom', color:'#AADDFF', shadow:'rgba(150,200,255,0.5)', tc:'#333', unlockedBy:'ATMOSPHERE',
+  Mg: { id:'Mg', name:'Magnesium',  symbol:'Mg', sub:'',  emoji:'⚡', tier:'atom', color:'#AADDFF', shadow:'rgba(150,200,255,0.5)', tc:'#333', unlockedBy:'STEEL',
         fact:'Burns with a blindingly bright white flame — so bright you literally cannot look at it. Used in flares and fireworks. Also in your muscles.' },
   Al: { id:'Al', name:'Aluminum',    symbol:'Al', sub:'',  emoji:'📐', tier:'atom', color:'#BBCCDD', shadow:'rgba(180,200,220,0.5)', tc:'#333', unlockedBy:'MgO',
         fact:'The most abundant metal in Earth\'s crust. Used to be more valuable than gold — Napoleon served dinner on aluminum plates to impress guests. Then we figured out cheap extraction and now it wraps leftovers.' },
@@ -1205,14 +1205,20 @@ REACTIONS_RAW.forEach(([pair,result]) => {
 // UNLOCK TREE — which discovery unlocks which atom
 // ═══════════════════════════════════════════════════════
 const ATOM_UNLOCKS = {
-  NaCl:        ['Na','Cl'],
-  H2S:         ['S'],
-  STEEL:       ['Fe'],
-  BONES:       ['Ca','P'],
-  OCEAN:       ['K'],
-  ATMOSPHERE:  ['Mg'],
-  MgO:         ['Al'],
-  CEMENT:      ['Si'],
+  // Wave 1: reachable from starters (H,O,C,N)
+  H2O:         ['S'],       // water → sulfur
+  CO2:         ['Na'],      // carbon dioxide → sodium
+  NH3:         ['Cl'],      // ammonia → chlorine
+  // Wave 2: reachable once S,Na,Cl are unlocked
+  NaCl:        ['Fe'],      // salt → iron
+  ATMOSPHERE:  ['Ca'],      // atmosphere → calcium
+  H2S:         ['P'],       // hydrogen sulfide → phosphorus
+  // Wave 3: reachable once Fe,Ca,P are unlocked
+  STEEL:       ['Mg'],      // steel → magnesium
+  BONES:       ['K'],       // bone → potassium
+  // Wave 4: reachable once Mg,K are unlocked
+  MgO:         ['Al'],      // magnesium oxide → aluminum
+  CEMENT:      ['Si'],      // cement → silicon
 };
 
 // ═══════════════════════════════════════════════════════
