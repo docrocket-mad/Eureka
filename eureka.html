@@ -1963,6 +1963,13 @@ function updateHint() {
 // INIT
 // ═══════════════════════════════════════════════════════
 loadState();
+// Retroactively apply any unlocks from previous sessions
+Object.entries(ATOM_UNLOCKS).forEach(([trigger, atoms]) => {
+  if (discovered.has(trigger)) {
+    atoms.forEach(a => discovered.add(a));
+  }
+});
+saveState();
 renderTray();
 updateCounts();
 startGizmoIdle();
