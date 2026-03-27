@@ -779,7 +779,7 @@ body {
     <div class="gizmo-wrap" id="gizmoWrap">
       <div class="gizmo-bubble" id="gizmoBubble">Combine two elements to get started!</div>
       <div class="gizmo idle" id="gizmo">
-        <img class="gizmo-img" id="gizmoImg" src="/images/gizmo-idle.png" alt="Prof Gizmo">
+        <img class="gizmo-img" id="gizmoImg" src="/images/gizmo-color.png" alt="Prof Gizmo">
       </div>
     </div>
 
@@ -1666,16 +1666,16 @@ let gizmoIdleInterval = null;
 let lastDiscoveryTime = Date.now();
 
 const GIZMO_IMAGES = {
-  idle:    '/images/gizmo-idle.png',
-  excited: '/images/gizmo-excited.png',
-  mega:    '/images/gizmo-mega.png',
-  worried: '/images/gizmo-worried.png',
-  panic:   '/images/gizmo-worried.png',
-  shrug:   '/images/gizmo-shrug.png',
-  unlock:  '/images/gizmo-unlock.png',
+  idle:    '/images/gizmo-color.png',
+  excited: '/images/gizmo-color.png',
+  mega:    '/images/gizmo-color.png',
+  worried: '/images/gizmo-color.png',
+  panic:   '/images/gizmo-color.png',
+  shrug:   '/images/gizmo-color.png',
+  unlock:  '/images/gizmo-color.png',
 };
 // Preload all images
-Object.values(GIZMO_IMAGES).forEach(src => { const i = new Image(); i.src = src; });
+Object.values(new Set(Object.values(GIZMO_IMAGES))).forEach(src => { const i = new Image(); i.src = src; });
 
 function gizmoSpeak(text, state, isDangerText) {
   const el = document.getElementById('gizmo');

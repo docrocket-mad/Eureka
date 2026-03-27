@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(grep -r \"Color-gnome\\\\|Excited-gnome\\\\|sad-gnome\" c:/Projects/LAB-OS --include=*.js --include=*.ejs)"
+    ]
+  }
+}
