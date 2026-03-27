@@ -853,6 +853,86 @@ body {
 
 <script>
 // ═══════════════════════════════════════════════════════
+// SOUND ENGINE — Web Audio API synthesis
+// ═══════════════════════════════════════════════════════
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playTone(freq, type, duration, volume, delay) {
+  const ctx = getAudio();
+  const t = ctx.currentTime + (delay || 0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(volume || 0.15, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + duration);
+}
+
+const SFX = {
+  pop() {
+    // Soft pop — placing element from tray
+    playTone(600, 'sine', 0.08, 0.12);
+    playTone(900, 'sine', 0.06, 0.06, 0.02);
+  },
+  merge() {
+    // Bubbly fuse sound
+    playTone(300, 'sine', 0.1, 0.12);
+    playTone(500, 'sine', 0.1, 0.1, 0.05);
+    playTone(800, 'triangle', 0.15, 0.08, 0.1);
+  },
+  discover() {
+    // Ascending sparkle chime
+    [523, 659, 784, 1047].forEach((f, i) => {
+      playTone(f, 'sine', 0.25, 0.12, i * 0.08);
+      playTone(f * 1.5, 'sine', 0.15, 0.04, i * 0.08 + 0.02);
+    });
+  },
+  discoverMega() {
+    // Big triumphant chord
+    [523, 659, 784, 1047, 1319].forEach((f, i) => {
+      playTone(f, 'sine', 0.5, 0.1, i * 0.07);
+      playTone(f * 1.5, 'triangle', 0.3, 0.04, i * 0.07 + 0.02);
+    });
+    playTone(1568, 'sine', 0.6, 0.08, 0.4);
+  },
+  danger() {
+    // Ominous low rumble + dissonant hit
+    playTone(80, 'sawtooth', 0.4, 0.1);
+    playTone(120, 'square', 0.3, 0.06, 0.05);
+    playTone(180, 'sawtooth', 0.2, 0.05, 0.1);
+    playTone(90, 'sine', 0.5, 0.08, 0.15);
+  },
+  dangerPanic() {
+    // Alarm-like ascending panic
+    [150, 200, 250, 300, 350].forEach((f, i) => {
+      playTone(f, 'sawtooth', 0.15, 0.08, i * 0.06);
+    });
+    playTone(100, 'square', 0.5, 0.1, 0.35);
+  },
+  noReaction() {
+    // Dull thud
+    playTone(150, 'sine', 0.12, 0.1);
+    playTone(100, 'sine', 0.08, 0.06, 0.03);
+  },
+  unlock() {
+    // Sparkly ascending twinkle
+    [880, 1109, 1319, 1760].forEach((f, i) => {
+      playTone(f, 'sine', 0.2, 0.08, i * 0.1);
+      playTone(f * 2, 'sine', 0.1, 0.03, i * 0.1 + 0.03);
+    });
+  },
+};
+
+// ═══════════════════════════════════════════════════════
 // ELEMENTS  — danger:true marks the danger zone
 // ═══════════════════════════════════════════════════════
 const E = {
@@ -1212,6 +1292,7 @@ function spawnFromTray(elId, event) {
   const cx = rect.width/2 - 33 + (Math.random()-0.5)*120;
   const cy = rect.height/2 - 33 + (Math.random()-0.5)*80;
   const obj = spawnElement(elId, cx, cy);
+  SFX.pop();
   const clientX = event.touches ? event.touches[0].clientX : event.clientX;
   const clientY = event.touches ? event.touches[0].clientY : event.clientY;
   startDrag(obj, clientX, clientY, 33, 33);
@@ -1332,6 +1413,7 @@ function attemptReaction(a, b) {
 
     a.domEl.classList.add('merging');
     b.domEl.classList.add('merging');
+    SFX.merge();
 
     setTimeout(() => {
       const midX = (a.x + b.x) / 2;
@@ -1349,8 +1431,15 @@ function attemptReaction(a, b) {
         updateCounts();
         checkAtomUnlocks(resultId);
         setTimeout(() => showDiscovery(resultId, a.elId, b.elId, isDanger), 400);
-        if (isDanger) spawnDangerConfetti();
-        else spawnConfetti();
+        if (isDanger) {
+          spawnDangerConfetti();
+          const isPanic = ['MUSTARD_GAS','NITROGLYCERIN','TNT','PHOSGENE','THERMITE'].includes(resultId);
+          isPanic ? SFX.dangerPanic() : SFX.danger();
+        } else {
+          spawnConfetti();
+          const isMega = ['LIFE','OCEAN','PHOTOSYNTHESIS','ATMOSPHERE'].includes(resultId);
+          isMega ? SFX.discoverMega() : SFX.discover();
+        }
       }
       // Gizmo always reacts, new or not
       setTimeout(() => gizmoReact(resultId, isDanger), 100);
@@ -1360,6 +1449,7 @@ function attemptReaction(a, b) {
 
   } else {
     bounceApart(a, b);
+    SFX.noReaction();
     gizmoNoReaction();
   }
 }
@@ -1414,6 +1504,7 @@ function showUnlockToast(atomId) {
   bubble.innerHTML = `<span style="font-size:13px;font-weight:900">${el.symbol}</span>`;
   text.textContent = `${el.name} Unlocked!`;
   sub.textContent = 'New atom in your tray ⚗️';
+  SFX.unlock();
 
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2800);
