@@ -76,5 +76,39 @@ app.get('/api/load/:code', async (req, res) => {
   }
 });
 
+// ── Report bug/feature → Artificer ──
+const ARTIFICER_WEBHOOK = 'https://portal.artificer.systems/api/webhook/bug-report';
+const ARTIFICER_KEY = process.env.ARTIFICER_WEBHOOK_KEY || '';
+
+app.post('/api/report', async (req, res) => {
+  try {
+    const { text, ticket_type, meta } = req.body;
+    if (!text) return res.status(400).json({ error: 'No report text' });
+
+    const title = text.length > 80 ? text.slice(0, 77) + '...' : text;
+    const description = `${text}\n\n---\nDiscovered: ${meta?.discovered || '?'} elements\nBrowser: ${meta?.browser || 'unknown'}\nScreen: ${meta?.screen || '?'}\nTime: ${meta?.timestamp || new Date().toISOString()}`;
+
+    if (ARTIFICER_KEY) {
+      await fetch(ARTIFICER_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': ARTIFICER_KEY },
+        body: JSON.stringify({
+          source: 'eureka',
+          priority: 'medium',
+          title: `[Eureka] ${title}`,
+          description,
+          reporter: 'Eureka Player (voice)',
+          ticket_type: ticket_type || 'bug',
+        })
+      });
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Report error:', err);
+    res.status(500).json({ error: 'Report failed' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Eureka! running on port ${PORT}`));
