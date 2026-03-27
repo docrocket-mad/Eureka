@@ -25,7 +25,9 @@ function generateCode() {
   return crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
-// ── Serve the game ──
+// ── Serve static files ──
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'eureka.html'));
 });

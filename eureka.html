@@ -551,175 +551,40 @@ body {
   color: #FF8899;
 }
 
-/* Gizmo character — pure CSS */
+/* Gizmo character — image based */
 .gizmo {
-  width: 48px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   position: relative;
   transition: transform 0.3s;
 }
-
-/* Hat */
-.gizmo-hat {
-  position: absolute;
-  top: -4px; left: 8px;
-  width: 32px; height: 20px;
-  background: #2222AA;
-  border-radius: 4px 4px 0 0;
-  z-index: 2;
-}
-.gizmo-hat::before { /* brim */
-  content: '';
-  position: absolute;
-  bottom: -3px; left: -5px;
-  width: 42px; height: 6px;
-  background: #3333CC;
-  border-radius: 3px;
-}
-.gizmo-hat::after { /* star on hat */
-  content: '⭐';
-  position: absolute;
-  top: 2px; left: 7px;
-  font-size: 10px;
-}
-
-/* Head */
-.gizmo-head {
-  position: absolute;
-  top: 14px; left: 6px;
-  width: 36px; height: 30px;
-  background: #FFDD88;
-  border-radius: 50% 50% 45% 45%;
-  z-index: 1;
-  transition: transform 0.3s;
-}
-
-/* Eyes */
-.gizmo-eyes {
-  position: absolute;
-  top: 20px; left: 11px;
-  display: flex; gap: 8px;
-  z-index: 3;
-}
-.gizmo-eye {
-  width: 8px; height: 9px;
-  background: white;
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-  transition: height 0.2s;
-}
-.gizmo-eye::after {
-  content: '';
-  position: absolute;
-  width: 5px; height: 5px;
-  background: #222244;
-  border-radius: 50%;
-  top: 2px; left: 1.5px;
+.gizmo-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
   transition: transform 0.2s;
 }
 
-/* Mouth */
-.gizmo-mouth {
-  position: absolute;
-  top: 31px; left: 19px;
-  width: 10px; height: 5px;
-  border: 2px solid #CC8833;
-  border-top: none;
-  border-radius: 0 0 6px 6px;
-  z-index: 3;
-  transition: all 0.3s;
-}
-
-/* Body */
-.gizmo-body {
-  position: absolute;
-  top: 40px; left: 10px;
-  width: 28px; height: 22px;
-  background: #3333AA;
-  border-radius: 6px 6px 4px 4px;
-  z-index: 1;
-}
-.gizmo-body::after { /* lab coat lapels */
-  content: '';
-  position: absolute;
-  top: 0; left: 8px;
-  width: 12px; height: 10px;
-  background: white;
-  clip-path: polygon(0 0, 100% 0, 60% 100%, 40% 100%);
-}
-
-/* Arms */
-.gizmo-arm-l {
-  position: absolute;
-  top: 42px; left: 2px;
-  width: 10px; height: 18px;
-  background: #3333AA;
-  border-radius: 5px;
-  transform-origin: top center;
-  transition: transform 0.3s;
-}
-.gizmo-arm-r {
-  position: absolute;
-  top: 42px; right: 2px;
-  width: 10px; height: 18px;
-  background: #3333AA;
-  border-radius: 5px;
-  transform-origin: top center;
-  transition: transform 0.3s;
-}
-
-/* Legs */
-.gizmo-legs {
-  position: absolute;
-  bottom: 0; left: 13px;
-  display: flex; gap: 4px;
-}
-.gizmo-leg {
-  width: 9px; height: 10px;
-  background: #222266;
-  border-radius: 0 0 4px 4px;
-}
-
 /* ── GIZMO STATES ── */
-/* idle — subtle bob */
 .gizmo.idle { animation: gizmoBob 2.5s ease-in-out infinite; }
 @keyframes gizmoBob {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
 }
 
-/* excited — jump and wave */
 .gizmo.excited { animation: gizmoExcited 0.5s ease-in-out 3; }
 @keyframes gizmoExcited {
   0%,100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-10px) rotate(-5deg); }
   75% { transform: translateY(-10px) rotate(5deg); }
 }
-.gizmo.excited .gizmo-arm-l { transform: rotate(-120deg); }
-.gizmo.excited .gizmo-arm-r { transform: rotate(120deg); }
-.gizmo.excited .gizmo-mouth {
-  width: 14px; height: 7px;
-  left: 17px;
-  border-radius: 0 0 8px 8px;
-}
 
-/* mega excited — for LIFE, OCEAN, PHOTOSYNTHESIS */
 .gizmo.mega { animation: gizmoMega 0.35s ease-in-out 5; }
 @keyframes gizmoMega {
   0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-14px) scale(1.1); }
+  50% { transform: translateY(-14px) scale(1.15); }
 }
 
-/* worried */
-.gizmo.worried .gizmo-eye { height: 6px; }
-.gizmo.worried .gizmo-mouth {
-  width: 10px; height: 5px;
-  border-radius: 6px 6px 0 0;
-  border-top: 2px solid #CC8833;
-  border-bottom: none;
-  top: 32px;
-}
 .gizmo.worried { animation: gizmoWorried 0.4s ease-in-out 3; }
 @keyframes gizmoWorried {
   0%,100% { transform: translateX(0) rotate(0deg); }
@@ -727,7 +592,6 @@ body {
   75% { transform: translateX(3px) rotate(3deg); }
 }
 
-/* panicking — for mustard gas / worst danger */
 .gizmo.panic { animation: gizmoPanic 0.25s linear infinite; }
 @keyframes gizmoPanic {
   0% { transform: translateX(0) rotate(-8deg); }
@@ -736,23 +600,12 @@ body {
   75% { transform: translateX(-4px) rotate(8deg) translateY(-3px); }
   100% { transform: translateX(0) rotate(-8deg); }
 }
-.gizmo.panic .gizmo-arm-l { transform: rotate(-150deg); }
-.gizmo.panic .gizmo-arm-r { transform: rotate(150deg); }
-.gizmo.panic .gizmo-eye::after { transform: translateY(-2px); } /* eyes wide up */
-.gizmo.panic .gizmo-mouth {
-  width: 12px; height: 8px;
-  border-radius: 0 0 8px 8px;
-  left: 18px; top: 30px;
-}
 
-/* shrug — no reaction */
 .gizmo.shrug { animation: gizmoShrug 0.4s ease-in-out 1; }
 @keyframes gizmoShrug {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
 }
-.gizmo.shrug .gizmo-arm-l { transform: rotate(-60deg); }
-.gizmo.shrug .gizmo-arm-r { transform: rotate(60deg); }
 
 /* ── CONFETTI ── */
 .confetti-piece {
@@ -926,20 +779,7 @@ body {
     <div class="gizmo-wrap" id="gizmoWrap">
       <div class="gizmo-bubble" id="gizmoBubble">Combine two elements to get started!</div>
       <div class="gizmo idle" id="gizmo">
-        <div class="gizmo-hat"></div>
-        <div class="gizmo-head"></div>
-        <div class="gizmo-eyes">
-          <div class="gizmo-eye"></div>
-          <div class="gizmo-eye"></div>
-        </div>
-        <div class="gizmo-mouth"></div>
-        <div class="gizmo-body"></div>
-        <div class="gizmo-arm-l"></div>
-        <div class="gizmo-arm-r"></div>
-        <div class="gizmo-legs">
-          <div class="gizmo-leg"></div>
-          <div class="gizmo-leg"></div>
-        </div>
+        <img class="gizmo-img" id="gizmoImg" src="/images/gizmo-idle.png" alt="Prof Gizmo">
       </div>
     </div>
 
@@ -1825,15 +1665,29 @@ let gizmoTimeout = null;
 let gizmoIdleInterval = null;
 let lastDiscoveryTime = Date.now();
 
+const GIZMO_IMAGES = {
+  idle:    '/images/gizmo-idle.png',
+  excited: '/images/gizmo-excited.png',
+  mega:    '/images/gizmo-mega.png',
+  worried: '/images/gizmo-worried.png',
+  panic:   '/images/gizmo-worried.png',
+  shrug:   '/images/gizmo-shrug.png',
+  unlock:  '/images/gizmo-unlock.png',
+};
+// Preload all images
+Object.values(GIZMO_IMAGES).forEach(src => { const i = new Image(); i.src = src; });
+
 function gizmoSpeak(text, state, isDangerText) {
   const el = document.getElementById('gizmo');
   const bubble = document.getElementById('gizmoBubble');
+  const img = document.getElementById('gizmoImg');
 
   // Clear pending timers
   if (gizmoTimeout) clearTimeout(gizmoTimeout);
 
-  // Set state
+  // Set state + swap image
   el.className = 'gizmo ' + state;
+  img.src = GIZMO_IMAGES[state] || GIZMO_IMAGES.idle;
   bubble.className = 'gizmo-bubble show' + (isDangerText ? ' danger-bubble-text' : '');
   bubble.textContent = text;
 
@@ -1843,6 +1697,7 @@ function gizmoSpeak(text, state, isDangerText) {
     bubble.classList.remove('show');
     setTimeout(() => {
       el.className = 'gizmo idle';
+      document.getElementById('gizmoImg').src = GIZMO_IMAGES.idle;
     }, 300);
   }, dur);
 }
@@ -1867,6 +1722,7 @@ function gizmoNoReaction() {
 
 function gizmoUnlock() {
   const lines = GIZMO_LINES.unlock;
+  document.getElementById('gizmoImg').src = GIZMO_IMAGES.unlock;
   gizmoSpeak(lines[Math.floor(Math.random()*lines.length)], 'excited', false);
 }
 
