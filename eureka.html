@@ -219,7 +219,23 @@ body {
   flex-shrink: 0;
   position: relative;
   z-index: 40;
+  transition: height 0.3s cubic-bezier(0.32,0.72,0,1);
 }
+.tray.expanded {
+  height: 55vh;
+}
+
+.tray-handle {
+  width: 36px; height: 5px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  margin: 6px auto 2px;
+  cursor: grab;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.tray-handle:active { background: rgba(255,255,255,0.3); }
+.tray.expanded .tray-handle { background: rgba(255,210,63,0.4); }
 
 .tray-tabs {
   display: flex;
@@ -253,6 +269,16 @@ body {
   scrollbar-width: none;
 }
 .tray-scroll::-webkit-scrollbar { display: none; }
+
+.tray.expanded .tray-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+}
 
 .tray-item {
   flex-shrink: 0;
@@ -847,7 +873,8 @@ body {
       </div>
     </div>
 
-  <div class="tray">
+  <div class="tray" id="tray">
+    <div class="tray-handle" id="trayHandle"></div>
     <div class="tray-tabs">
       <div class="tray-tab active" id="tab-atoms" onclick="switchTab('atoms')">⚛️ Atoms</div>
       <div class="tray-tab" id="tab-molecules" onclick="switchTab('molecules')">🧪 Molecules</div>
@@ -1326,6 +1353,31 @@ function saveState() {
 // TRAY
 // ═══════════════════════════════════════════════════════
 const TIER_TAB = { atom:'atoms', molecule:'molecules', compound:'compounds', danger:'danger' };
+
+function initTrayDrawer() {
+  const tray = document.getElementById('tray');
+  const handle = document.getElementById('trayHandle');
+  let startY = 0, draggingTray = false;
+
+  const onStart = (e) => {
+    startY = e.touches ? e.touches[0].clientY : e.clientY;
+    draggingTray = true;
+  };
+  const onEnd = (e) => {
+    if (!draggingTray) return;
+    draggingTray = false;
+    const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    const dy = startY - endY;
+    if (dy > 30) tray.classList.add('expanded');
+    else if (dy < -30) tray.classList.remove('expanded');
+    else tray.classList.toggle('expanded');
+  };
+
+  handle.addEventListener('touchstart', onStart, {passive:true});
+  handle.addEventListener('touchend', onEnd);
+  handle.addEventListener('mousedown', onStart);
+  handle.addEventListener('mouseup', onEnd);
+}
 
 function switchTab(tab) {
   currentTab = tab;
@@ -2188,6 +2240,7 @@ renderTray();
 updateCounts();
 startGizmoIdle();
 initReportBtn();
+initTrayDrawer();
 </script>
 </body>
 </html>
