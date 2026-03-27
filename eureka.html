@@ -229,16 +229,22 @@ body {
 }
 
 .tray-handle {
-  width: 36px; height: 5px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 99px;
-  margin: 6px auto 2px;
-  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 0 2px;
+  cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s;
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.2s;
 }
-.tray-handle:active { background: rgba(255,255,255,0.3); }
-.tray.expanded .tray-handle { background: rgba(255,210,63,0.4); }
+.tray-handle:active { color: var(--gold); }
+.tray.expanded .tray-handle { color: var(--gold); }
 
 .tray-tabs {
   display: flex;
@@ -879,7 +885,7 @@ body {
   </div>
 
   <div class="tray" id="tray">
-    <div class="tray-handle" id="trayHandle"></div>
+    <div class="tray-handle" id="trayHandle">▲ expand</div>
     <div class="tray-tabs">
       <div class="tray-tab active" id="tab-atoms" onclick="switchTab('atoms')">⚛️ Atoms</div>
       <div class="tray-tab" id="tab-molecules" onclick="switchTab('molecules')">🧪 Molecules</div>
@@ -1362,30 +1368,9 @@ const TIER_TAB = { atom:'atoms', molecule:'molecules', compound:'compounds', dan
 function initTrayDrawer() {
   const tray = document.getElementById('tray');
   const handle = document.getElementById('trayHandle');
-  let startY = 0;
-
-  const onStart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    startY = e.touches ? e.touches[0].clientY : e.clientY;
-  };
-  const onEnd = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-    const dy = startY - endY;
-    if (dy > 20) tray.classList.add('expanded');
-    else if (dy < -20) tray.classList.remove('expanded');
-    else tray.classList.toggle('expanded');
-  };
-
-  handle.addEventListener('touchstart', onStart, {passive:false});
-  handle.addEventListener('touchend', onEnd, {passive:false});
-  handle.addEventListener('mousedown', onStart);
-  handle.addEventListener('mouseup', onEnd);
-  // Also allow tapping the tabs area to collapse when expanded
-  document.querySelector('.tray-tabs').addEventListener('click', () => {
-    // don't collapse — tabs should switch tabs, not toggle drawer
+  handle.addEventListener('click', () => {
+    tray.classList.toggle('expanded');
+    handle.textContent = tray.classList.contains('expanded') ? '▼ collapse' : '▲ expand';
   });
 }
 
