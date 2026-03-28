@@ -1101,7 +1101,20 @@ function renderTray() {
       `;
 
       if (isDisc) {
-        item.addEventListener('touchstart', e => { e.preventDefault(); spawnFromTray(el.id, e); }, {passive:false});
+        // Touch: only spawn if it's a tap (no scroll movement)
+        let touchStartX, touchStartY;
+        item.addEventListener('touchstart', e => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }, {passive:true});
+        item.addEventListener('touchend', e => {
+          const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+          const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+          if (dx < 10 && dy < 10) {
+            e.preventDefault();
+            spawnFromTray(el.id, e);
+          }
+        });
         item.addEventListener('mousedown', e => spawnFromTray(el.id, e));
       }
       row.appendChild(item);
@@ -1120,8 +1133,9 @@ function spawnFromTray(elId, event) {
   const cy = rect.height/2 - 33 + (Math.random()-0.5)*80;
   const obj = spawnElement(elId, cx, cy);
   SFX.pop();
-  const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-  const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+  const touch = event.touches?.[0] || event.changedTouches?.[0];
+  const clientX = touch ? touch.clientX : event.clientX;
+  const clientY = touch ? touch.clientY : event.clientY;
   startDrag(obj, clientX, clientY, 33, 33);
 }
 
