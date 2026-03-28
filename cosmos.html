@@ -53,7 +53,7 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 .solar-scroll:active{cursor:grabbing;}
 .solar-scroll::-webkit-scrollbar{display:none;}
 
-.solar-canvas{height:100%;display:flex;align-items:center;padding:0 40px;position:relative;min-width:2400px;}
+.solar-canvas{height:100%;display:flex;align-items:center;padding:0 40px;position:relative;min-width:3600px;}
 
 /* Sun */
 .sun{
@@ -633,6 +633,154 @@ const BODIES = [
     gradient:'radial-gradient(circle at 35% 35%, #FFE066, #FFD700, #CCAA00)',
     unlockScore:1200,
   },
+  // ── REMAINING MOONS ──
+  {
+    id:'ganymede', name:'Ganymede', type:'Moon of Jupiter', emoji:'🔵',
+    color:'#8899AA', glow:'rgba(136,153,170,0.4)', textColor:'white',
+    size:14, orbitDist:490,
+    tagline:'The largest moon in the solar system. Bigger than Mercury. Has its own magnetic field. Overachiever.',
+    stats:[
+      {val:'5,268 km', label:'Diameter'},
+      {val:'7.2 Earth days', label:'Orbit'},
+      {val:'-163°C', label:'Avg Temp'},
+      {val:'Own magnetic field', label:'Unique'},
+    ],
+    fact:'Ganymede is the only moon with its own magnetic field — it has a small magnetosphere inside Jupiter\'s enormous one. Like a bouncer inside a bouncer. It\'s bigger than Mercury but only half the mass. Probably has a subsurface saltwater ocean sandwiched between layers of ice. Jupiter\'s moons are basically a mini solar system.',
+    distAU:5.2, sizePx:14, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #AABBCC, #778899, #556677)',
+    unlockScore:270,
+  },
+  {
+    id:'charon', name:'Charon', type:'Moon of Pluto', emoji:'⚫',
+    color:'#999999', glow:'rgba(153,153,153,0.3)', textColor:'white',
+    size:7, orbitDist:860,
+    tagline:'So large relative to Pluto that they orbit each other. Not a moon — a dance partner.',
+    stats:[
+      {val:'1,212 km', label:'Diameter'},
+      {val:'6.4 Earth days', label:'Orbit'},
+      {val:'-220°C', label:'Avg Temp'},
+      {val:'Half Pluto\'s size', label:'Ratio'},
+    ],
+    fact:'Charon is half the diameter of Pluto. They don\'t orbit the way our Moon orbits Earth — the center of gravity is BETWEEN them, in empty space. They orbit each other while facing the same side toward each other forever. Tidally locked in a cosmic slow dance. Also has a reddish north pole cap — probably from Pluto\'s escaping atmosphere freezing onto it.',
+    distAU:39.5, sizePx:7, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #BBBBBB, #888888, #555555)',
+    unlockScore:850,
+  },
+  // ── ASTEROIDS ──
+  {
+    id:'vesta', name:'Vesta', type:'Asteroid', emoji:'🪨',
+    color:'#AA9988', glow:'rgba(170,153,136,0.3)', textColor:'white',
+    size:7, orbitDist:385,
+    tagline:'Second-largest asteroid. Has a crater so massive it excavated 1% of Vesta\'s entire volume.',
+    stats:[
+      {val:'525 km', label:'Diameter'},
+      {val:'3.6 Earth years', label:'Year'},
+      {val:'-20°C avg', label:'Temp'},
+      {val:'Rheasilvia crater', label:'Notable'},
+    ],
+    fact:'Vesta\'s south pole has a crater called Rheasilvia that\'s 505 km across — nearly as wide as Vesta itself. The impact was so violent it blasted 1% of Vesta\'s volume into space. Those chunks are now a family of asteroids AND some have landed on Earth as meteorites. You might be walking on a piece of Vesta right now.',
+    distAU:2.36, sizePx:7, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #CCBBAA, #998877, #665544)',
+    unlockScore:160,
+  },
+  // ── COMETS ──
+  {
+    id:'halley', name:'Halley\'s Comet', type:'Comet', emoji:'☄️',
+    color:'#AADDFF', glow:'rgba(170,221,255,0.5)', textColor:'#333',
+    size:8, orbitDist:950,
+    tagline:'Visible every 75-76 years. Every generation of humans has seen it. Next visit: 2061.',
+    stats:[
+      {val:'11 km', label:'Nucleus'},
+      {val:'75-76 years', label:'Period'},
+      {val:'254,000 km/h', label:'Speed (perihelion)'},
+      {val:'2061', label:'Next Visit'},
+    ],
+    fact:'Halley\'s Comet has been recorded since 240 BCE. It appeared before the Battle of Hastings in 1066 and is depicted in the Bayeux Tapestry. Mark Twain was born when it appeared in 1835 and died when it returned in 1910 — he predicted this. Its tail always points away from the Sun regardless of direction of travel. The Sun is that pushy.',
+    distAU:17.8, sizePx:8, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 25% 25%, #FFFFFF, #BBDDFF, #88AACC)',
+    unlockScore:500,
+  },
+  // ── DEEP SPACE ──
+  {
+    id:'blackhole', name:'Sagittarius A*', type:'Supermassive Black Hole', emoji:'⚫',
+    color:'#222233', glow:'rgba(255,100,50,0.6)', textColor:'white',
+    size:40, orbitDist:1080,
+    tagline:'4 million times the mass of the Sun. At the center of our galaxy. Light goes in. Light does not come out.',
+    stats:[
+      {val:'4 million solar masses', label:'Mass'},
+      {val:'26,000 light years', label:'Distance'},
+      {val:'44 million km', label:'Diameter'},
+      {val:'2022', label:'First Image'},
+    ],
+    fact:'Every galaxy has a supermassive black hole at its center. Ours is called Sagittarius A*. The Event Horizon Telescope captured its image in 2022 — it took a virtual telescope the size of Earth to do it. Nothing can escape from within the event horizon — not light, not information, not regret. Time slows down as you approach. At the singularity, physics as we know it stops working.',
+    distAU:0, sizePx:40, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 50% 50%, #111122, #000000, #000000)',
+    unlockScore:1500,
+  },
+  {
+    id:'neutronstar', name:'Neutron Star', type:'Stellar Remnant', emoji:'💫',
+    color:'#CCDDFF', glow:'rgba(200,220,255,0.6)', textColor:'#333',
+    size:6, orbitDist:1100,
+    tagline:'A dead star compressed to the size of a city. A teaspoon weighs a billion tonnes. No really.',
+    stats:[
+      {val:'20 km', label:'Diameter'},
+      {val:'1.4-2 solar masses', label:'Mass'},
+      {val:'716 rotations/sec (max)', label:'Spin'},
+      {val:'1 billion tonnes/tsp', label:'Density'},
+    ],
+    fact:'When a massive star dies, the core collapses so violently that protons and electrons merge into neutrons. The result is a ball of neutrons 20 km across with the mass of the Sun. A teaspoon of neutron star material weighs a billion tonnes. Some spin hundreds of times per second — pulsars. The magnetic field is a trillion times stronger than Earth\'s. They are the universe\'s most extreme objects.',
+    distAU:0, sizePx:6, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #FFFFFF, #AABBEE, #6677CC)',
+    unlockScore:1800,
+  },
+  {
+    id:'nebula', name:'Pillars of Creation', type:'Nebula', emoji:'🌌',
+    color:'#7755AA', glow:'rgba(119,85,170,0.5)', textColor:'white',
+    size:50, orbitDist:1130,
+    tagline:'Star nurseries. Clouds of gas and dust where new stars are born. The universe\'s maternity ward.',
+    stats:[
+      {val:'5 light years', label:'Height'},
+      {val:'6,500 light years', label:'Distance'},
+      {val:'Eagle Nebula', label:'Location'},
+      {val:'~1995/2022', label:'Hubble/JWST'},
+    ],
+    fact:'The Pillars of Creation are columns of interstellar gas and dust in the Eagle Nebula, 6,500 light years away. New stars are being born inside them right now. Hubble photographed them in 1995 — one of the most iconic images in astronomy. JWST re-imaged them in 2022 with infrared, revealing baby stars hidden inside. There\'s evidence the pillars were destroyed by a supernova 6,000 years ago — but we won\'t see it for another 500 years because light hasn\'t arrived yet.',
+    distAU:0, sizePx:50, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 40% 40%, #AA77CC, #664488, #332255)',
+    unlockScore:2000,
+  },
+  {
+    id:'milkyway', name:'The Milky Way', type:'Galaxy', emoji:'🌌',
+    color:'#DDDDFF', glow:'rgba(221,221,255,0.4)', textColor:'#333',
+    size:60, orbitDist:1180,
+    tagline:'Our home galaxy. 200-400 billion stars. We\'re two-thirds of the way out from the center. Suburban.',
+    stats:[
+      {val:'100,000 light years', label:'Diameter'},
+      {val:'200-400 billion', label:'Stars'},
+      {val:'225 million years', label:'Galactic Year'},
+      {val:'~20 orbits', label:'Earth Has Done'},
+    ],
+    fact:'The Milky Way is a barred spiral galaxy. Our Sun is one of 200-400 billion stars in it. We\'re 26,000 light years from the center — suburban, cosmically speaking. It takes 225 million years to orbit once — a galactic year. Dinosaurs were alive less than one galactic year ago. The Milky Way is on a collision course with Andromeda — in 4.5 billion years they\'ll merge. But space is so empty that almost no stars will actually hit each other.',
+    distAU:0, sizePx:60, unlocked:false, moons:0,
+    gradient:'radial-gradient(ellipse at 50% 50%, #EEEEFF, #AAAACC, #555577)',
+    unlockScore:2500,
+  },
+  {
+    id:'trappist', name:'TRAPPIST-1', type:'Exoplanet System', emoji:'🪐',
+    color:'#FF6644', glow:'rgba(255,102,68,0.5)', textColor:'white',
+    size:20, orbitDist:1240,
+    tagline:'7 Earth-sized planets. 3 in the habitable zone. 40 light years away. The most promising place to look.',
+    stats:[
+      {val:'7', label:'Planets'},
+      {val:'3', label:'In Habitable Zone'},
+      {val:'40 light years', label:'Distance'},
+      {val:'Red Dwarf', label:'Star Type'},
+    ],
+    fact:'TRAPPIST-1 is an ultra-cool red dwarf star 40 light years away with 7 rocky Earth-sized planets — the most found around a single star. Three are in the habitable zone where liquid water could exist. The planets are so close together that from one, you could see the others in the sky, larger than our Moon. JWST is currently analyzing their atmospheres for signs of water and life. This is the system to watch.',
+    distAU:0, sizePx:20, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #FF8866, #CC4422, #882211)',
+    unlockScore:3000,
+  },
 ];
 
 // Mission questions
@@ -666,6 +814,18 @@ const QUESTIONS = [
   {q:'What is the Pale Blue Dot?', opts:['Neptune','Uranus','Earth from far away','A nebula'], ans:'Earth from far away'},
   {q:'What will happen to Triton eventually?', opts:['Escape Neptune','Be torn apart','Hit Neptune','Become a planet'], ans:'Be torn apart'},
   {q:'What probe landed on Titan?', opts:['Cassini','Huygens','Voyager','New Horizons'], ans:'Huygens'},
+  {q:'Which moon is the largest in the solar system?', opts:['Titan','Europa','Ganymede','Io'], ans:'Ganymede'},
+  {q:'What is at the center of the Milky Way?', opts:['A star','Nothing','A supermassive black hole','A nebula'], ans:'A supermassive black hole'},
+  {q:'How dense is a neutron star?', opts:['Like lead','Like the Sun','A billion tonnes per teaspoon','Like diamond'], ans:'A billion tonnes per teaspoon'},
+  {q:'What are the Pillars of Creation?', opts:['Mountain range','Nebula columns','Galaxy cluster','Asteroid formation'], ans:'Nebula columns'},
+  {q:'How many planets does TRAPPIST-1 have?', opts:['3','5','7','9'], ans:'7'},
+  {q:'How often is Halley\'s Comet visible?', opts:['Every 33 years','Every 75-76 years','Every 100 years','Every 200 years'], ans:'Every 75-76 years'},
+  {q:'Which way does a comet\'s tail point?', opts:['Behind it','Toward the Sun','Away from the Sun','Sideways'], ans:'Away from the Sun'},
+  {q:'What is special about Ganymede?', opts:['It has rings','It has its own magnetic field','It has life','It\'s the hottest moon'], ans:'It has its own magnetic field'},
+  {q:'What is Charon\'s relationship to Pluto?', opts:['They orbit each other','Charon orbits Pluto normally','They are the same size','Charon is bigger'], ans:'They orbit each other'},
+  {q:'How many stars are in the Milky Way?', opts:['1 million','1 billion','200-400 billion','1 trillion'], ans:'200-400 billion'},
+  {q:'What is a galactic year?', opts:['1 million years','25 million years','225 million years','1 billion years'], ans:'225 million years'},
+  {q:'What was Vesta\'s Rheasilvia impact?', opts:['Blasted 1% of Vesta away','Created a new moon','Destroyed Vesta','Nothing special'], ans:'Blasted 1% of Vesta away'},
 ];
 
 // ═══════════════════════════════════════════════════════
