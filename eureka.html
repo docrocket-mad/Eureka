@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Eureka! — Real Chemistry Discovery</title>
+<title>Eureka! — Science Games</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -115,6 +115,118 @@ body {
 /* ── LAYOUT ── */
 .app { display: flex; flex-direction: column; height: 100dvh; height: 100vh; }
 @supports (height: 100dvh) { .app { height: 100dvh; } }
+
+.mode-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+.mode-container { display: none; flex: 1; flex-direction: column; overflow: hidden; min-height: 0; }
+.mode-container.active { display: flex; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  display: flex;
+  background: rgba(8,8,15,0.98);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 50;
+}
+.bottom-nav-item {
+  flex: 1;
+  padding: 8px 4px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.bottom-nav-icon { font-size: 18px; display: block; margin-bottom: 1px; }
+.bottom-nav-label { font-size: 9px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.bottom-nav-item.active .bottom-nav-label { color: var(--gold); }
+
+/* ── PERIODIC MODE ── */
+.p-tab-bar {
+  display: flex;
+  background: rgba(10,10,20,0.98);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.p-tab {
+  flex: 1; padding: 9px 4px; text-align: center;
+  font-size: 10px; font-weight: 900; color: var(--muted);
+  cursor: pointer; text-transform: uppercase;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.p-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.p-main { flex: 1; overflow: hidden; position: relative; }
+.p-screen { display: none; height: 100%; overflow-y: auto; padding: 16px; }
+.p-screen.active { display: block; }
+
+/* Periodic Table grid */
+.pt-grid { display: grid; grid-template-columns: repeat(18,1fr); gap: 2px; margin-bottom: 12px; }
+.pt-cell {
+  aspect-ratio: 1; border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: max(1.8vw,6px); font-weight: 900;
+  cursor: pointer; transition: transform 0.15s;
+  position: relative; overflow: hidden;
+}
+.pt-cell.locked { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); }
+.pt-cell.locked::after { content: '?'; color: rgba(255,255,255,0.12); font-size: max(2vw,7px); }
+.pt-cell.unlocked { box-shadow: 0 2px 8px var(--cat-color, rgba(0,0,0,0.4)); }
+.pt-sym { font-size: max(2.2vw,8px); font-weight: 900; line-height: 1; }
+.pt-num { font-size: max(1.2vw,5px); font-weight: 700; opacity: 0.75; line-height: 1; }
+
+/* Learn card */
+.p-learn-card {
+  background: var(--card); border-radius: 24px;
+  border: 1px solid var(--border); padding: 28px 24px;
+  max-width: 360px; width: 100%; margin: 0 auto;
+  text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.p-learn-symbol { font-family: 'Fredoka One', cursive; font-size: 72px; line-height: 1; margin-bottom: 4px; }
+.p-learn-name { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+.p-learn-num { font-size: 13px; color: var(--muted); font-weight: 700; }
+.p-learn-fact { font-size: 13px; font-weight: 600; line-height: 1.65; color: rgba(240,240,255,0.85); margin-top: 14px; text-align: left; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; }
+.p-card-nav { display: flex; justify-content: center; gap: 12px; margin-top: 14px; }
+.p-card-btn { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900; color: var(--text); cursor: pointer; }
+.p-card-btn:active { background: rgba(255,210,63,0.15); }
+
+/* Match game */
+.p-match-stats { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; }
+.p-match-stat { text-align: center; }
+.p-match-val { font-size: 22px; font-weight: 900; }
+.p-match-lbl { font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+.p-match-prompt { font-size: 12px; color: var(--muted); font-weight: 800; text-align: center; margin-bottom: 8px; }
+.p-match-question { font-family: 'Fredoka One', cursive; font-size: 48px; text-align: center; color: var(--gold); margin-bottom: 16px; }
+.p-match-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 360px; margin: 0 auto; }
+.p-match-opt {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 14px; text-align: center; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.15s;
+}
+.p-match-opt:active { transform: scale(0.97); }
+.p-match-opt.correct { background: rgba(0,229,176,0.2); border-color: var(--teal); color: var(--teal); }
+.p-match-opt.wrong { background: rgba(255,34,68,0.15); border-color: var(--danger); color: var(--danger); }
+
+/* Hunt game */
+.p-hunt-clue { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; }
+.p-hunt-clue-text { font-size: 15px; font-weight: 800; line-height: 1.5; }
+.p-hunt-hint { font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 6px; }
+.p-hunt-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; max-width: 360px; margin: 0 auto; }
+.p-hunt-cell {
+  aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; cursor: pointer;
+  font-weight: 900; transition: transform 0.15s;
+}
+.p-hunt-cell:active { transform: scale(0.93); }
+.p-hunt-cell .p-hunt-sym { font-size: 18px; font-weight: 900; }
+.p-hunt-cell .p-hunt-name { font-size: 8px; font-weight: 800; opacity: 0.8; }
+
+/* Category legend */
+.p-cat-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.p-cat-dot { display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 800; color: var(--muted); }
+.p-cat-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* Encyclopedia as mode (not overlay) */
+#mode-encyclo { overflow-y: auto; }
+#mode-encyclo .encyclo-header { flex-shrink: 0; }
+#mode-encyclo .encyclo-sections { flex: 1; overflow-y: auto; padding: 14px; }
 
 /* ── CANVAS ── */
 .lab-canvas {
@@ -836,15 +948,18 @@ body {
   <div class="header">
     <div class="logo">EURE<span>K</span>A<span style="font-size:20px">!</span></div>
     <div class="header-mid">
-      <div class="header-tagline">Real Chemistry Discovery</div>
+      <div class="header-tagline">Artificer Studios · Science Games</div>
     </div>
     <div class="stats-row">
-      <div class="stat-pill gold" id="discPill" onclick="showEncyclo()">🔬 <span id="discCount">0</span></div>
-      <div class="stat-pill danger" id="dangerPill" onclick="showEncyclo('danger')">☠️ <span id="dangerCount">0</span></div>
+      <div class="stat-pill gold" id="discPill" onclick="switchMode('encyclo')">🔬 <span id="discCount">0</span></div>
+      <div class="stat-pill danger" id="dangerPill" onclick="switchMode('encyclo')">☠️ <span id="dangerCount">0</span></div>
       <div class="cloud-pill" onclick="showSaveModal()">☁️ Sync</div>
     </div>
   </div>
 
+  <div class="mode-area">
+  <!-- ═══ LAB MODE ═══ -->
+  <div class="mode-container active" id="mode-lab">
   <div class="lab-canvas" id="labCanvas">
     <div class="canvas-hint" id="canvasHint">
       <span class="canvas-hint-icon">⚗️</span>
@@ -866,6 +981,52 @@ body {
 
   <div class="tray" id="tray">
     <div class="tray-scroll" id="trayScroll"></div>
+  </div>
+  </div><!-- /mode-lab -->
+
+  <!-- ═══ PERIODIC MODE ═══ -->
+  <div class="mode-container" id="mode-periodic">
+    <div class="p-tab-bar">
+      <div class="p-tab active" id="p-tab-learn" onclick="pSwitchTab('learn')">📚 Learn</div>
+      <div class="p-tab" id="p-tab-match" onclick="pSwitchTab('match')">🎯 Match</div>
+      <div class="p-tab" id="p-tab-hunt" onclick="pSwitchTab('hunt')">🔍 Hunt</div>
+      <div class="p-tab" id="p-tab-table" onclick="pSwitchTab('table')">⚛️ Table</div>
+    </div>
+    <div class="p-main">
+      <div class="p-screen active" id="p-screen-learn"></div>
+      <div class="p-screen" id="p-screen-match"></div>
+      <div class="p-screen" id="p-screen-hunt"></div>
+      <div class="p-screen" id="p-screen-table"></div>
+    </div>
+  </div><!-- /mode-periodic -->
+
+  <!-- ═══ ENCYCLOPEDIA MODE ═══ -->
+  <div class="mode-container" id="mode-encyclo">
+    <div class="encyclo-header">
+      <div>
+        <div class="encyclo-title">🔬 Encyclopedia</div>
+        <div class="encyclo-sub" id="encycloSub2">0 discovered</div>
+      </div>
+    </div>
+    <div class="encyclo-sections" id="encycloSections2"></div>
+  </div><!-- /mode-encyclo -->
+
+  </div><!-- /mode-area -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="bottom-nav-item active" id="nav-lab" onclick="switchMode('lab')">
+      <span class="bottom-nav-icon">⚗️</span>
+      <span class="bottom-nav-label">Lab</span>
+    </div>
+    <div class="bottom-nav-item" id="nav-periodic" onclick="switchMode('periodic')">
+      <span class="bottom-nav-icon">⚛️</span>
+      <span class="bottom-nav-label">Periodic</span>
+    </div>
+    <div class="bottom-nav-item" id="nav-encyclo" onclick="switchMode('encyclo')">
+      <span class="bottom-nav-icon">📖</span>
+      <span class="bottom-nav-label">Encyclopedia</span>
+    </div>
   </div>
 </div>
 
@@ -1842,6 +2003,310 @@ async function sendReport(text) {
     })
   });
   if (!res.ok) throw new Error('Failed to send report');
+}
+
+// ═══════════════════════════════════════════════════════
+// MODE SWITCHING
+// ═══════════════════════════════════════════════════════
+let currentMode = 'lab';
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-container').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('mode-'+mode).classList.add('active');
+  document.getElementById('nav-'+mode).classList.add('active');
+
+  if (mode === 'periodic') pRenderCurrentTab();
+  if (mode === 'encyclo') renderEncycloMode();
+}
+
+// ═══════════════════════════════════════════════════════
+// ENCYCLOPEDIA MODE (non-overlay version)
+// ═══════════════════════════════════════════════════════
+function renderEncycloMode() {
+  const sections = document.getElementById('encycloSections2');
+  sections.innerHTML = '';
+  const total = Object.keys(E).length;
+  const found = [...discovered].filter(id => !STARTER_ATOMS.includes(id)).length;
+  document.getElementById('encycloSub2').textContent = `${found} discovered of ${total - STARTER_ATOMS.length} total`;
+
+  const groups = [
+    { key:'atoms', label:'⚛️ Atoms', ids: Object.values(E).filter(e=>e.tier==='atom').map(e=>e.id) },
+    { key:'molecules', label:'🧪 Molecules', ids: Object.values(E).filter(e=>e.tier==='molecule'&&!e.danger).map(e=>e.id) },
+    { key:'compounds', label:'🌍 Compounds', ids: Object.values(E).filter(e=>e.tier==='compound'&&!e.danger).map(e=>e.id) },
+    { key:'danger', label:'☠️ Danger Zone', ids: Object.values(E).filter(e=>e.tier==='danger'||e.danger).map(e=>e.id), danger:true },
+  ];
+
+  groups.forEach(group => {
+    const discoveredInGroup = group.ids.filter(id => discovered.has(id)).length;
+    const title = document.createElement('div');
+    title.className = 'encyclo-section-title' + (group.danger ? ' danger-section-title' : '');
+    title.textContent = `${group.label} — ${discoveredInGroup}/${group.ids.length} discovered`;
+    sections.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'encyclo-grid';
+    group.ids.forEach(id => {
+      const el = E[id];
+      const isDisc = discovered.has(id);
+      const isDanger = el.danger || el.tier === 'danger';
+      const item = document.createElement('div');
+      item.className = 'encyclo-item' + (isDanger ? ' danger-item' : '') + (!isDisc ? ' encyclo-locked-item' : '');
+      const bg = isDisc ? `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})` : 'rgba(255,255,255,0.04)';
+      item.innerHTML = `
+        <div class="encyclo-bubble" style="background:${bg};color:${isDisc?el.tc:'transparent'};box-shadow:${isDisc?`0 2px 10px ${el.shadow}`:'none'}">
+          <span style="font-size:11px;font-weight:900">${isDisc?el.symbol:''}</span>
+        </div>
+        <div class="encyclo-name">${isDisc ? el.name : '???'}</div>
+      `;
+      grid.appendChild(item);
+    });
+    sections.appendChild(grid);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// PERIODIC MODE
+// ═══════════════════════════════════════════════════════
+let pCurrentTab = 'learn';
+let pLearnIdx = 0;
+let pCardFlipped = false;
+let pMatchStreak = 0;
+let pMatchScore = 0;
+let pMatchCorrect = 0;
+let pHuntScore = 0;
+let pHuntCorrect = 0;
+let pHuntAnswer = null;
+let periodicScore = 0;
+
+// Elements with periodic-table data (atoms only, with num/mass/cat/clues)
+function pGetDiscoveredAtoms() {
+  return Object.values(E).filter(e => e.tier === 'atom' && discovered.has(e.id) && PERIODIC_ELEMENTS[e.id]);
+}
+
+function pSwitchTab(tab) {
+  pCurrentTab = tab;
+  document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.p-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('p-tab-'+tab).classList.add('active');
+  document.getElementById('p-screen-'+tab).classList.add('active');
+  pRenderCurrentTab();
+}
+
+function pRenderCurrentTab() {
+  if (pCurrentTab === 'learn') pRenderLearn();
+  if (pCurrentTab === 'match') pRenderMatch();
+  if (pCurrentTab === 'hunt') pRenderHunt();
+  if (pCurrentTab === 'table') pRenderTable();
+}
+
+function pRenderLearn() {
+  const atoms = pGetDiscoveredAtoms();
+  if (!atoms.length) return;
+  if (pLearnIdx >= atoms.length) pLearnIdx = 0;
+  const el = atoms[pLearnIdx];
+  const pe = PERIODIC_ELEMENTS[el.id];
+  pCardFlipped = false;
+
+  const screen = document.getElementById('p-screen-learn');
+  screen.innerHTML = `
+    <div class="p-learn-card" onclick="pFlipCard()">
+      <div id="pCardContent">
+        <div style="font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">${pe.cat}</div>
+        <div class="p-learn-symbol" style="color:${el.color}">${el.symbol}</div>
+        <div class="p-learn-name">${el.name}</div>
+        <div class="p-learn-num">Atomic Number ${pe.num} · ${pe.mass} u</div>
+      </div>
+    </div>
+    <div class="p-card-nav">
+      <div class="p-card-btn" onclick="pPrevCard()">← Prev</div>
+      <div class="p-card-btn" onclick="pFlipCard()">🔄 Flip</div>
+      <div class="p-card-btn" onclick="pNextCard()">Next →</div>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted);font-weight:700">${pLearnIdx+1} / ${atoms.length}</div>
+  `;
+}
+
+function pFlipCard() {
+  const atoms = pGetDiscoveredAtoms();
+  const el = atoms[pLearnIdx];
+  const pe = PERIODIC_ELEMENTS[el.id];
+  const content = document.getElementById('pCardContent');
+  if (!content) return;
+  pCardFlipped = !pCardFlipped;
+  if (pCardFlipped) {
+    content.innerHTML = `
+      <div style="font-size:10px;font-weight:900;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🧠 Science Fact</div>
+      <div class="p-learn-fact">${el.fact}</div>
+      <div style="font-size:10px;font-weight:900;color:var(--spark);text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px">🔧 Real World Uses</div>
+      <div class="p-learn-fact">${pe.use || 'Research ongoing...'}</div>
+    `;
+  } else {
+    content.innerHTML = `
+      <div style="font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">${pe.cat}</div>
+      <div class="p-learn-symbol" style="color:${el.color}">${el.symbol}</div>
+      <div class="p-learn-name">${el.name}</div>
+      <div class="p-learn-num">Atomic Number ${pe.num} · ${pe.mass} u</div>
+    `;
+  }
+}
+
+function pPrevCard() { const a = pGetDiscoveredAtoms(); pLearnIdx = (pLearnIdx - 1 + a.length) % a.length; pRenderLearn(); }
+function pNextCard() { const a = pGetDiscoveredAtoms(); pLearnIdx = (pLearnIdx + 1) % a.length; pRenderLearn(); }
+
+function pRenderMatch() {
+  const atoms = pGetDiscoveredAtoms();
+  if (atoms.length < 4) {
+    document.getElementById('p-screen-match').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-weight:800">Discover at least 4 atoms in the Lab to play Match!</div>';
+    return;
+  }
+  const el = atoms[Math.floor(Math.random() * atoms.length)];
+  const pe = PERIODIC_ELEMENTS[el.id];
+  const askSymbol = Math.random() > 0.5;
+  const question = askSymbol ? el.symbol : el.name;
+  const prompt = askSymbol ? 'What element has this symbol?' : 'What is this element\'s symbol?';
+
+  // Build 4 options (1 correct + 3 random)
+  const others = atoms.filter(a => a.id !== el.id).sort(() => Math.random()-0.5).slice(0,3);
+  const options = [el, ...others].sort(() => Math.random()-0.5);
+
+  const screen = document.getElementById('p-screen-match');
+  screen.innerHTML = `
+    <div class="p-match-stats">
+      <div class="p-match-stat"><div class="p-match-val" style="color:var(--gold)">${pMatchScore}</div><div class="p-match-lbl">Score</div></div>
+      <div class="p-match-stat"><div class="p-match-val" style="color:var(--spark)">${pMatchStreak}🔥</div><div class="p-match-lbl">Streak</div></div>
+      <div class="p-match-stat"><div class="p-match-val" style="color:var(--teal)">${pMatchCorrect}</div><div class="p-match-lbl">Correct</div></div>
+    </div>
+    <div class="p-match-prompt">${prompt}</div>
+    <div class="p-match-question">${question}</div>
+    <div class="p-match-options" id="pMatchOptions">
+      ${options.map(o => `<div class="p-match-opt" data-id="${o.id}" onclick="pMatchAnswer('${o.id}','${el.id}')">${askSymbol ? o.name : o.symbol}</div>`).join('')}
+    </div>
+  `;
+}
+
+function pMatchAnswer(picked, correct) {
+  const opts = document.querySelectorAll('.p-match-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o.dataset.id === correct) o.classList.add('correct');
+    if (o.dataset.id === picked && picked !== correct) o.classList.add('wrong');
+  });
+  if (picked === correct) {
+    pMatchStreak++;
+    pMatchCorrect++;
+    const pts = 10 + pMatchStreak * 5;
+    pMatchScore += pts;
+    periodicScore += pts;
+    SFX.discover();
+    pCheckUnlock();
+  } else {
+    pMatchStreak = 0;
+    SFX.noReaction();
+  }
+  setTimeout(pRenderMatch, 800);
+}
+
+function pRenderHunt() {
+  const atoms = pGetDiscoveredAtoms();
+  if (atoms.length < 4) {
+    document.getElementById('p-screen-hunt').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-weight:800">Discover at least 4 atoms in the Lab to play Hunt!</div>';
+    return;
+  }
+  const target = atoms[Math.floor(Math.random() * atoms.length)];
+  const pe = PERIODIC_ELEMENTS[target.id];
+  const clues = pe.clues || [target.fact.split('.')[0]];
+  const clue = clues[Math.floor(Math.random() * clues.length)];
+  pHuntAnswer = target.id;
+
+  const others = atoms.filter(a => a.id !== target.id).sort(() => Math.random()-0.5).slice(0,11);
+  const grid = [target, ...others].sort(() => Math.random()-0.5);
+
+  const screen = document.getElementById('p-screen-hunt');
+  screen.innerHTML = `
+    <div class="p-match-stats">
+      <div class="p-match-stat"><div class="p-match-val" style="color:var(--gold)">${pHuntScore}</div><div class="p-match-lbl">Score</div></div>
+      <div class="p-match-stat"><div class="p-match-val" style="color:var(--teal)">${pHuntCorrect}</div><div class="p-match-lbl">Found</div></div>
+    </div>
+    <div class="p-hunt-clue">
+      <div style="font-size:10px;font-weight:900;color:var(--teal);text-transform:uppercase;margin-bottom:6px">🔍 Find This Element</div>
+      <div class="p-hunt-clue-text">${clue}</div>
+      <div class="p-hunt-hint">Category: ${pe.cat}</div>
+    </div>
+    <div class="p-hunt-grid">
+      ${grid.map(el => `
+        <div class="p-hunt-cell" style="background:radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color});color:${el.tc}" onclick="pHuntPick('${el.id}',this)">
+          <span class="p-hunt-sym">${el.symbol}</span>
+          <span class="p-hunt-name">${el.name}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function pHuntPick(id, cell) {
+  if (id === pHuntAnswer) {
+    cell.style.boxShadow = '0 0 20px var(--teal)';
+    pHuntScore += 15;
+    pHuntCorrect++;
+    periodicScore += 15;
+    SFX.discover();
+    pCheckUnlock();
+    setTimeout(pRenderHunt, 600);
+  } else {
+    cell.style.opacity = '0.3';
+    cell.style.pointerEvents = 'none';
+    SFX.noReaction();
+  }
+}
+
+function pRenderTable() {
+  const screen = document.getElementById('p-screen-table');
+  if (!PT_LAYOUT || !PT_LAYOUT.length) {
+    screen.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-weight:800">Periodic table data loading...</div>';
+    return;
+  }
+  let html = '<div style="font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;text-align:center">Your Periodic Table</div>';
+  html += '<div class="p-cat-legend">';
+  Object.entries(CAT_COLORS).forEach(([key,color]) => {
+    html += `<div class="p-cat-dot"><div class="p-cat-swatch" style="background:${color}"></div>${CATEGORIES[key]||key}</div>`;
+  });
+  html += '</div>';
+  html += '<div class="pt-grid">';
+  // Build 7-row × 18-col grid
+  const map = {};
+  PT_LAYOUT.forEach(([sym,col,row]) => { map[`${col},${row}`] = sym; });
+  for (let r = 1; r <= 7; r++) {
+    for (let c = 1; c <= 18; c++) {
+      const sym = map[`${c},${r}`];
+      if (!sym) { html += '<div></div>'; continue; }
+      const el = E[sym];
+      const pe = PERIODIC_ELEMENTS[sym];
+      const unlocked = el && discovered.has(sym);
+      if (unlocked && pe) {
+        const catColor = CAT_COLORS[pe.cat] || '#666';
+        html += `<div class="pt-cell unlocked" style="background:${catColor};color:white;--cat-color:${catColor}40">
+          <span class="pt-num">${pe.num}</span><span class="pt-sym">${sym}</span></div>`;
+      } else {
+        html += '<div class="pt-cell locked"></div>';
+      }
+    }
+  }
+  html += '</div>';
+  screen.innerHTML = html;
+}
+
+function pCheckUnlock() {
+  if (!PERIODIC_UNLOCK_THRESHOLDS) return;
+  PERIODIC_UNLOCK_THRESHOLDS.forEach(([threshold, sym]) => {
+    if (periodicScore >= threshold && !discovered.has(sym) && E[sym]) {
+      discovered.add(sym);
+      saveState();
+      renderTray();
+      updateCounts();
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════

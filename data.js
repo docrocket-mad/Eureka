@@ -1118,3 +1118,117 @@ const GIZMO_LINES = {
     "Fresh element! Your lab just got more interesting!",
   ]
 };
+
+// ═══════════════════════════════════════════════════════
+// PERIODIC MODE DATA
+// ═══════════════════════════════════════════════════════
+
+// Extra data for atoms used in Periodic mode (num, mass, category, clues, uses)
+const PERIODIC_ELEMENTS = {
+  H:  { num:1,  mass:'1.008',  cat:'Non-metal', use:'Rocket fuel, fuel cells, ammonia production, the Sun.', clues:['Lightest element','75% of all matter','Combines with oxygen for water','Atomic number 1'] },
+  He: { num:2,  mass:'4.003',  cat:'Noble Gas',  use:'Balloons, MRI cooling, deep-sea diving, party voices.', clues:['Makes balloons float','Named after the Sun','Makes your voice squeaky','Second element'] },
+  Li: { num:3,  mass:'6.941',  cat:'Alkali Metal',use:'Batteries, mood stabilizers, grease, nuclear reactors.', clues:['Powers your phone','Lightest metal','Cut it with a knife','Atomic number 3'] },
+  B:  { num:5,  mass:'10.81',  cat:'Metalloid',  use:'Pyrex glass, borax, fiberglass, rocket igniters.', clues:['Makes glass heat-resistant','In borax laundry booster','Almost as hard as diamond (as BN)','Atomic number 5'] },
+  C:  { num:6,  mass:'12.011', cat:'Non-metal',  use:'Steel, diamonds, pencils, all life, plastics, fuel.', clues:['Backbone of all life','Both diamonds and pencils','Atomic number 6','Found in everything alive'] },
+  N:  { num:7,  mass:'14.007', cat:'Non-metal',  use:'Fertilizers, explosives, liquid nitrogen, food preservation.', clues:['78% of the air','You breathe it but can\'t use it','Liquid form freezes instantly','Atomic number 7'] },
+  O:  { num:8,  mass:'15.999', cat:'Non-metal',  use:'Breathing, steel, rocket fuel, welding, hospitals.', clues:['21% of atmosphere','You need it to breathe','Plants make it as waste','Atomic number 8'] },
+  F:  { num:9,  mass:'18.998', cat:'Halogen',    use:'Toothpaste, Teflon, refrigerants, uranium enrichment.', clues:['Most reactive element','In your toothpaste','Makes Teflon non-stick','Atomic number 9'] },
+  Ne: { num:10, mass:'20.18',  cat:'Noble Gas',  use:'Neon signs, lasers, cryogenics, advertising.', clues:['Red-orange signs','Noble gas','Greek for new','Atomic number 10'] },
+  Na: { num:11, mass:'22.990', cat:'Alkali Metal',use:'Table salt, soap, street lights, baking soda.', clues:['Explodes in water','Makes table salt','Soft enough for a butter knife','Atomic number 11'] },
+  Mg: { num:12, mass:'24.305', cat:'Alkaline Earth',use:'Flares, fireworks, alloys, muscle function.', clues:['Blinding white flame','Essential for muscles','Used in flares','Atomic number 12'] },
+  Al: { num:13, mass:'26.982', cat:'Post-transition',use:'Cans, foil, aircraft, power lines.', clues:['Most abundant metal in crust','Once more valuable than gold','Drink cans are made of this','Atomic number 13'] },
+  Si: { num:14, mass:'28.086', cat:'Metalloid',   use:'Computer chips, solar panels, glass, concrete.', clues:['Every chip is made of this','Sand is mostly its oxide','Silicon Valley namesake','Atomic number 14'] },
+  P:  { num:15, mass:'30.974', cat:'Non-metal',   use:'Matches, fertilizers, DNA, bones, detergents.', clues:['Glows in the dark','In matchboxes','Essential for DNA','Atomic number 15'] },
+  S:  { num:16, mass:'32.06',  cat:'Non-metal',   use:'Gunpowder, matches, rubber, pharmaceuticals.', clues:['Rotten egg smell','Found near volcanoes','Makes hair curly','Atomic number 16'] },
+  Cl: { num:17, mass:'35.45',  cat:'Halogen',     use:'Water purification, bleach, PVC, disinfectants.', clues:['Swimming pool smell','WWI chemical weapon','Makes salt with sodium','Atomic number 17'] },
+  Ar: { num:18, mass:'39.948', cat:'Noble Gas',   use:'Light bulbs, welding, double-glazed windows.', clues:['1% of every breath','Completely inert','Fills light bulbs','Atomic number 18'] },
+  K:  { num:19, mass:'39.098', cat:'Alkali Metal',use:'Fertilizers, gunpowder, heart function, soaps.', clues:['Heart needs it to beat','Symbol K from Kalium','In bananas','Atomic number 19'] },
+  Ca: { num:20, mass:'40.078', cat:'Alkaline Earth',use:'Bones, teeth, concrete, plaster, antacids.', clues:['Makes bones strong','In milk and dairy','Skeleton replaced every 10 years','Atomic number 20'] },
+  Ti: { num:22, mass:'47.867', cat:'Transition',  use:'Aerospace, implants, paint (TiO2), golf clubs.', clues:['Strong as steel, half the weight','Named after Titans','In white paint','Atomic number 22'] },
+  Cr: { num:24, mass:'51.996', cat:'Transition',  use:'Chrome plating, stainless steel, pigments.', clues:['Makes things shiny','Makes steel stainless','Rubies get color from this','Atomic number 24'] },
+  Mn: { num:25, mass:'54.938', cat:'Transition',  use:'Batteries, steel alloys, cave paint pigments.', clues:['In every alkaline battery','30,000-year-old cave paintings','Named like magnesium','Atomic number 25'] },
+  Fe: { num:26, mass:'55.845', cat:'Transition',  use:'Steel, blood, magnets, construction, engines.', clues:['Makes blood red','Earth\'s core is mostly this','Most abundant by mass on Earth','Atomic number 26'] },
+  Co: { num:27, mass:'58.933', cat:'Transition',  use:'Blue pigment, vitamin B12, EV batteries.', clues:['Makes glass blue','Named after goblins','In vitamin B12','Atomic number 27'] },
+  Ni: { num:28, mass:'58.693', cat:'Transition',  use:'Coins, stainless steel, rechargeable batteries.', clues:['Devil\'s copper','In many coins','In stainless steel','Atomic number 28'] },
+  Cu: { num:29, mass:'63.546', cat:'Transition',  use:'Wiring, plumbing, coins, Statue of Liberty.', clues:['Statue of Liberty is this','Naturally kills bacteria','Used in wiring','Atomic number 29'] },
+  Zn: { num:30, mass:'65.38',  cat:'Transition',  use:'Galvanization, sunscreen, immune system.', clues:['Prevents rust on steel','In sunscreen','Your immune system needs it','Atomic number 30'] },
+  Ga: { num:31, mass:'69.723', cat:'Post-transition',use:'LEDs, semiconductors, thermometers, pranks.', clues:['Melts in your hand','Used in LEDs','Looks like aluminum','Atomic number 31'] },
+  As: { num:33, mass:'74.922', cat:'Metalloid',   use:'Semiconductors (GaAs), wood preservative, poison.', clues:['King of poisons','Odorless and tasteless','Napoleon may have died from this','Atomic number 33'] },
+  Se: { num:34, mass:'78.971', cat:'Non-metal',   use:'Photocopiers, solar cells, glass coloring.', clues:['Named after the Moon','Makes photocopiers work','Essential trace element','Atomic number 34'] },
+  Br: { num:35, mass:'79.904', cat:'Halogen',     use:'Flame retardants, photography, medicine.', clues:['Only liquid nonmetal','Named for its stench','Dark red-brown','Atomic number 35'] },
+  Kr: { num:36, mass:'83.798', cat:'Noble Gas',   use:'Photography flash, lasers, defined the meter.', clues:['Not from Superman\'s planet','Noble gas','Once defined the meter','Atomic number 36'] },
+  Rb: { num:37, mass:'85.468', cat:'Alkali Metal',use:'GPS, atomic clocks, fireworks (violet).', clues:['Used in GPS satellites','Second most reactive alkali','Makes violet fireworks','Atomic number 37'] },
+  Sr: { num:38, mass:'87.62',  cat:'Alkaline Earth',use:'Red fireworks, CRT screens, flares.', clues:['Makes fireworks red','Sr-90 in nuclear fallout','Mimics calcium in bones','Atomic number 38'] },
+  Zr: { num:40, mass:'91.224', cat:'Transition',  use:'Fake diamonds (cubic zirconia), nuclear fuel rods.', clues:['Cubic zirconia is its oxide','In nuclear fuel rod cladding','Transparent to neutrons','Atomic number 40'] },
+  Mo: { num:42, mass:'95.95',  cat:'Transition',  use:'Steel alloys, lubricants, enzyme cofactor.', clues:['Makes steel super tough','Best dry lubricant','Essential for nitrogen fixation','Atomic number 42'] },
+  Pd: { num:46, mass:'106.42', cat:'Transition',  use:'Catalytic converters, hydrogen storage, dentistry.', clues:['In catalytic converters','Sometimes worth more than gold','Suzuki coupling reaction','Atomic number 46'] },
+  Ag: { num:47, mass:'107.87', cat:'Transition',  use:'Jewelry, photography, electronics, mirrors.', clues:['Best electrical conductor','Kills bacteria on contact','Symbol from argentum','Atomic number 47'] },
+  Cd: { num:48, mass:'112.41', cat:'Transition',  use:'NiCd batteries, pigments, electroplating.', clues:['Brilliant yellow pigment','Extremely toxic','Used by Monet and Van Gogh','Atomic number 48'] },
+  In: { num:49, mass:'114.82', cat:'Post-transition',use:'Touchscreen coatings (ITO), solder, semiconductors.', clues:['In every touchscreen','Soft enough to bite','Named from indigo spectral line','Atomic number 49'] },
+  Sn: { num:50, mass:'118.71', cat:'Post-transition',use:'Tin cans, solder, bronze, pewter.', clues:['Bronze Age element','Makes a cry when bent','Symbol from stannum','Atomic number 50'] },
+  Sb: { num:51, mass:'121.76', cat:'Metalloid',   use:'Flame retardants, batteries, ancient eyeliner.', clues:['Ancient Egyptian eyeliner','Symbol from stibium','In flame retardants','Atomic number 51'] },
+  Te: { num:52, mass:'127.6',  cat:'Metalloid',   use:'Solar panels, DVDs, thermoelectric devices.', clues:['Makes you smell like garlic','In solar panels','In rewritable DVDs','Atomic number 52'] },
+  I:  { num:53, mass:'126.9',  cat:'Halogen',     use:'Antiseptic, thyroid function, photography.', clues:['Purple vapor','Your thyroid needs it','Used as antiseptic','Atomic number 53'] },
+  Xe: { num:54, mass:'131.29', cat:'Noble Gas',   use:'Car headlights, anesthetic, ion propulsion.', clues:['Noble gas that forms compounds','Blue-white headlights','Used in space propulsion','Atomic number 54'] },
+  Cs: { num:55, mass:'132.91', cat:'Alkali Metal',use:'Atomic clocks, GPS, drilling fluids.', clues:['Defines the second','Most reactive metal','Detonates in water','Atomic number 55'] },
+  Ba: { num:56, mass:'137.33', cat:'Alkaline Earth',use:'X-ray imaging, fireworks (green), drilling.', clues:['Green fireworks','Barium meal for X-rays','Named from Greek heavy','Atomic number 56'] },
+  W:  { num:74, mass:'183.84', cat:'Transition',  use:'Light bulb filaments, cutting tools, darts.', clues:['Highest melting point','Symbol W from Wolfram','In light bulb filaments','Atomic number 74'] },
+  Ir: { num:77, mass:'192.22', cat:'Transition',  use:'Spark plugs, the K-Pg boundary, crucibles.', clues:['Dinosaur extinction marker','Densest stable element','In spark plugs','Atomic number 77'] },
+  Pt: { num:78, mass:'195.08', cat:'Transition',  use:'Catalytic converters, jewelry, chemo drugs.', clues:['Rarer than gold','In catalytic converters','Used in cancer treatment','Atomic number 78'] },
+  Au: { num:79, mass:'196.97', cat:'Transition',  use:'Jewelry, electronics, dentistry, currency.', clues:['Doesn\'t tarnish or corrode','Fits in a 21m cube','Born in neutron star collisions','Atomic number 79'] },
+  Hg: { num:80, mass:'200.59', cat:'Transition',  use:'Thermometers, fluorescent lights, dental amalgam.', clues:['Only liquid metal','Made hatters go mad','Named after a planet','Atomic number 80'] },
+  Tl: { num:81, mass:'204.38', cat:'Post-transition',use:'Rat poison (historic), semiconductor research.', clues:['Poisoner\'s poison','Agatha Christie used it','Once in rat poison','Atomic number 81'] },
+  Pb: { num:82, mass:'207.2',  cat:'Post-transition',use:'Batteries, radiation shielding, ancient pipes.', clues:['Plumbing from plumbum','Romans used it in pipes','Dense and toxic','Atomic number 82'] },
+  Bi: { num:83, mass:'208.98', cat:'Post-transition',use:'Pepto-Bismol, cosmetics, fusible alloys.', clues:['Rainbow crystals','In Pepto-Bismol','Technically radioactive','Atomic number 83'] },
+  Rn: { num:86, mass:'222',    cat:'Noble Gas',   use:'Radon testing, cancer therapy (historic).', clues:['Radioactive noble gas','Seeps into basements','Second cause of lung cancer','Atomic number 86'] },
+  Ra: { num:88, mass:'226',    cat:'Alkaline Earth',use:'Cancer therapy, luminous paint (historic).', clues:['Marie Curie discovered it','Glows blue-green','Radium Girls painted with it','Atomic number 88'] },
+  Th: { num:90, mass:'232.04', cat:'Actinide',    use:'Nuclear fuel (future), gas mantles, welding electrodes.', clues:['Named after Thor','Alternative nuclear fuel','3-4x more abundant than uranium','Atomic number 90'] },
+  U:  { num:92, mass:'238.03', cat:'Actinide',    use:'Nuclear power, nuclear weapons, depleted uranium armor.', clues:['Powers nuclear reactors','Named after Uranus','1 kg = 20,000 tons of coal','Atomic number 92'] },
+  Pu: { num:94, mass:'244',    cat:'Actinide',    use:'Nuclear weapons, RTGs for space probes, pacemakers (historic).', clues:['Named after Pluto','Doesn\'t exist naturally','6 kg for a nuclear weapon','Atomic number 94'] },
+  Am: { num:95, mass:'243',    cat:'Actinide',    use:'Smoke detectors, moisture gauges.', clues:['In every smoke detector','Named after America','Synthetic element','Atomic number 95'] },
+  V:  { num:23, mass:'50.942', cat:'Transition',  use:'Steel alloys, vanadium redox batteries, catalysts.', clues:['Strengthens steel enormously','Named after Norse goddess Vanadis','Used in redox flow batteries','Atomic number 23'] },
+  Sc: { num:21, mass:'44.956', cat:'Transition',  use:'Aluminum-scandium alloys, stadium lights, fighter jets.', clues:['In Soviet MiG fighter jets','Strongest aluminum alloy uses this','Named after Scandinavia','Atomic number 21'] },
+  Nb: { num:41, mass:'92.906', cat:'Transition',  use:'Superconducting magnets (MRI), steel alloys, jewelry.', clues:['In every MRI machine','Superconductor when cold','Named after Niobe','Atomic number 41'] },
+  Ru: { num:44, mass:'101.07', cat:'Transition',  use:'Fountain pen nibs, hard drive platters, catalysts.', clues:['In fountain pen tips','Named after Russia','Hard drive platters','Atomic number 44'] },
+  Rh: { num:45, mass:'102.91', cat:'Transition',  use:'Catalytic converters, mirrors, jewelry plating.', clues:['Most expensive precious metal some years','In catalytic converters','Rhodium plating','Atomic number 45'] },
+  Hf: { num:72, mass:'178.49', cat:'Transition',  use:'Nuclear reactor control rods, CPU transistors.', clues:['Absorbs neutrons','In Intel CPU transistors','Named after Copenhagen (Hafnia)','Atomic number 72'] },
+  Ta: { num:73, mass:'180.95', cat:'Transition',  use:'Phone capacitors, surgical instruments, conflict mineral.', clues:['In every smartphone capacitor','Conflict mineral','Named after Tantalus','Atomic number 73'] },
+  Re: { num:75, mass:'186.21', cat:'Transition',  use:'Jet engine turbine blades, catalysts.', clues:['In jet engine blades','Highest boiling point of metals','One of rarest elements','Atomic number 75'] },
+  Os: { num:76, mass:'190.23', cat:'Transition',  use:'Fountain pen tips, electrical contacts, fingerprint detection.', clues:['Densest naturally occurring element','Named from Greek for smell','In fountain pen nibs','Atomic number 76'] },
+  Ac: { num:89, mass:'227',    cat:'Actinide',    use:'Neutron source, cancer therapy (Ac-225).', clues:['Glows blue in the dark','Targeted cancer therapy','Named from Greek aktinos (ray)','Atomic number 89'] },
+  Np: { num:93, mass:'237',    cat:'Actinide',    use:'Neutron detection, precursor to Pu-238.', clues:['Named after Neptune','Byproduct of nuclear reactors','First transuranic element found','Atomic number 93'] },
+  Fr: { num:87, mass:'223',    cat:'Alkali Metal',use:'Research only — too unstable for practical use.', clues:['Most unstable natural element','Half-life 22 minutes','Named after France','Atomic number 87'] },
+  Po: { num:84, mass:'209',    cat:'Metalloid',   use:'Static eliminators (historic), nuclear triggers.', clues:['Killed Alexander Litvinenko','Discovered by Marie Curie','Named after Poland','Atomic number 84'] },
+};
+
+// Periodic table grid positions [symbol, gridColumn, gridRow]
+const PT_LAYOUT = [
+  ['H',1,1],['He',18,1],
+  ['Li',1,2],['B',13,2],['C',14,2],['N',15,2],['O',16,2],['F',17,2],['Ne',18,2],
+  ['Na',1,3],['Mg',2,3],['Al',13,3],['Si',14,3],['P',15,3],['S',16,3],['Cl',17,3],['Ar',18,3],
+  ['K',1,4],['Ca',2,4],['Sc',3,4],['Ti',4,4],['V',5,4],['Cr',6,4],['Mn',7,4],['Fe',8,4],['Co',9,4],['Ni',10,4],['Cu',11,4],['Zn',12,4],['Ga',13,4],['As',15,4],['Se',16,4],['Br',17,4],['Kr',18,4],
+  ['Rb',1,5],['Sr',2,5],['Zr',4,5],['Nb',5,5],['Mo',6,5],['Ru',8,5],['Rh',9,5],['Pd',10,5],['Ag',11,5],['Cd',12,5],['In',13,5],['Sn',14,5],['Sb',15,5],['Te',16,5],['I',17,5],['Xe',18,5],
+  ['Cs',1,6],['Ba',2,6],['Hf',4,6],['Ta',5,6],['W',6,6],['Re',7,6],['Os',8,6],['Ir',9,6],['Pt',10,6],['Au',11,6],['Hg',12,6],['Tl',13,6],['Pb',14,6],['Bi',15,6],['Po',16,6],['Rn',18,6],['Fr',1,7],['Ra',2,7],
+  ['Ac',4,7],['Th',5,7],['Np',7,7],['U',6,7],['Pu',8,7],['Am',9,7],
+];
+
+const CATEGORIES = {
+  'Non-metal':'Non-metal','Noble Gas':'Noble Gas','Alkali Metal':'Alkali Metal',
+  'Alkaline Earth':'Alkaline Earth','Transition':'Transition','Post-transition':'Post-transition',
+  'Metalloid':'Metalloid','Halogen':'Halogen','Actinide':'Actinide',
+};
+
+const CAT_COLORS = {
+  'Non-metal':'#FF6B35','Noble Gas':'#9B59B6','Alkali Metal':'#E74C3C',
+  'Alkaline Earth':'#E67E22','Transition':'#3498DB','Post-transition':'#2ECC71',
+  'Metalloid':'#1ABC9C','Halogen':'#F39C12','Actinide':'#C0392B',
+};
+
+// Score thresholds for Periodic mode to unlock atoms
+const PERIODIC_UNLOCK_THRESHOLDS = [
+  [50,'O'],[100,'Na'],[160,'Mg'],[230,'Al'],[310,'Si'],
+  [400,'P'],[500,'S'],[600,'Cl'],[720,'Ar'],[850,'K'],
+  [1000,'Ca'],[1200,'Fe'],[1400,'Cu'],[1600,'Ag'],
+  [1800,'Au'],[2000,'Hg'],[2500,'Pt'],[3000,'U'],
+  [4000,'Pu'],[5000,'Ra'],
+];
