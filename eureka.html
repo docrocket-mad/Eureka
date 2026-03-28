@@ -223,10 +223,58 @@ body {
 .p-cat-dot { display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 800; color: var(--muted); }
 .p-cat-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
-/* Encyclopedia as mode (not overlay) */
-#mode-encyclo { overflow-y: auto; }
-#mode-encyclo .encyclo-header { flex-shrink: 0; }
-#mode-encyclo .encyclo-sections { flex: 1; overflow-y: auto; padding: 14px; }
+/* Discovery encyclopedia below periodic table */
+.disc-section-title {
+  font-size: 10px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--muted); margin: 18px 6px 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.disc-section-title.danger-title { color: var(--danger); }
+
+.disc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 6px;
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+.disc-grid-item {
+  background: var(--card2);
+  border-radius: 10px;
+  padding: 8px 4px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.disc-grid-item.danger-grid-item { border-color: rgba(255,34,68,0.2); background: #120408; }
+.disc-grid-item.locked-grid-item {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.04);
+}
+.disc-grid-bubble {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900;
+  position: relative; overflow: hidden;
+}
+.disc-grid-bubble::after {
+  content:''; position:absolute;
+  top:4px; left:6px;
+  width:9px; height:6px;
+  background:rgba(255,255,255,0.25);
+  border-radius:50%; transform:rotate(-30deg);
+}
+.disc-grid-name { font-size: 7px; font-weight: 800; text-align: center; color: rgba(240,240,255,0.7); line-height: 1.2; }
+.locked-grid-item .disc-grid-bubble { background: rgba(255,255,255,0.04) !important; }
+.locked-grid-item .disc-grid-bubble * { opacity: 0; }
+.locked-grid-item .disc-grid-bubble::before {
+  content:'🔒'; font-size:12px; position:absolute; opacity:0.2;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+}
+.locked-grid-item .disc-grid-name { opacity: 0.2; }
 
 /* ── CANVAS ── */
 .lab-canvas {
@@ -1021,6 +1069,7 @@ body {
     <div class="p-cat-legend" id="ptLegend" style="padding:0 14px 6px"></div>
     <div style="flex:1;overflow-y:auto;padding:0 8px 14px">
       <div class="pt-grid" id="ptMainGrid"></div>
+      <div id="ptDiscoveries"></div>
     </div>
   </div><!-- /mode-encyclo -->
 
@@ -2021,31 +2070,63 @@ function renderEncycloMode() {
       }
     }
   }
+
+  // Discovery encyclopedia below table
+  const disc = document.getElementById('ptDiscoveries');
+  disc.innerHTML = '';
+  const sections = [
+    { label:'🧪 Molecules', ids: Object.values(E).filter(e=>e.tier==='molecule'&&!e.danger).map(e=>e.id) },
+    { label:'🌍 Compounds', ids: Object.values(E).filter(e=>e.tier==='compound'&&!e.danger).map(e=>e.id) },
+    { label:'☠️ Danger Zone', ids: Object.values(E).filter(e=>e.tier==='danger'||e.danger).map(e=>e.id), danger:true },
+  ];
+
+  sections.forEach(sec => {
+    const found = sec.ids.filter(id => discovered.has(id)).length;
+    disc.innerHTML += `<div class="disc-section-title${sec.danger?' danger-title':''}">${sec.label} — ${found}/${sec.ids.length}</div>`;
+    let gridHtml = '<div class="disc-grid">';
+    sec.ids.forEach(id => {
+      const el = E[id];
+      const isDisc = discovered.has(id);
+      const isDanger = el.danger || el.tier === 'danger';
+      const bg = isDisc ? `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})` : '';
+      const cls = (isDanger ? ' danger-grid-item' : '') + (!isDisc ? ' locked-grid-item' : '');
+      gridHtml += `<div class="disc-grid-item${cls}"${isDisc ? ` onclick="showPTDetail('${id}')"` : ''}>
+        <div class="disc-grid-bubble" style="background:${isDisc?bg:'rgba(255,255,255,0.04)'};color:${isDisc?el.tc:'transparent'};box-shadow:${isDisc?`0 2px 8px ${el.shadow}`:'none'}">
+          <span style="font-size:${el.symbol.length>5?'7px':el.symbol.length>3?'9px':'10px'};font-weight:900">${isDisc?el.symbol:''}</span>
+        </div>
+        <div class="disc-grid-name">${isDisc ? el.name : '???'}</div>
+      </div>`;
+    });
+    gridHtml += '</div>';
+    disc.innerHTML += gridHtml;
+  });
 }
 
 function showPTDetail(sym) {
   const el = E[sym];
-  const pe = PERIODIC_ELEMENTS[sym];
-  if (!el || !pe) return;
+  if (!el) return;
+  const pe = PERIODIC_ELEMENTS ? PERIODIC_ELEMENTS[sym] : null;
+  const isDanger = el.danger || el.tier === 'danger';
 
   const overlay = document.getElementById('discoveryOverlay');
   const card = document.getElementById('discoveryCard');
   document.getElementById('discEmoji').textContent = el.emoji;
   document.getElementById('discName').textContent = el.name;
   document.getElementById('discFormula').textContent = el.symbol;
-  document.getElementById('discFormula').className = 'disc-formula normal';
-  document.getElementById('discReaction').textContent = `#${pe.num} · ${pe.mass} u · ${pe.cat}`;
+  document.getElementById('discFormula').className = 'disc-formula ' + (isDanger ? 'danger' : 'normal');
+  document.getElementById('discReaction').textContent = pe ? `#${pe.num} · ${pe.mass} u · ${pe.cat}` : (el.sub || el.tier);
   document.getElementById('discFact').textContent = el.fact;
 
-  overlay.className = 'discovery-overlay';
-  card.className = 'discovery-card';
-  document.getElementById('discCategory').className = 'disc-category normal';
-  document.getElementById('discCategory').innerHTML = '⚛️ ' + el.name;
-  document.getElementById('discFactBox').className = 'disc-fact-box normal';
-  document.getElementById('discFactLabel').className = 'disc-fact-label normal';
-  document.getElementById('discFactLabel').textContent = '🧠 Science Fact';
+  const mode = isDanger ? 'danger' : 'normal';
+  overlay.className = 'discovery-overlay' + (isDanger ? ' danger-overlay' : '');
+  card.className = 'discovery-card' + (isDanger ? ' danger-card' : '');
+  document.getElementById('discCategory').className = 'disc-category ' + mode;
+  document.getElementById('discCategory').innerHTML = (isDanger ? '☠️ ' : '⚛️ ') + el.name;
+  document.getElementById('discFactBox').className = 'disc-fact-box ' + mode;
+  document.getElementById('discFactLabel').className = 'disc-fact-label ' + mode;
+  document.getElementById('discFactLabel').textContent = isDanger ? '☢️ Hazard Report' : '🧠 Science Fact';
   const btn = document.getElementById('discBtn');
-  btn.className = 'disc-btn normal';
+  btn.className = 'disc-btn ' + mode;
   btn.textContent = 'Back to Table ⚛️';
   overlay.classList.add('show');
 }
