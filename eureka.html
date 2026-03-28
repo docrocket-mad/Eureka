@@ -217,7 +217,6 @@ body {
 
 /* ── TRAY ── */
 .tray {
-  height: 148px;
   background: rgba(10,10,20,0.99);
   border-top: 1px solid var(--border);
   display: flex;
@@ -225,29 +224,20 @@ body {
   flex-shrink: 0;
   position: relative;
   z-index: 40;
-  transition: height 0.3s cubic-bezier(0.32,0.72,0,1);
+  max-height: 45vh;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
-.tray.expanded {
-  height: 55vh;
-}
+.tray::-webkit-scrollbar { display: none; }
 
-.tray-handle {
+
+
+.tray-scroll {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 4px 0 2px;
-  cursor: pointer;
-  flex-shrink: 0;
-  font-size: 9px;
-  font-weight: 900;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: color 0.2s;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
 }
-.tray-handle:active { color: var(--gold); }
-.tray.expanded .tray-handle { color: var(--gold); }
 
 .tray-section-label {
   flex-shrink: 0;
@@ -256,35 +246,22 @@ body {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 2px 6px;
-  align-self: center;
-  background: rgba(255,255,255,0.04);
-  border-radius: 6px;
-  margin: 0 2px;
+  padding: 3px 14px 1px;
+  border-top: 1px solid var(--border);
 }
-.tray-section-label.danger-label { color: var(--danger); background: rgba(255,34,68,0.08); }
+.tray-section-label:first-child { border-top: none; }
+.tray-section-label.danger-label { color: var(--danger); }
 
-.tray-scroll {
-  flex: 1;
+.tray-row {
+  display: flex;
   overflow-x: auto;
   overflow-y: hidden;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  scrollbar-width: none;
-}
-.tray-scroll::-webkit-scrollbar { display: none; }
-
-.tray.expanded .tray-scroll {
-  overflow-x: hidden;
-  overflow-y: auto;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-content: flex-start;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 4px 14px 6px;
+  scrollbar-width: none;
+  align-items: center;
 }
+.tray-row::-webkit-scrollbar { display: none; }
 
 .tray-item {
   flex-shrink: 0;
@@ -883,7 +860,6 @@ body {
   </div>
 
   <div class="tray" id="tray">
-    <div class="tray-handle" id="trayHandle">▲ expand</div>
     <div class="tray-scroll" id="trayScroll"></div>
   </div>
 </div>
@@ -1072,15 +1048,6 @@ function saveState() {
 // TRAY
 // ═══════════════════════════════════════════════════════
 
-function initTrayDrawer() {
-  const tray = document.getElementById('tray');
-  const handle = document.getElementById('trayHandle');
-  handle.addEventListener('click', () => {
-    tray.classList.toggle('expanded');
-    handle.textContent = tray.classList.contains('expanded') ? '▼ collapse' : '▲ expand';
-  });
-}
-
 function renderTray() {
   const scroll = document.getElementById('trayScroll');
   scroll.innerHTML = '';
@@ -1093,19 +1060,23 @@ function renderTray() {
   ];
 
   sections.forEach(sec => {
-    const items = Object.values(E).filter(el => el.tier === sec.key || (sec.key === 'danger' && el.danger && el.tier !== 'danger'));
-    // Only show section if it has any discovered items or any items at all
+    const items = Object.values(E).filter(el => {
+      if (sec.key === 'danger') return el.danger || el.tier === 'danger';
+      if (el.danger || el.tier === 'danger') return false;
+      return el.tier === sec.key;
+    });
     const hasAny = items.some(el => discovered.has(el.id));
-    if (!hasAny && sec.key !== 'atom') return; // always show atoms
+    if (!hasAny && sec.key !== 'atom') return;
 
     const label = document.createElement('div');
     label.className = 'tray-section-label' + (sec.danger ? ' danger-label' : '');
     label.textContent = sec.label;
     scroll.appendChild(label);
 
+    const row = document.createElement('div');
+    row.className = 'tray-row';
+
     items.forEach(el => {
-      // Skip danger-flagged molecules from the molecule section (shown in danger)
-      if (sec.key === 'molecule' && (el.danger || el.tier === 'danger')) return;
       const isDisc = discovered.has(el.id);
       const isDanger = el.danger || el.tier === 'danger';
       const item = document.createElement('div');
@@ -1128,8 +1099,9 @@ function renderTray() {
         item.addEventListener('touchstart', e => { e.preventDefault(); spawnFromTray(el.id, e); }, {passive:false});
         item.addEventListener('mousedown', e => spawnFromTray(el.id, e));
       }
-      scroll.appendChild(item);
+      row.appendChild(item);
     });
+    scroll.appendChild(row);
   });
 }
 
@@ -1868,7 +1840,6 @@ renderTray();
 updateCounts();
 startGizmoIdle();
 initReportBtn();
-initTrayDrawer();
 </script>
 </body>
 </html>
