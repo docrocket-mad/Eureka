@@ -31,6 +31,12 @@ const ATOM_UNLOCKS = {
   CATALYST: ['Sr','Cs'], CdS: ['Rn'], XeF2: ['B'],
   // Wave 13: from Sr,Cs,Rn,B
   SrO: ['Ra'], BORAX: ['Te'], CsCl: ['Pu'],
+  // Wave 14: from Ra,Te,Pu,B
+  RADIUM_PAINT: ['V','Sc'], SOLAR_CELL: ['Rb','Y'], PU_PIT: ['Np','Am'],
+  // Wave 15: from V,Sc,Rb,Y,Np,Am
+  SMOKE_DETECTOR: ['Nb','In'], V2O5: ['Ru','Rh'], ScAl: ['Hf','Ta'],
+  // Wave 16: from Nb,In,Ru,Rh,Hf,Ta
+  NbTi: ['Re','Os'], ITO: ['Ir','Tl'], HfO2: ['Po','Fr','Ac'],
 };
 
 const E = {
@@ -160,6 +166,46 @@ const E = {
         fact:'Makes you smell like garlic for weeks if you touch it — tellurium breath. Used in solar panels and rewritable DVDs. The element that haunts your social life.' },
   Pu: { id:'Pu', name:'Plutonium',    symbol:'Pu', sub:'',  emoji:'☢️', tier:'atom', color:'#FF4444', shadow:'rgba(255,68,68,0.6)', tc:'white', unlockedBy:'CsCl',
         fact:'Named after Pluto (the planet, back when it was one). Doesn\'t exist naturally — we made it. 6 kg is enough for a nuclear weapon. The most dangerous thing humanity ever created.' },
+
+  // ── Wave 14 unlocks ──
+  V:  { id:'V',  name:'Vanadium',     symbol:'V',  sub:'',  emoji:'🔩', tier:'atom', color:'#7788AA', shadow:'rgba(119,136,170,0.5)', tc:'white', unlockedBy:'RADIUM_PAINT',
+        fact:'Strengthens steel like nothing else — vanadium steel made the Model T possible. Also enables vanadium redox flow batteries for grid storage. Quietly carrying civilization.' },
+  Sc: { id:'Sc', name:'Scandium',     symbol:'Sc', sub:'',  emoji:'✈️', tier:'atom', color:'#BBCCBB', shadow:'rgba(187,204,187,0.5)', tc:'#333', unlockedBy:'RADIUM_PAINT',
+        fact:'Add 0.5% to aluminum and it becomes aircraft-grade. Soviet MiG-29 fighters used scandium-aluminum alloys. The rarest element that changed aerial combat.' },
+  Rb: { id:'Rb', name:'Rubidium',     symbol:'Rb', sub:'',  emoji:'📡', tier:'atom', color:'#FF9999', shadow:'rgba(255,153,153,0.5)', tc:'#333', unlockedBy:'SOLAR_CELL',
+        fact:'Second most reactive alkali metal — explodes in water even more violently than potassium. Used in GPS satellite atomic clocks. Your navigation depends on rubidium.' },
+  Y:  { id:'Y',  name:'Yttrium',      symbol:'Y',  sub:'',  emoji:'📺', tier:'atom', color:'#99BBAA', shadow:'rgba(153,187,170,0.5)', tc:'#333', unlockedBy:'SOLAR_CELL',
+        fact:'The red phosphor in old CRT televisions was yttrium oxide. Also in YAG lasers for eye surgery. Named after Ytterby, Sweden — one village gave four elements their names.' },
+  Nb: { id:'Nb', name:'Niobium',      symbol:'Nb', sub:'',  emoji:'🧲', tier:'atom', color:'#7799BB', shadow:'rgba(119,153,187,0.5)', tc:'white', unlockedBy:'SMOKE_DETECTOR',
+        fact:'Superconducting magnets in MRI machines are niobium-titanium alloy. Also in jet engines and the Large Hadron Collider. The element that bends space and sees inside you.' },
+  Ru: { id:'Ru', name:'Ruthenium',    symbol:'Ru', sub:'',  emoji:'🖊️', tier:'atom', color:'#889999', shadow:'rgba(136,153,153,0.5)', tc:'white', unlockedBy:'V2O5',
+        fact:'Tips fountain pen nibs for durability. Also in hard drive platters and next-gen solar cells. Named after Russia (Ruthenia). One of the rarest elements on Earth.' },
+  Rh: { id:'Rh', name:'Rhodium',      symbol:'Rh', sub:'',  emoji:'💎', tier:'atom', color:'#DDDDDD', shadow:'rgba(221,221,221,0.5)', tc:'#333', unlockedBy:'V2O5',
+        fact:'The most expensive precious metal — $10,000+ per ounce some years. Used in catalytic converters. So rare that all rhodium ever mined fits in a small room.' },
+  In: { id:'In', name:'Indium',       symbol:'In', sub:'',  emoji:'📱', tier:'atom', color:'#AABBCC', shadow:'rgba(170,187,204,0.5)', tc:'#333', unlockedBy:'SMOKE_DETECTOR',
+        fact:'Indium tin oxide coats every touchscreen on Earth — transparent AND conductive. So soft you can bite it and leave tooth marks. A metal you can chew.' },
+  Hf: { id:'Hf', name:'Hafnium',      symbol:'Hf', sub:'',  emoji:'⚛️', tier:'atom', color:'#99AABB', shadow:'rgba(153,170,187,0.5)', tc:'white', unlockedBy:'ScAl',
+        fact:'Absorbs neutrons like a sponge — used in nuclear reactor control rods. Intel used hafnium dioxide to revolutionize transistors in 2007. From reactors to processors.' },
+  Ta: { id:'Ta', name:'Tantalum',     symbol:'Ta', sub:'',  emoji:'📱', tier:'atom', color:'#8899AA', shadow:'rgba(136,153,170,0.5)', tc:'white', unlockedBy:'ScAl',
+        fact:'In every phone\'s capacitors. A conflict mineral — wars in Congo funded by tantalum mining. Named after Tantalus, forever reaching for what he can\'t have. Fitting.' },
+  Re: { id:'Re', name:'Rhenium',      symbol:'Re', sub:'',  emoji:'✈️', tier:'atom', color:'#778899', shadow:'rgba(119,136,153,0.5)', tc:'white', unlockedBy:'NbTi',
+        fact:'Highest boiling point of any metal — 5,596°C. Used in jet engine turbine blades where temperatures would melt almost anything else. The element that makes flight possible at Mach 2.' },
+  Os: { id:'Os', name:'Osmium',       symbol:'Os', sub:'',  emoji:'⚖️', tier:'atom', color:'#6677AA', shadow:'rgba(102,119,170,0.5)', tc:'white', unlockedBy:'NbTi',
+        fact:'The densest naturally occurring element — 22.59 g/cm³. A cubic foot weighs over 1,400 pounds. Named from Greek osme (smell) because its oxide reeks. Dense and stinky.' },
+  Ir: { id:'Ir', name:'Iridium',      symbol:'Ir', sub:'',  emoji:'☄️', tier:'atom', color:'#CCCCDD', shadow:'rgba(204,204,221,0.5)', tc:'#333', unlockedBy:'ITO',
+        fact:'The dinosaur-killing asteroid left an iridium layer in rock worldwide — the K-Pg boundary. Rare on Earth, common in asteroids. Also in spark plugs. From extinction to ignition.' },
+  Tl: { id:'Tl', name:'Thallium',     symbol:'Tl', sub:'',  emoji:'☠️', tier:'atom', color:'#556644', shadow:'rgba(85,102,68,0.5)', tc:'white', unlockedBy:'ITO',
+        fact:'The poisoner\'s poison. Odorless, tasteless, dissolves in water. Symptoms mimic natural illness. Agatha Christie used it in The Pale Horse. Hair falls out first. Then everything else.' },
+  Po: { id:'Po', name:'Polonium',     symbol:'Po', sub:'',  emoji:'☢️', tier:'atom', color:'#88AA88', shadow:'rgba(136,170,136,0.5)', tc:'white', unlockedBy:'HfO2',
+        fact:'Alexander Litvinenko was assassinated with polonium-210 in his tea. One microgram is lethal. Marie Curie discovered it, named it after Poland. Intensely radioactive.' },
+  Fr: { id:'Fr', name:'Francium',     symbol:'Fr', sub:'',  emoji:'⏱️', tier:'atom', color:'#FFAAAA', shadow:'rgba(255,170,170,0.5)', tc:'#333', unlockedBy:'HfO2',
+        fact:'Most unstable naturally occurring element — longest half-life is 22 minutes. At any given moment, less than 30 grams exist in Earth\'s entire crust. The rarest natural element.' },
+  Ac: { id:'Ac', name:'Actinium',     symbol:'Ac', sub:'',  emoji:'💙', tier:'atom', color:'#88BBFF', shadow:'rgba(136,187,255,0.5)', tc:'white', unlockedBy:'HfO2',
+        fact:'Glows blue in the dark from its own radioactivity. Actinium-225 is used in targeted cancer therapy — alpha particles that destroy tumors while sparing healthy tissue. Blue death, blue salvation.' },
+  Np: { id:'Np', name:'Neptunium',    symbol:'Np', sub:'',  emoji:'🔵', tier:'atom', color:'#6699BB', shadow:'rgba(102,153,187,0.5)', tc:'white', unlockedBy:'PU_PIT',
+        fact:'First transuranic element discovered. Named after Neptune (Pluto → Plutonium, Neptune → Neptunium). Byproduct of nuclear reactors. Mostly a nuisance in nuclear waste. The unwanted middle child of actinides.' },
+  Am: { id:'Am', name:'Americium',    symbol:'Am', sub:'',  emoji:'🔥', tier:'atom', color:'#CC8888', shadow:'rgba(204,136,136,0.5)', tc:'white', unlockedBy:'PU_PIT',
+        fact:'In every smoke detector in your home. A tiny speck of americium-241 ionizes air, and smoke disrupts the current. A radioactive element saving millions of lives. Quietly. While you sleep.' },
 
   // ── MOLECULES ──
   H2:  { id:'H2',  name:'Hydrogen Gas',  symbol:'H₂',  sub:'gas',  emoji:'🎈', tier:'molecule', color:'#FF9BB5', shadow:'rgba(255,107,157,0.4)', tc:'white',
@@ -296,6 +342,22 @@ const E = {
          fact:'A noble gas compound — thought impossible until 1962. Xenon actually bonds with fluorine. Shattered the rule that noble gases don\'t react. Rules are guidelines.' },
   B2O3:{ id:'B2O3',name:'Boron Trioxide',    symbol:'B₂O₃',sub:'',  emoji:'🧊', tier:'molecule', color:'#BB9977', shadow:'rgba(187,153,119,0.4)', tc:'white',
          fact:'Makes glass heat-resistant. Pyrex, lab beakers, baking dishes — all contain boron oxide. The reason your casserole dish doesn\'t shatter in the oven.' },
+
+  // ── Wave 14+ Molecules ──
+  V2O5:{ id:'V2O5',name:'Vanadium Pentoxide',symbol:'V₂O₅',sub:'',emoji:'🟡',tier:'molecule',color:'#DDAA33',shadow:'rgba(221,170,51,0.4)',tc:'#333',
+         fact:'Yellow powder. The catalyst that makes sulfuric acid production possible — the contact process. Without vanadium pentoxide, modern industry grinds to a halt.' },
+  ScAl:{ id:'ScAl',name:'Scandium-Aluminum',symbol:'ScAl',sub:'alloy',emoji:'✈️',tier:'molecule',color:'#BBCCBB',shadow:'rgba(187,204,187,0.4)',tc:'#333',
+         fact:'Add 0.5% scandium to aluminum and it becomes aerospace-grade. Soviet MiG-29 fighters were built with this. The alloy that won the Cold War arms race in the sky.' },
+  NbTi:{ id:'NbTi',name:'Niobium-Titanium',symbol:'NbTi',sub:'superconductor',emoji:'🧲',tier:'molecule',color:'#7799BB',shadow:'rgba(119,153,187,0.4)',tc:'white',
+         fact:'The superconducting alloy in every MRI machine on Earth. Cooled to -269°C, it conducts electricity with zero resistance. Your medical imaging runs on quantum physics.' },
+  ITO: { id:'ITO', name:'Indium Tin Oxide',symbol:'ITO',sub:'',emoji:'📱',tier:'molecule',color:'#AACCDD',shadow:'rgba(170,204,221,0.4)',tc:'#333',
+         fact:'Transparent AND electrically conductive. Coats every touchscreen, LCD, and OLED display on Earth. You\'re touching indium tin oxide right now. Every tap, every swipe.' },
+  HfO2:{ id:'HfO2',name:'Hafnium Dioxide',symbol:'HfO₂',sub:'',emoji:'💻',tier:'molecule',color:'#99AABB',shadow:'rgba(153,170,187,0.4)',tc:'white',
+         fact:'Intel\'s breakthrough in 2007 — replaced silicon dioxide in transistor gates. Without hafnium dioxide, Moore\'s Law would have died. The element that saved computing.' },
+  Nb2O5:{id:'Nb2O5',name:'Niobium Pentoxide',symbol:'Nb₂O₅',sub:'',emoji:'📷',tier:'molecule',color:'#8899BB',shadow:'rgba(136,153,187,0.4)',tc:'white',
+         fact:'Anti-reflective coating on camera lenses. That purple sheen on expensive optics? Niobium pentoxide. Also in lithium-ion battery anodes. Seeing and storing.' },
+  RhCl3:{id:'RhCl3',name:'Rhodium Chloride',symbol:'RhCl₃',sub:'',emoji:'🧪',tier:'molecule',color:'#DD9999',shadow:'rgba(221,153,153,0.4)',tc:'#333',
+         fact:'Dark red powder. Starting material for virtually all rhodium catalysts. Wilkinson\'s catalyst changed organic chemistry forever. $50,000 worth of metal per gram of compound.' },
 
   // ── COMPOUNDS ──
   SALT_WATER:    { id:'SALT_WATER',    name:'Salt Water',      symbol:'NaCl·H₂O', sub:'', emoji:'🌊', tier:'compound', color:'#1166BB', shadow:'rgba(17,102,187,0.5)', tc:'white',
@@ -443,6 +505,22 @@ const E = {
   BISMUTH_CRYSTAL:{id:'BISMUTH_CRYSTAL',name:'Bismuth Crystal',symbol:'Bi crystal',sub:'',emoji:'🌈',tier:'compound',color:'#DD88EE',shadow:'rgba(221,136,238,0.5)',tc:'white',
                    fact:'Melt bismuth, cool it slowly, and it forms iridescent rainbow staircase crystals. The oxide layer creates interference colors. The most Instagram-worthy element.' },
 
+  // ── Wave 14+ Compounds ──
+  SMOKE_DETECTOR:{ id:'SMOKE_DETECTOR',name:'Smoke Detector',symbol:'Am-241',sub:'',emoji:'🔥',tier:'compound',color:'#CC8888',shadow:'rgba(204,136,136,0.4)',tc:'white',
+                   fact:'A tiny speck of americium-241 ionizes air between two plates. Smoke particles disrupt the ion current, triggering the alarm. A radioactive element saving lives in every hallway.' },
+  JET_ENGINE:    { id:'JET_ENGINE',    name:'Jet Engine Blade',symbol:'Re+Ni',sub:'',emoji:'✈️',tier:'compound',color:'#778899',shadow:'rgba(119,136,153,0.4)',tc:'white',
+                   fact:'Single-crystal rhenium-nickel superalloy turbine blades. Withstand 1,500°C while spinning at 10,000 RPM. Each blade costs more than a car. Flight at Mach 2 depends on metallurgy.' },
+  MRI:           { id:'MRI',           name:'MRI Machine',     symbol:'NbTi+He',sub:'',emoji:'🏥',tier:'compound',color:'#7799CC',shadow:'rgba(119,153,204,0.5)',tc:'white',
+                   fact:'Superconducting niobium-titanium coils cooled by liquid helium to -269°C. Creates magnetic fields 60,000x stronger than Earth\'s. Sees inside your body without cutting. Quantum physics saving lives.' },
+  TOUCHSCREEN:   { id:'TOUCHSCREEN',   name:'Touchscreen',     symbol:'ITO+glass',sub:'',emoji:'📱',tier:'compound',color:'#AADDEE',shadow:'rgba(170,221,238,0.4)',tc:'#333',
+                   fact:'Indium tin oxide on glass. Transparent conductor that senses your finger\'s capacitance. Every tap on your phone is indium atoms detecting your electric field. You\'re touching the periodic table.' },
+  TRANSISTOR:    { id:'TRANSISTOR',    name:'Transistor',       symbol:'HfO₂+Si',sub:'',emoji:'💻',tier:'compound',color:'#99AABB',shadow:'rgba(153,170,187,0.4)',tc:'white',
+                   fact:'Hafnium dioxide gate oxide on silicon. 10 billion of these in your phone. Each one switches on and off billions of times per second. The atom-thin switch that runs civilization.' },
+  SPARK_PLUG:    { id:'SPARK_PLUG',    name:'Spark Plug',       symbol:'Ir+Pt',sub:'',emoji:'⚡',tier:'compound',color:'#CCCCDD',shadow:'rgba(204,204,221,0.4)',tc:'#333',
+                   fact:'Iridium-platinum tip survives 100,000+ sparks at 800°C. Each spark ignites fuel in 1 millisecond. Two precious metals making controlled explosions 4,000 times per minute.' },
+  DINO_EXTINCTION:{id:'DINO_EXTINCTION',name:'K-Pg Extinction',symbol:'Ir layer',sub:'',emoji:'☄️',tier:'compound',color:'#887766',shadow:'rgba(136,119,102,0.5)',tc:'white',
+                   fact:'A thin layer of iridium in rock worldwide marks the exact moment 66 million years ago when an asteroid ended the dinosaurs. Iridium is rare on Earth but common in space rocks. The forensic evidence of apocalypse.' },
+
   // ── DANGER ZONE ☠️ ──
   Cl2:     { id:'Cl2',     name:'Chlorine Gas',    symbol:'Cl₂',   sub:'gas',  emoji:'☠️', tier:'danger', color:'#88FF44', shadow:'rgba(100,220,50,0.6)', tc:'#002', danger:true,
              fact:'⚠️ DANGER ZONE. Used as a chemical weapon in WWI. Heavier than air so it sinks into trenches. Causes your lungs to fill with fluid. Smells like a swimming pool, but way more fatal. The swimming pool smell IS this gas — just very diluted.' },
@@ -505,6 +583,15 @@ const E = {
              fact:'⚠️ DANGER ZONE. The demon core. 6 kg of plutonium-239 in a sphere. Two scientists died from criticality accidents with this exact setup at Los Alamos. One sneezed. The neutrons didn\'t care.' },
   Cs_WATER:{ id:'Cs_WATER',name:'Cesium in Water',   symbol:'Cs+H₂O',sub:'',    emoji:'💥', tier:'danger', color:'#FFD700', shadow:'rgba(255,215,0,0.7)', tc:'#333', danger:true,
              fact:'⚠️ DANGER ZONE. Cesium hits water and DETONATES. Not fizzes like sodium. Not pops like potassium. DETONATES. The most violent alkali metal reaction. Glass shatters. Walls dent. Don\'t.' },
+  // ── Wave 14+ Danger ──
+  OsO4:    { id:'OsO4',    name:'Osmium Tetroxide',  symbol:'OsO₄',  sub:'',    emoji:'☠️', tier:'danger', color:'#6677AA', shadow:'rgba(102,119,170,0.6)', tc:'white', danger:true,
+             fact:'⚠️ DANGER ZONE. Volatile, colorless crystals. Extremely toxic oxidizer — damages eyes and lungs at parts per BILLION. Used in biological staining because it fixes cell membranes beautifully. Deadly beauty under the microscope.' },
+  TlCl:    { id:'TlCl',    name:'Thallium Chloride', symbol:'TlCl',  sub:'',    emoji:'☠️', tier:'danger', color:'#556644', shadow:'rgba(85,102,68,0.6)', tc:'white', danger:true,
+             fact:'⚠️ DANGER ZONE. The poisoner\'s poison. Odorless, tasteless, dissolves in water. Symptoms mimic natural illness — hair loss, then organ failure. Agatha Christie used thallium in The Pale Horse. Saddam Hussein used it on dissidents. Not fiction.' },
+  POLONIUM_210:{ id:'POLONIUM_210',name:'Polonium-210',symbol:'²¹⁰Po',sub:'',   emoji:'☢️', tier:'danger', color:'#88AA88', shadow:'rgba(136,170,136,0.6)', tc:'white', danger:true,
+             fact:'⚠️ DANGER ZONE. Alexander Litvinenko was assassinated with this in London, 2006. One microgram is lethal — a millionth of a gram. Emits alpha particles that shred DNA from inside. Undetectable by Geiger counter. The perfect murder weapon.' },
+  FRANCIUM_WATER:{ id:'FRANCIUM_WATER',name:'Francium in Water',symbol:'Fr+H₂O',sub:'',emoji:'💥',tier:'danger',color:'#FFAAAA',shadow:'rgba(255,170,170,0.7)',tc:'#333',danger:true,
+             fact:'⚠️ DANGER ZONE. Theoretical mega-explosion. Francium is the most reactive metal — more than cesium. But it\'s so rare and short-lived (22-minute half-life) that nobody has ever had enough to test. The explosion that exists only in mathematics.' },
 };
 
 const REACTIONS_RAW = [
@@ -772,6 +859,33 @@ const REACTIONS_RAW = [
   [['Ra','Br2'],         'RADIUM_PAINT'],
   [['Pu','Pu'],          'PU_PIT'],
   [['Cs','H2O'],         'Cs_WATER'],
+  // ── Wave 14+ reactions ──
+  [['V','O2'],           'V2O5'],
+  [['V','O'],            'V2O5'],
+  [['Sc','Al'],          'ScAl'],
+  [['Nb','Ti'],          'NbTi'],
+  [['In','SnO2'],        'ITO'],
+  [['Hf','O2'],          'HfO2'],
+  [['Hf','O'],           'HfO2'],
+  [['Nb','O2'],          'Nb2O5'],
+  [['Nb','O'],           'Nb2O5'],
+  [['Rh','Cl'],          'RhCl3'],
+  [['Rh','HCl'],         'RhCl3'],
+  // ── Wave 14+ compounds ──
+  [['Am','FeO'],         'SMOKE_DETECTOR'],
+  [['Re','Ni'],          'JET_ENGINE'],
+  [['NbTi','He'],        'MRI'],
+  [['ITO','GLASS'],      'TOUCHSCREEN'],
+  [['HfO2','Si'],        'TRANSISTOR'],
+  [['Ir','Pt'],          'SPARK_PLUG'],
+  [['Ir','ATMOSPHERE'],  'DINO_EXTINCTION'],
+  // ── Wave 14+ danger ──
+  [['Os','O2'],          'OsO4'],
+  [['Os','O'],           'OsO4'],
+  [['Tl','Cl'],          'TlCl'],
+  [['Tl','HCl'],         'TlCl'],
+  [['Po','Po'],          'POLONIUM_210'],
+  [['Fr','H2O'],         'FRANCIUM_WATER'],
 ];
 
 function makeKey(a,b) { return [a,b].sort().join('+'); }
@@ -929,6 +1043,21 @@ const GIZMO_LINES = {
     ATOMIC_CLOCK: "ATOMIC CLOCK! 9,192,631,770 oscillations per second! That IS the second! Time itself runs on cesium!",
     THORIUM_REACTOR: "THORIUM REACTOR! Less waste! More abundant than uranium! THE future of nuclear! Thor approves!",
     BISMUTH_CRYSTAL: "BISMUTH CRYSTALS!! RAINBOW STAIRCASES!! THE MOST BEAUTIFUL THING IN CHEMISTRY!! *happy tears*",
+    // Wave 14+ normal gizmo lines
+    V2O5: "Vanadium pentoxide! Yellow catalyst that makes ALL sulfuric acid production possible! Industrial MVP!",
+    ScAl: "SCANDIUM-ALUMINUM ALLOY! Soviet MiG fighters were built with this! 0.5% scandium changes EVERYTHING!",
+    NbTi: "NIOBIUM-TITANIUM! Superconductor! Zero resistance at -269°C! Every MRI machine uses this! QUANTUM METALLURGY!",
+    ITO: "Indium tin oxide! Transparent AND conductive! On EVERY touchscreen on Earth! You're touching it RIGHT NOW!",
+    HfO2: "Hafnium dioxide! Intel used this to save Moore's Law in 2007! Computing ALMOST died! Hafnium saved it!",
+    Nb2O5: "Niobium pentoxide! That purple sheen on camera lenses? This! Anti-reflective coating perfection!",
+    RhCl3: "Rhodium chloride! Starting point for catalysts worth more per gram than gold! The $50,000 powder!",
+    SMOKE_DETECTOR: "SMOKE DETECTOR! Americium-241 saving lives in EVERY hallway! A radioactive guardian angel!",
+    JET_ENGINE: "JET ENGINE BLADE! Single-crystal rhenium-nickel! Survives 1,500°C at 10,000 RPM! Engineering poetry!",
+    MRI: "AN MRI MACHINE! Quantum superconductors seeing INSIDE YOUR BODY! No cutting! PHYSICS IS MAGIC!",
+    TOUCHSCREEN: "TOUCHSCREEN! Indium detects your finger's ELECTRIC FIELD! Every tap is atomic! Every swipe is chemistry!",
+    TRANSISTOR: "A TRANSISTOR! 10 BILLION in your phone! Each one atom-thin! Hafnium dioxide runs CIVILIZATION!",
+    SPARK_PLUG: "SPARK PLUG! Iridium-platinum! 100,000 sparks at 800°C! Precious metals making controlled explosions!",
+    DINO_EXTINCTION: "THE K-PG EXTINCTION!! An iridium layer in rock WORLDWIDE! 66 million years ago! THE ASTEROID! I have CHILLS!",
   },
   danger: {
     CO:          "⚠️ Carbon monoxide... colorless... odorless... I'm opening EVERY window.",
@@ -966,6 +1095,10 @@ const GIZMO_LINES = {
     RADIUM_PAINT:"RADIUM PAINT! The Radium Girls licked their brushes! They were told it was SAFE! It was NOT! History's cruelest lie!",
     PU_PIT:      "THE DEMON CORE?! PLUTONIUM-239?! Two scientists DIED from this exact thing at Los Alamos! I need to leave! THE BUILDING! THE COUNTRY!",
     Cs_WATER:    "CESIUM IN WATER?! It doesn't fizz! It doesn't pop! It DETONATES!! GLASS SHATTERS! WALLS DENT! WHY WOULD YOU DO THIS?!",
+    OsO4:        "OSMIUM TETROXIDE?! Toxic at PARTS PER BILLION! Damages eyes from across the ROOM! The deadliest thing under a microscope!",
+    TlCl:        "THALLIUM CHLORIDE?! The POISONER'S POISON! Odorless! Tasteless! Agatha Christie wrote a WHOLE BOOK about this! I am NOT comfortable!",
+    POLONIUM_210:"POLONIUM-210?! ONE MICROGRAM IS LETHAL! They put this in a man's TEA! In LONDON! Undetectable by Geiger counter! NIGHTMARE FUEL!",
+    FRANCIUM_WATER:"FRANCIUM IN WATER?! More reactive than CESIUM! Nobody has EVER had enough to test! The explosion exists only in NIGHTMARES and MATH!",
     default:     "☠️ That's... that's very dangerous. I need you to know I had nothing to do with this. My lawyer agrees.",
   },
   no_reaction: [
