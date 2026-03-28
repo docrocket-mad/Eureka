@@ -251,21 +251,18 @@ body {
 
 .tray-section-label {
   flex-shrink: 0;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 900;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  padding: 4px 2px;
-  display: flex;
-  align-items: center;
-  border-left: 2px solid var(--border);
-  margin-left: 4px;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  align-self: center;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  margin: 0 2px;
 }
-.tray-section-label:first-child { border-left: none; margin-left: 0; }
-.tray-section-label.danger-label { color: var(--danger); border-left-color: rgba(255,34,68,0.3); }
+.tray-section-label.danger-label { color: var(--danger); background: rgba(255,34,68,0.08); }
 
 .tray-scroll {
   flex: 1;
