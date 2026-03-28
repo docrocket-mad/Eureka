@@ -1000,15 +1000,19 @@ body {
     </div>
   </div><!-- /mode-periodic -->
 
-  <!-- ═══ ENCYCLOPEDIA MODE ═══ -->
+  <!-- ═══ PERIODIC TABLE MODE ═══ -->
   <div class="mode-container" id="mode-encyclo">
-    <div class="encyclo-header">
+    <div style="padding:10px 14px 4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
       <div>
-        <div class="encyclo-title">🔬 Encyclopedia</div>
-        <div class="encyclo-sub" id="encycloSub2">0 discovered</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--gold)">⚛️ Periodic Table</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:700" id="ptDiscCount">0 / 75 discovered</div>
       </div>
+      <div style="font-size:9px;color:var(--muted);font-weight:800">Tap to learn more</div>
     </div>
-    <div class="encyclo-sections" id="encycloSections2"></div>
+    <div class="p-cat-legend" id="ptLegend" style="padding:0 14px 6px"></div>
+    <div style="flex:1;overflow-y:auto;padding:0 8px 14px">
+      <div class="pt-grid" id="ptMainGrid"></div>
+    </div>
   </div><!-- /mode-encyclo -->
 
   </div><!-- /mode-area -->
@@ -1024,8 +1028,8 @@ body {
       <span class="bottom-nav-label">Periodic</span>
     </div>
     <div class="bottom-nav-item" id="nav-encyclo" onclick="switchMode('encyclo')">
-      <span class="bottom-nav-icon">📖</span>
-      <span class="bottom-nav-label">Encyclopedia</span>
+      <span class="bottom-nav-icon">⚛️</span>
+      <span class="bottom-nav-label">Table</span>
     </div>
   </div>
 </div>
@@ -1046,17 +1050,6 @@ body {
   </div>
 </div>
 
-<!-- ENCYCLOPEDIA -->
-<div class="encyclo-overlay" id="encycloOverlay">
-  <div class="encyclo-header">
-    <div>
-      <div class="encyclo-title">🔬 Encyclopedia</div>
-      <div class="encyclo-sub" id="encycloSub">0 discovered</div>
-    </div>
-    <div class="encyclo-close" onclick="hideEncyclo()">✕</div>
-  </div>
-  <div class="encyclo-sections" id="encycloSections"></div>
-</div>
 
 <!-- REPORT FALLBACK MODAL -->
 <div class="report-overlay" id="reportOverlay" onclick="if(event.target===this)hideReport()">
@@ -1566,65 +1559,6 @@ function closeDiscovery() {
 }
 
 // ═══════════════════════════════════════════════════════
-// ENCYCLOPEDIA
-// ═══════════════════════════════════════════════════════
-function showEncyclo(section) {
-  renderEncyclo(section);
-  document.getElementById('encycloOverlay').classList.add('show');
-}
-function hideEncyclo() {
-  document.getElementById('encycloOverlay').classList.remove('show');
-}
-
-function renderEncyclo(focusSection) {
-  const sections = document.getElementById('encycloSections');
-  sections.innerHTML = '';
-  const total = Object.keys(E).length;
-  const found = [...discovered].filter(id => !STARTER_ATOMS.includes(id)).length;
-  document.getElementById('encycloSub').textContent = `${found} discovered of ${total - STARTER_ATOMS.length} total`;
-
-  const groups = [
-    { key:'atoms',     label:'⚛️ Atoms',     ids: Object.values(E).filter(e=>e.tier==='atom').map(e=>e.id) },
-    { key:'molecules', label:'🧪 Molecules',  ids: Object.values(E).filter(e=>e.tier==='molecule').map(e=>e.id) },
-    { key:'compounds', label:'🌍 Compounds',  ids: Object.values(E).filter(e=>e.tier==='compound').map(e=>e.id) },
-    { key:'danger',    label:'☠️ Danger Zone',ids: Object.values(E).filter(e=>e.tier==='danger').map(e=>e.id), danger:true },
-  ];
-
-  groups.forEach(group => {
-    const title = document.createElement('div');
-    title.className = 'encyclo-section-title' + (group.danger ? ' danger-section-title' : '');
-    const discoveredInGroup = group.ids.filter(id => discovered.has(id)).length;
-    title.textContent = `${group.label} — ${discoveredInGroup}/${group.ids.length} discovered`;
-    sections.appendChild(title);
-
-    const grid = document.createElement('div');
-    grid.className = 'encyclo-grid';
-
-    group.ids.forEach(id => {
-      const el = E[id];
-      const isDisc = discovered.has(id);
-      const isDanger = el.danger || el.tier === 'danger';
-      const item = document.createElement('div');
-      item.className = 'encyclo-item' + (isDanger ? ' danger-item' : '') + (!isDisc ? ' encyclo-locked-item' : '');
-      const bg = isDisc ? `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})` : 'rgba(255,255,255,0.04)';
-      item.innerHTML = `
-        <div class="encyclo-bubble" style="background:${bg};color:${isDisc?el.tc:'transparent'};box-shadow:${isDisc?`0 2px 10px ${el.shadow}`:'none'}">
-          <span style="font-size:11px;font-weight:900">${isDisc?el.symbol:''}</span>
-        </div>
-        <div class="encyclo-name">${isDisc ? el.name : '???'}</div>
-      `;
-      grid.appendChild(item);
-    });
-    sections.appendChild(grid);
-  });
-
-  if (focusSection === 'danger') {
-    setTimeout(() => {
-      const dangerTitle = [...sections.querySelectorAll('.danger-section-title')][0];
-      if (dangerTitle) dangerTitle.scrollIntoView({behavior:'smooth'});
-    }, 100);
-  }
-}
 
 // ═══════════════════════════════════════════════════════
 // COUNTS
@@ -2022,48 +1956,70 @@ function switchMode(mode) {
 }
 
 // ═══════════════════════════════════════════════════════
-// ENCYCLOPEDIA MODE (non-overlay version)
+// PERIODIC TABLE MODE
 // ═══════════════════════════════════════════════════════
 function renderEncycloMode() {
-  const sections = document.getElementById('encycloSections2');
-  sections.innerHTML = '';
-  const total = Object.keys(E).length;
-  const found = [...discovered].filter(id => !STARTER_ATOMS.includes(id)).length;
-  document.getElementById('encycloSub2').textContent = `${found} discovered of ${total - STARTER_ATOMS.length} total`;
-
-  const groups = [
-    { key:'atoms', label:'⚛️ Atoms', ids: Object.values(E).filter(e=>e.tier==='atom').map(e=>e.id) },
-    { key:'molecules', label:'🧪 Molecules', ids: Object.values(E).filter(e=>e.tier==='molecule'&&!e.danger).map(e=>e.id) },
-    { key:'compounds', label:'🌍 Compounds', ids: Object.values(E).filter(e=>e.tier==='compound'&&!e.danger).map(e=>e.id) },
-    { key:'danger', label:'☠️ Danger Zone', ids: Object.values(E).filter(e=>e.tier==='danger'||e.danger).map(e=>e.id), danger:true },
-  ];
-
-  groups.forEach(group => {
-    const discoveredInGroup = group.ids.filter(id => discovered.has(id)).length;
-    const title = document.createElement('div');
-    title.className = 'encyclo-section-title' + (group.danger ? ' danger-section-title' : '');
-    title.textContent = `${group.label} — ${discoveredInGroup}/${group.ids.length} discovered`;
-    sections.appendChild(title);
-
-    const grid = document.createElement('div');
-    grid.className = 'encyclo-grid';
-    group.ids.forEach(id => {
-      const el = E[id];
-      const isDisc = discovered.has(id);
-      const isDanger = el.danger || el.tier === 'danger';
-      const item = document.createElement('div');
-      item.className = 'encyclo-item' + (isDanger ? ' danger-item' : '') + (!isDisc ? ' encyclo-locked-item' : '');
-      const bg = isDisc ? `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})` : 'rgba(255,255,255,0.04)';
-      item.innerHTML = `
-        <div class="encyclo-bubble" style="background:${bg};color:${isDisc?el.tc:'transparent'};box-shadow:${isDisc?`0 2px 10px ${el.shadow}`:'none'}">
-          <span style="font-size:11px;font-weight:900">${isDisc?el.symbol:''}</span>
-        </div>
-        <div class="encyclo-name">${isDisc ? el.name : '???'}</div>
-      `;
-      grid.appendChild(item);
-    });
-    sections.appendChild(grid);
+  // Legend
+  const legend = document.getElementById('ptLegend');
+  legend.innerHTML = '';
+  Object.entries(CAT_COLORS).forEach(([key,color]) => {
+    legend.innerHTML += `<div class="p-cat-dot"><div class="p-cat-swatch" style="background:${color}"></div>${key}</div>`;
   });
+
+  // Count
+  const totalPT = PT_LAYOUT.length;
+  const foundPT = PT_LAYOUT.filter(([sym]) => discovered.has(sym)).length;
+  document.getElementById('ptDiscCount').textContent = `${foundPT} / ${totalPT} discovered`;
+
+  // Grid
+  const grid = document.getElementById('ptMainGrid');
+  grid.innerHTML = '';
+  const map = {};
+  PT_LAYOUT.forEach(([sym,col,row]) => { map[`${col},${row}`] = sym; });
+
+  for (let r = 1; r <= 7; r++) {
+    for (let c = 1; c <= 18; c++) {
+      const sym = map[`${c},${r}`];
+      if (!sym) { grid.innerHTML += '<div></div>'; continue; }
+      const el = E[sym];
+      const pe = PERIODIC_ELEMENTS[sym];
+      const unlocked = el && discovered.has(sym);
+      if (unlocked && pe) {
+        const catColor = CAT_COLORS[pe.cat] || '#666';
+        grid.innerHTML += `<div class="pt-cell unlocked" style="background:${catColor};color:white;--cat-color:${catColor}40" onclick="showPTDetail('${sym}')">
+          <span class="pt-num">${pe.num}</span><span class="pt-sym">${sym}</span></div>`;
+      } else {
+        grid.innerHTML += '<div class="pt-cell locked"></div>';
+      }
+    }
+  }
+}
+
+function showPTDetail(sym) {
+  const el = E[sym];
+  const pe = PERIODIC_ELEMENTS[sym];
+  if (!el || !pe) return;
+
+  const overlay = document.getElementById('discoveryOverlay');
+  const card = document.getElementById('discoveryCard');
+  document.getElementById('discEmoji').textContent = el.emoji;
+  document.getElementById('discName').textContent = el.name;
+  document.getElementById('discFormula').textContent = el.symbol;
+  document.getElementById('discFormula').className = 'disc-formula normal';
+  document.getElementById('discReaction').textContent = `#${pe.num} · ${pe.mass} u · ${pe.cat}`;
+  document.getElementById('discFact').textContent = el.fact;
+
+  overlay.className = 'discovery-overlay';
+  card.className = 'discovery-card';
+  document.getElementById('discCategory').className = 'disc-category normal';
+  document.getElementById('discCategory').innerHTML = '⚛️ ' + el.name;
+  document.getElementById('discFactBox').className = 'disc-fact-box normal';
+  document.getElementById('discFactLabel').className = 'disc-fact-label normal';
+  document.getElementById('discFactLabel').textContent = '🧠 Science Fact';
+  const btn = document.getElementById('discBtn');
+  btn.className = 'disc-btn normal';
+  btn.textContent = 'Back to Table ⚛️';
+  overlay.classList.add('show');
 }
 
 // ═══════════════════════════════════════════════════════
