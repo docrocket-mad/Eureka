@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cosmos — Space Exploration</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:#04040F;--surface:#080818;--card:#0E0E22;--card2:#141430;
+  --border:rgba(255,255,255,0.07);--text:#F0F0FF;--muted:#5555AA;
+  --gold:#FFD23F;--teal:#00E5B0;--spark:#FF6B35;--blue:#4D9FFF;
+  --pink:#FF6B9D;--green:#44FF88;--purple:#9B59B6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);height:100vh;overflow:hidden;position:fixed;width:100%;}
+
+/* ── STARS BG ── */
+.stars-bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.star-particle{position:absolute;border-radius:50%;animation:twinkle var(--d) ease-in-out infinite;animation-delay:var(--del);}
+@keyframes twinkle{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+
+/* ── HEADER ── */
+.header{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(4,4,15,0.97);border-bottom:1px solid var(--border);position:relative;z-index:50;flex-shrink:0;}
+.logo{font-family:'Fredoka One',cursive;font-size:24px;letter-spacing:2px;color:var(--gold);text-shadow:0 0 20px rgba(255,210,63,0.4);}
+.logo-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.header-stats{display:flex;gap:8px;}
+.stat-pill{border-radius:99px;padding:5px 12px;font-size:11px;font-weight:900;}
+.pill-gold{background:rgba(255,210,63,0.12);border:1px solid rgba(255,210,63,0.25);color:var(--gold);}
+.pill-teal{background:rgba(0,229,176,0.1);border:1px solid rgba(0,229,176,0.2);color:var(--teal);cursor:pointer;}
+
+/* ── APP ── */
+.app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1;}
+
+/* ── TAB BAR ── */
+.tab-bar{display:flex;background:rgba(4,4,15,0.98);border-bottom:1px solid var(--border);flex-shrink:0;}
+.tab{flex:1;padding:9px 4px;text-align:center;font-size:10px;font-weight:900;color:var(--muted);cursor:pointer;letter-spacing:0.3px;text-transform:uppercase;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── MAIN ── */
+.main{flex:1;overflow:hidden;position:relative;}
+.screen{display:none;height:100%;position:relative;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ══════════════════════════════
+   SOLAR SYSTEM SCREEN
+══════════════════════════════ */
+.solar-wrap{flex:1;overflow:hidden;position:relative;}
+
+/* Scrollable solar system */
+.solar-scroll{width:100%;height:100%;overflow-x:auto;overflow-y:hidden;position:relative;cursor:grab;}
+.solar-scroll:active{cursor:grabbing;}
+.solar-scroll::-webkit-scrollbar{display:none;}
+
+.solar-canvas{height:100%;display:flex;align-items:center;padding:0 40px;position:relative;min-width:2400px;}
+
+/* Sun */
+.sun{
+  width:90px;height:90px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 35% 35%, #FFFAAA, #FFD700, #FF8C00, #FF4500);
+  box-shadow:0 0 40px rgba(255,180,0,0.8),0 0 80px rgba(255,140,0,0.4),0 0 120px rgba(255,100,0,0.2);
+  cursor:pointer;transition:transform 0.2s;animation:sunPulse 4s ease-in-out infinite;
+  position:relative;z-index:5;
+}
+.sun:active{transform:scale(0.95);}
+@keyframes sunPulse{0%,100%{box-shadow:0 0 40px rgba(255,180,0,0.8),0 0 80px rgba(255,140,0,0.4)}50%{box-shadow:0 0 60px rgba(255,200,0,1),0 0 100px rgba(255,150,0,0.6)}}
+
+/* Orbit track */
+.orbit-group{position:relative;display:flex;align-items:center;flex-shrink:0;}
+.orbit-line{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);flex-shrink:0;}
+
+/* Planet */
+.planet-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:pointer;transition:transform 0.2s;position:relative;}
+.planet-wrap:active{transform:scale(0.9);}
+.planet-wrap.locked{opacity:0.25;cursor:default;}
+.planet-wrap.locked:active{transform:none;}
+
+.planet{border-radius:50%;position:relative;overflow:hidden;flex-shrink:0;}
+.planet-name{font-size:10px;font-weight:800;color:rgba(240,240,255,0.6);white-space:nowrap;}
+.planet-lock{font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.4;}
+
+/* Moon indicator */
+.moon-dots{display:flex;gap:3px;justify-content:center;}
+.moon-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.25);}
+
+/* Planet label chip */
+.planet-chip{
+  position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+  background:rgba(255,210,63,0.15);border:1px solid rgba(255,210,63,0.3);
+  border-radius:99px;padding:2px 8px;font-size:9px;font-weight:900;
+  color:var(--gold);white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 0.2s;
+}
+
+/* ══════════════════════════════
+   BODY DETAIL OVERLAY
+══════════════════════════════ */
+.body-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(4,4,15,0.92);backdrop-filter:blur(20px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.body-overlay.show{opacity:1;pointer-events:all;}
+
+.body-sheet{
+  background:var(--card);border-radius:28px 28px 0 0;
+  width:100%;max-width:480px;max-height:85vh;
+  overflow-y:auto;padding:0 0 32px;
+  border:1px solid var(--border);border-bottom:none;
+  animation:sheetUp 0.35s cubic-bezier(0.32,0.72,0,1) both;
+}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+.sheet-handle{width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:99px;margin:12px auto 0;}
+
+.sheet-hero{
+  height:180px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.sheet-body-visual{border-radius:50%;position:relative;overflow:hidden;flex-shrink:0;}
+
+.sheet-info{padding:20px 22px 0;}
+.sheet-type{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+.sheet-name{font-family:'Fredoka One',cursive;font-size:32px;margin-bottom:4px;}
+.sheet-tagline{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+
+.stats-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+.stats-row::-webkit-scrollbar{display:none;}
+.stat-chip{background:var(--card2);border-radius:12px;padding:10px 13px;flex-shrink:0;border:1px solid var(--border);}
+.stat-chip-val{font-size:14px;font-weight:900;line-height:1;}
+.stat-chip-label{font-size:9px;font-weight:800;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+
+.fact-box{background:linear-gradient(135deg,rgba(77,159,255,0.08),rgba(0,229,176,0.05));border:1.5px solid rgba(77,159,255,0.18);border-radius:16px;padding:14px 16px;margin-bottom:14px;}
+.fact-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:6px;}
+.fact-text{font-size:13px;font-weight:700;line-height:1.7;color:rgba(240,240,255,0.85);}
+
+.explore-btn{
+  margin:0 22px;width:calc(100% - 44px);
+  background:linear-gradient(135deg,var(--gold),var(--spark));
+  border:none;border-radius:13px;color:white;
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;
+  padding:14px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,210,63,0.3);
+  transition:transform 0.15s;
+}
+.explore-btn:active{transform:scale(0.97);}
+.close-sheet{
+  position:absolute;top:16px;right:16px;
+  width:34px;height:34px;background:rgba(255,255,255,0.08);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;border:1px solid var(--border);
+}
+
+/* ══════════════════════════════
+   SCALE SCREEN
+══════════════════════════════ */
+.scale-wrap{flex:1;overflow-y:auto;padding:16px;}
+.scale-title{font-family:'Fredoka One',cursive;font-size:24px;color:var(--gold);margin-bottom:4px;}
+.scale-sub{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:20px;}
+
+.scale-section{margin-bottom:24px;}
+.scale-section-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;}
+
+.size-comparison{display:flex;align-items:flex-end;gap:6px;margin-bottom:8px;height:80px;}
+.size-body{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.size-label{font-size:9px;font-weight:800;color:var(--muted);text-align:center;margin-top:6px;line-height:1.3;}
+.size-item{display:flex;flex-direction:column;align-items:center;}
+
+.distance-bar-wrap{margin-bottom:12px;}
+.distance-bar-label{display:flex;justify-content:space-between;margin-bottom:4px;}
+.distance-bar-name{font-size:12px;font-weight:800;}
+.distance-bar-val{font-size:11px;font-weight:700;color:var(--muted);}
+.distance-bar{height:6px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden;}
+.distance-fill{height:100%;border-radius:99px;transition:width 1.2s ease;}
+
+.mind-blow{background:var(--card);border-radius:18px;padding:18px;border:1px solid var(--border);margin-bottom:12px;}
+.mb-icon{font-size:28px;margin-bottom:8px;display:block;}
+.mb-title{font-size:14px;font-weight:900;margin-bottom:4px;}
+.mb-text{font-size:12px;font-weight:700;color:var(--muted);line-height:1.6;}
+
+/* ══════════════════════════════
+   MISSION SCREEN
+══════════════════════════════ */
+.mission-wrap{flex:1;overflow-y:auto;padding:16px;}
+.mission-score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.mission-score-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.mission-score-val{font-size:22px;font-weight:900;color:var(--gold);}
+.timer-bar{height:5px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:16px;}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:99px;transition:width 0.1s linear;}
+
+.mission-q-box{background:var(--card);border-radius:20px;padding:20px;margin-bottom:14px;border:1px solid var(--border);text-align:center;}
+.mission-q-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;}
+.mission-q{font-size:16px;font-weight:800;line-height:1.5;color:var(--text);}
+
+.mission-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.mission-opt{background:var(--card);border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;border:2px solid var(--border);transition:all 0.2s;font-size:13px;font-weight:800;}
+.mission-opt:active{transform:scale(0.95);}
+.mission-opt.correct{background:rgba(0,229,176,0.12);border-color:var(--teal);color:var(--teal);}
+.mission-opt.wrong{background:rgba(255,107,53,0.1);border-color:var(--spark);color:var(--spark);}
+
+.mission-done{text-align:center;padding:32px 16px;}
+.md-emoji{font-size:64px;margin-bottom:12px;display:block;animation:mdPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;}
+@keyframes mdPop{from{transform:scale(0)rotate(-20deg)}to{transform:scale(1)rotate(0)}}
+.md-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--gold);margin-bottom:6px;}
+.md-score{font-size:18px;font-weight:900;margin-bottom:20px;}
+.md-btn{background:linear-gradient(135deg,var(--teal),var(--blue));border:none;border-radius:13px;color:white;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;padding:14px 32px;cursor:pointer;}
+
+/* ── UNLOCK OVERLAY ── */
+.unlock-overlay{position:fixed;inset:0;z-index:300;background:rgba(4,4,15,0.9);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.unlock-overlay.show{opacity:1;pointer-events:all;}
+.unlock-card{background:var(--card);border-radius:28px;padding:32px 26px;text-align:center;max-width:300px;width:90%;border:1px solid rgba(255,210,63,0.2);animation:unlockPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;}
+@keyframes unlockPop{from{transform:scale(0.5)rotate(-8deg);opacity:0}to{transform:scale(1)rotate(0);opacity:1}}
+.uo-new{font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.uo-planet{border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;}
+.uo-name{font-family:'Fredoka One',cursive;font-size:28px;margin-bottom:4px;}
+.uo-type{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:14px;}
+.uo-fact{font-size:13px;font-weight:700;line-height:1.65;color:rgba(240,240,255,0.82);margin-bottom:20px;}
+.uo-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--spark));border:none;border-radius:13px;color:white;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;padding:14px;cursor:pointer;}
+
+/* ── CONFETTI ── */
+.confetti-piece{position:fixed;pointer-events:none;z-index:400;animation:cfFall var(--dur) var(--delay) ease-in forwards;}
+@keyframes cfFall{0%{transform:translateY(-10px)rotate(0);opacity:1}100%{transform:translateY(100vh)rotate(720deg);opacity:0}}
+
+/* ── FLASH ── */
+.sf{position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0;animation:sf 0.35s ease forwards;}
+@keyframes sf{0%{opacity:0.15}100%{opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars-bg" id="starsEl"></div>
+
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="logo">COSMOS</div>
+      <div class="logo-sub">Artificer Studios · Space Discovery</div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill pill-gold">⭐ <span id="scoreEl">0</span></div>
+      <div class="stat-pill pill-teal" onclick="switchTab('solar')">🪐 <span id="exploredEl">1</span></div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" id="tab-solar"   onclick="switchTab('solar')">🌍 Explore</div>
+    <div class="tab"        id="tab-scale"   onclick="switchTab('scale')">📏 Scale</div>
+    <div class="tab"        id="tab-mission" onclick="switchTab('mission')">🚀 Mission</div>
+  </div>
+
+  <div class="main">
+
+    <!-- SOLAR SYSTEM -->
+    <div class="screen active" id="screen-solar">
+      <div class="solar-wrap">
+        <div class="solar-scroll" id="solarScroll">
+          <div class="solar-canvas" id="solarCanvas"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCALE -->
+    <div class="screen" id="screen-scale">
+      <div class="scale-wrap">
+        <div class="scale-title">Mind-Bending Scale</div>
+        <div class="scale-sub">The universe is incomprehensibly large. Let's try anyway.</div>
+
+        <div class="scale-section">
+          <div class="scale-section-title">Size Comparison</div>
+          <div class="size-comparison" id="sizeComparison"></div>
+        </div>
+
+        <div class="scale-section">
+          <div class="scale-section-title">Distance from the Sun</div>
+          <div id="distanceBars"></div>
+        </div>
+
+        <div class="scale-section">
+          <div class="scale-section-title">🤯 Scale Facts</div>
+          <div class="mind-blow">
+            <span class="mb-icon">🚗</span>
+            <div class="mb-title">Driving to the Moon</div>
+            <div class="mb-text">If you could drive a car to the Moon at highway speed (100 km/h), it would take about 160 days non-stop. To the Sun: 170 years. To Neptune: 4,600 years.</div>
+          </div>
+          <div class="mind-blow">
+            <span class="mb-icon">💡</span>
+            <div class="mb-title">The Speed of Light Problem</div>
+            <div class="mb-text">Light travels at 300,000 km/second — fast enough to circle Earth 7 times in one second. Yet it takes 8 minutes to reach us from the Sun. From the nearest star: 4.2 years. When you look at stars, you're looking into the past.</div>
+          </div>
+          <div class="mind-blow">
+            <span class="mb-icon">🌍</span>
+            <div class="mb-title">Earth is a Pale Blue Dot</div>
+            <div class="mb-text">In 1990, Voyager 1 turned its camera back at Earth from 6 billion km away. Earth appeared as a fraction of a pixel. Carl Sagan called it "a mote of dust suspended in a sunbeam." Every human who ever lived, on that dot.</div>
+          </div>
+          <div class="mind-blow">
+            <span class="mb-icon">☀️</span>
+            <div class="mb-title">The Sun is Enormous</div>
+            <div class="mb-text">1.3 million Earths could fit inside the Sun. Yet the Sun is a medium-sized star. The largest known star, UY Scuti, is so big that if it replaced the Sun, it would engulf Jupiter. You are very, very small.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSION -->
+    <div class="screen" id="screen-mission">
+      <div class="mission-wrap" id="missionWrap"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BODY DETAIL -->
+<div class="body-overlay" id="bodyOverlay">
+  <div class="body-sheet" id="bodySheet">
+    <div class="sheet-handle"></div>
+    <div class="close-sheet" onclick="closeSheet()">✕</div>
+    <div class="sheet-hero" id="sheetHero"></div>
+    <div class="sheet-info">
+      <div class="sheet-type" id="sheetType"></div>
+      <div class="sheet-name" id="sheetName"></div>
+      <div class="sheet-tagline" id="sheetTagline"></div>
+      <div class="stats-row" id="sheetStats"></div>
+      <div class="fact-box">
+        <div class="fact-label">🧠 The Mad Scientist Says...</div>
+        <div class="fact-text" id="sheetFact"></div>
+      </div>
+      <button class="explore-btn" onclick="markExplored()">✅ Explored! Earn 25 XP</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNLOCK -->
+<div class="unlock-overlay" id="unlockOverlay">
+  <div class="unlock-card">
+    <div class="uo-new">🚀 Destination Unlocked!</div>
+    <div class="uo-planet" id="uoPlanet"></div>
+    <div class="uo-name" id="uoName"></div>
+    <div class="uo-type" id="uoType"></div>
+    <div class="uo-fact" id="uoFact"></div>
+    <button class="uo-btn" onclick="closeUnlock()">Set Course ✦</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CELESTIAL BODIES DATABASE
+// ═══════════════════════════════════════════════════════
+const BODIES = [
+  {
+    id:'sun', name:'The Sun', type:'Star', emoji:'☀️',
+    color:'#FFD700', glow:'rgba(255,180,0,0.8)', textColor:'#333',
+    size:90, orbitDist:0,
+    tagline:'A gigantic ball of plasma trying to explode — and failing, because gravity is stronger. For now.',
+    stats:[
+      {val:'1,392,700 km', label:'Diameter'},
+      {val:'4.6 billion yrs', label:'Age'},
+      {val:'15 million °C', label:'Core Temp'},
+      {val:'99.86%', label:'Solar Mass'},
+    ],
+    fact:'Every second the Sun converts 600 million tonnes of hydrogen into helium. The energy released is equivalent to 100 billion nuclear bombs — every second. It has enough fuel for another 5 billion years. After that, it will expand into a red giant and swallow the Earth. No rush.',
+    distAU:0, sizePx:90, unlocked:true, moons:0,
+  },
+  {
+    id:'mercury', name:'Mercury', type:'Terrestrial Planet', emoji:'⚫',
+    color:'#B5B5B5', glow:'rgba(180,180,180,0.4)', textColor:'white',
+    size:14, orbitDist:90,
+    tagline:'Closest to the Sun, yet not the hottest. A world of extremes and absolutely no atmosphere to speak of.',
+    stats:[
+      {val:'4,879 km', label:'Diameter'},
+      {val:'88 Earth days', label:'Year'},
+      {val:'430°C / -180°C', label:'Day/Night Temp'},
+      {val:'0', label:'Moons'},
+    ],
+    fact:'Mercury has no atmosphere to hold heat. The side facing the Sun reaches 430°C — hot enough to melt lead. The side in shadow plunges to -180°C. All in the same day. Also, a day on Mercury is longer than its year. Time is weird out there.',
+    distAU:0.39, sizePx:14, unlocked:true, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #CCCCCC, #888888, #555555)',
+  },
+  {
+    id:'venus', name:'Venus', type:'Terrestrial Planet', emoji:'🌕',
+    color:'#E8C85A', glow:'rgba(232,200,90,0.5)', textColor:'#333',
+    size:22, orbitDist:160,
+    tagline:'Earth\'s evil twin. Similar size, similar mass, completely uninhabitable hellscape.',
+    stats:[
+      {val:'12,104 km', label:'Diameter'},
+      {val:'225 Earth days', label:'Year'},
+      {val:'465°C', label:'Avg Temp'},
+      {val:'0', label:'Moons'},
+    ],
+    fact:'Venus rotates backwards and so slowly that a day is longer than its year. Its atmosphere is 96% CO₂ with clouds of sulfuric acid. Surface pressure is 90x Earth\'s — like being 900 metres underwater. Spacecraft survive less than 2 hours on the surface. It\'s also the brightest object in our sky after the Sun and Moon.',
+    distAU:0.72, sizePx:22, unlocked:true, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #F5D76E, #E8C85A, #C4A030)',
+  },
+  {
+    id:'earth', name:'Earth', type:'Our Home', emoji:'🌍',
+    color:'#3498DB', glow:'rgba(52,152,219,0.6)', textColor:'white',
+    size:24, orbitDist:240,
+    tagline:'The only place in the known universe with life, oceans, pizza, and bad traffic.',
+    stats:[
+      {val:'12,742 km', label:'Diameter'},
+      {val:'365.25 days', label:'Year'},
+      {val:'15°C avg', label:'Avg Temp'},
+      {val:'1', label:'Moons'},
+    ],
+    fact:'Earth is the densest planet in the solar system. It\'s the only known place where water exists in all three states naturally. The planet is 4.5 billion years old — complex life only appeared in the last 600 million years. Humans have existed for 0.004% of Earth\'s history. We showed up very, very recently.',
+    distAU:1.0, sizePx:24, unlocked:true, moons:1,
+    gradient:'radial-gradient(circle at 35% 35%, #5DADE2, #2E86C1, #1A5276)',
+  },
+  {
+    id:'mars', name:'Mars', type:'Terrestrial Planet', emoji:'🔴',
+    color:'#E74C3C', glow:'rgba(231,76,60,0.5)', textColor:'white',
+    size:18, orbitDist:330,
+    tagline:'The most explored planet beyond Earth. Still hasn\'t had visitors. We\'re working on it.',
+    stats:[
+      {val:'6,779 km', label:'Diameter'},
+      {val:'687 Earth days', label:'Year'},
+      {val:'-65°C avg', label:'Avg Temp'},
+      {val:'2', label:'Moons'},
+    ],
+    fact:'Mars has the tallest volcano in the solar system — Olympus Mons, three times taller than Everest. It also has the longest canyon — Valles Marineris, as wide as the USA. Evidence suggests Mars once had liquid water and a thicker atmosphere. Something happened about 4 billion years ago. We\'re still trying to figure out what.',
+    distAU:1.52, sizePx:18, unlocked:true, moons:2,
+    gradient:'radial-gradient(circle at 35% 35%, #FF6B6B, #C0392B, #922B21)',
+    unlockScore:0,
+  },
+  {
+    id:'jupiter', name:'Jupiter', type:'Gas Giant', emoji:'🟤',
+    color:'#E8B96A', glow:'rgba(232,185,106,0.5)', textColor:'#333',
+    size:60, orbitDist:440,
+    tagline:'The king of planets. A storm that has been raging for 400 years. 95 known moons. Absolute unit.',
+    stats:[
+      {val:'139,820 km', label:'Diameter'},
+      {val:'12 Earth years', label:'Year'},
+      {val:'-110°C (cloud top)', label:'Temp'},
+      {val:'95', label:'Moons'},
+    ],
+    fact:'Jupiter\'s Great Red Spot is a storm twice the size of Earth that has been raging for at least 400 years. Jupiter acts as the solar system\'s vacuum cleaner — its massive gravity captures comets and asteroids that would otherwise hit Earth. It has saved us countless times. We owe Jupiter a lot.',
+    distAU:5.2, sizePx:60, unlocked:false, moons:95,
+    gradient:'radial-gradient(circle at 35% 35%, #F0D090, #C89850, #A07030)',
+    unlockScore:100,
+  },
+  {
+    id:'saturn', name:'Saturn', type:'Gas Giant', emoji:'🪐',
+    color:'#F4D03F', glow:'rgba(244,208,63,0.5)', textColor:'#333',
+    size:52, orbitDist:560,
+    tagline:'The showstopper. Those rings are mostly water ice — and they\'re only 10-100 metres thick.',
+    stats:[
+      {val:'116,460 km', label:'Diameter'},
+      {val:'29 Earth years', label:'Year'},
+      {val:'-140°C', label:'Avg Temp'},
+      {val:'146', label:'Moons'},
+    ],
+    fact:'Saturn\'s rings span 282,000 km — nearly the distance from Earth to the Moon — but are only 10 to 100 metres thick. If you shrank Saturn to basketball size the rings would be thinner than a sheet of paper. Saturn is also less dense than water. It would float in a big enough ocean. Probably.',
+    distAU:9.5, sizePx:52, unlocked:false, moons:146,
+    gradient:'radial-gradient(circle at 35% 35%, #F9E79F, #D4AC0D, #B7950B)',
+    unlockScore:200,
+  },
+  {
+    id:'uranus', name:'Uranus', type:'Ice Giant', emoji:'🔵',
+    color:'#7FDBFF', glow:'rgba(127,219,255,0.5)', textColor:'#333',
+    size:36, orbitDist:660,
+    tagline:'Spins on its side. May have had a massive collision long ago. The butt of every astronomy joke.',
+    stats:[
+      {val:'50,724 km', label:'Diameter'},
+      {val:'84 Earth years', label:'Year'},
+      {val:'-195°C', label:'Avg Temp'},
+      {val:'28', label:'Moons'},
+    ],
+    fact:'Uranus rotates on its side — its axis tilts 98 degrees. This means its poles experience 42 years of continuous sunlight followed by 42 years of darkness. Scientists believe a Mars-sized object collided with it billions of years ago and knocked it over. It also has the coldest atmosphere of any planet despite not being the farthest from the Sun.',
+    distAU:19.2, sizePx:36, unlocked:false, moons:28,
+    gradient:'radial-gradient(circle at 35% 35%, #A9E4F7, #7EC8E3, #0099CC)',
+    unlockScore:350,
+  },
+  {
+    id:'neptune', name:'Neptune', type:'Ice Giant', emoji:'💙',
+    color:'#2980B9', glow:'rgba(41,128,185,0.6)', textColor:'white',
+    size:34, orbitDist:760,
+    tagline:'The windiest planet. Storms reaching 2,100 km/h. Never been visited by humans. Probably fine.',
+    stats:[
+      {val:'49,528 km', label:'Diameter'},
+      {val:'165 Earth years', label:'Year'},
+      {val:'-200°C', label:'Avg Temp'},
+      {val:'16', label:'Moons'},
+    ],
+    fact:'Neptune has the fastest winds in the solar system — reaching 2,100 km/h, faster than the speed of sound on Earth. It was the first planet predicted mathematically before it was observed — astronomers noticed Uranus was being pulled slightly off course and calculated something must be pulling it. Voyager 2 visited in 1989 and remains the only spacecraft to do so.',
+    distAU:30.1, sizePx:34, unlocked:false, moons:16,
+    gradient:'radial-gradient(circle at 35% 35%, #5DADE2, #2471A3, #1A5276)',
+    unlockScore:550,
+  },
+  {
+    id:'pluto', name:'Pluto', type:'Dwarf Planet', emoji:'⚪',
+    color:'#D7DBDD', glow:'rgba(200,200,200,0.4)', textColor:'#333',
+    size:10, orbitDist:850,
+    tagline:'Still a planet in our hearts. Demoted in 2006. Has never forgiven us.',
+    stats:[
+      {val:'2,377 km', label:'Diameter'},
+      {val:'248 Earth years', label:'Year'},
+      {val:'-225°C', label:'Avg Temp'},
+      {val:'5', label:'Moons'},
+    ],
+    fact:'Pluto was discovered in 1930 by Clyde Tombaugh, who was 24 years old. It was a planet for 76 years before being reclassified as a dwarf planet in 2006. The New Horizons spacecraft flew past in 2015 and discovered a heart-shaped nitrogen ice plain. Scientists were genuinely surprised by how geologically active it is. Never underestimate the little ones.',
+    distAU:39.5, sizePx:10, unlocked:false, moons:5,
+    gradient:'radial-gradient(circle at 35% 35%, #EAEDED, #B2BABB, #7F8C8D)',
+    unlockScore:800,
+  },
+  // ── BONUS BODIES ──
+  {
+    id:'ceres', name:'Ceres', type:'Dwarf Planet', emoji:'⚪',
+    color:'#AAAAAA', glow:'rgba(170,170,170,0.3)', textColor:'white',
+    size:8, orbitDist:380,
+    tagline:'The largest object in the asteroid belt. Promoted to dwarf planet in 2006 — same year Pluto was demoted.',
+    stats:[
+      {val:'946 km', label:'Diameter'},
+      {val:'4.6 Earth years', label:'Year'},
+      {val:'-105°C', label:'Avg Temp'},
+      {val:'0', label:'Moons'},
+    ],
+    fact:'Ceres contains about a third of the entire asteroid belt\'s mass. The Dawn spacecraft discovered bright spots in Occator Crater — salt deposits from an underground brine ocean. A dwarf planet with a hidden ocean. We keep finding water everywhere we look.',
+    distAU:2.77, sizePx:8, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #CCCCCC, #999999, #666666)',
+    unlockScore:150,
+  },
+  {
+    id:'io', name:'Io', type:'Moon of Jupiter', emoji:'🌋',
+    color:'#DDAA33', glow:'rgba(221,170,51,0.5)', textColor:'#333',
+    size:12, orbitDist:470,
+    tagline:'The most volcanically active body in the solar system. Over 400 active volcanoes. Jupiter squeezes it like a stress ball.',
+    stats:[
+      {val:'3,643 km', label:'Diameter'},
+      {val:'1.8 Earth days', label:'Orbit'},
+      {val:'-143°C (surface)', label:'Temp'},
+      {val:'400+', label:'Active Volcanoes'},
+    ],
+    fact:'Jupiter\'s gravity creates tidal forces that flex Io\'s interior, generating enormous heat. Volcanoes erupt lava plumes 500 km high. The surface is covered in sulfur and sulfur dioxide frost — it looks like a pizza. Astronomers actually call it the pizza moon. Science is beautiful.',
+    distAU:5.2, sizePx:12, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #FFD700, #CC9900, #996600)',
+    unlockScore:250,
+  },
+  {
+    id:'europa', name:'Europa', type:'Moon of Jupiter', emoji:'🧊',
+    color:'#99CCEE', glow:'rgba(153,204,238,0.5)', textColor:'#333',
+    size:12, orbitDist:480,
+    tagline:'A moon with more liquid water than all of Earth\'s oceans combined — hidden under a shell of ice.',
+    stats:[
+      {val:'3,122 km', label:'Diameter'},
+      {val:'3.5 Earth days', label:'Orbit'},
+      {val:'-160°C (surface)', label:'Temp'},
+      {val:'~100 km', label:'Ice Shell'},
+    ],
+    fact:'Europa has a global saltwater ocean beneath 15-25 km of ice. Tidal heating from Jupiter keeps it liquid. Geysers of water vapor have been detected erupting from the surface. If there is life elsewhere in our solar system, Europa is the best bet. NASA\'s Europa Clipper mission launched in 2024 to investigate.',
+    distAU:5.2, sizePx:12, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #CCE5FF, #99BBDD, #6688AA)',
+    unlockScore:300,
+  },
+  {
+    id:'titan', name:'Titan', type:'Moon of Saturn', emoji:'🌫️',
+    color:'#CC9944', glow:'rgba(204,153,68,0.5)', textColor:'white',
+    size:16, orbitDist:590,
+    tagline:'The only moon with a thick atmosphere. Has lakes and rivers — of liquid methane. Rain falls. Seasons change.',
+    stats:[
+      {val:'5,150 km', label:'Diameter'},
+      {val:'16 Earth days', label:'Orbit'},
+      {val:'-179°C', label:'Avg Temp'},
+      {val:'1.5x Earth', label:'Atm Pressure'},
+    ],
+    fact:'Titan has a nitrogen atmosphere 50% thicker than Earth\'s. It rains liquid methane. Lakes of ethane pool at the poles. The Huygens probe landed there in 2005 — the farthest landing from Earth ever achieved. The Dragonfly mission will send a nuclear-powered helicopter drone to Titan in the 2030s. Not a typo. Helicopter. Drone. On another moon.',
+    distAU:9.5, sizePx:16, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #DDAA66, #AA7733, #885522)',
+    unlockScore:400,
+  },
+  {
+    id:'enceladus', name:'Enceladus', type:'Moon of Saturn', emoji:'❄️',
+    color:'#EEEEFF', glow:'rgba(238,238,255,0.5)', textColor:'#333',
+    size:8, orbitDist:575,
+    tagline:'Tiny ice moon shooting geysers of water into space. Confirmed organic molecules. A small moon with big implications.',
+    stats:[
+      {val:'504 km', label:'Diameter'},
+      {val:'1.4 Earth days', label:'Orbit'},
+      {val:'-201°C (surface)', label:'Temp'},
+      {val:'101', label:'Geysers'},
+    ],
+    fact:'Enceladus is only 500 km across but contains a global subsurface ocean. Geysers at the south pole shoot water ice into space — creating Saturn\'s E ring. The Cassini spacecraft flew through the plumes and detected hydrogen, organic molecules, and hydrothermal activity. All the ingredients for life. In a moon smaller than the UK.',
+    distAU:9.5, sizePx:8, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #FFFFFF, #DDDDEE, #BBBBCC)',
+    unlockScore:450,
+  },
+  {
+    id:'triton', name:'Triton', type:'Moon of Neptune', emoji:'🥶',
+    color:'#88BBCC', glow:'rgba(136,187,204,0.4)', textColor:'white',
+    size:10, orbitDist:780,
+    tagline:'Neptune\'s largest moon orbits backwards. Probably a captured Kuiper Belt object. Geysers of nitrogen.',
+    stats:[
+      {val:'2,707 km', label:'Diameter'},
+      {val:'5.9 Earth days (retrograde)', label:'Orbit'},
+      {val:'-235°C', label:'Temp'},
+      {val:'Nitrogen', label:'Geysers'},
+    ],
+    fact:'Triton orbits Neptune in the opposite direction to Neptune\'s rotation — strong evidence it was captured from the Kuiper Belt. Its surface is -235°C, making it one of the coldest objects in the solar system. Nitrogen geysers shoot dark material 8 km high. Eventually tidal forces will tear it apart — giving Neptune rings like Saturn.',
+    distAU:30.1, sizePx:10, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #AACCDD, #7799AA, #557788)',
+    unlockScore:600,
+  },
+  {
+    id:'eris', name:'Eris', type:'Dwarf Planet', emoji:'⚫',
+    color:'#CCCCDD', glow:'rgba(200,200,220,0.3)', textColor:'#333',
+    size:10, orbitDist:920,
+    tagline:'The discovery that killed Pluto\'s planet status. More massive than Pluto. Lives way out in the dark.',
+    stats:[
+      {val:'2,326 km', label:'Diameter'},
+      {val:'559 Earth years', label:'Year'},
+      {val:'-243°C', label:'Avg Temp'},
+      {val:'1 (Dysnomia)', label:'Moons'},
+    ],
+    fact:'Eris was discovered in 2005 and is 27% more massive than Pluto. Its discovery forced astronomers to either call it the 10th planet or redefine what a planet is. They chose to redefine — and Pluto was collateral damage. Eris orbits up to 97 AU from the Sun. At that distance, sunlight takes 13 hours to arrive.',
+    distAU:67.7, sizePx:10, unlocked:false, moons:1,
+    gradient:'radial-gradient(circle at 35% 35%, #DDDDEE, #AAAABB, #777788)',
+    unlockScore:900,
+  },
+  {
+    id:'voyager', name:'Voyager 1', type:'Space Probe', emoji:'🛸',
+    color:'#FFD700', glow:'rgba(255,215,0,0.4)', textColor:'#333',
+    size:6, orbitDist:1000,
+    tagline:'The farthest human-made object from Earth. Launched in 1977. Still sending data. Still going.',
+    stats:[
+      {val:'24.1 billion km', label:'Distance'},
+      {val:'1977', label:'Launched'},
+      {val:'61,000 km/h', label:'Speed'},
+      {val:'22+ hrs', label:'Signal Time'},
+    ],
+    fact:'Voyager 1 crossed into interstellar space in 2012 — the first human object to leave the solar system. It carries a Golden Record containing greetings in 55 languages, music from Bach to Chuck Berry, and images of life on Earth. It will drift through the galaxy for billions of years. Long after Earth is gone, the Golden Record will still be out there. Our message in a bottle.',
+    distAU:163, sizePx:6, unlocked:false, moons:0,
+    gradient:'radial-gradient(circle at 35% 35%, #FFE066, #FFD700, #CCAA00)',
+    unlockScore:1200,
+  },
+];
+
+// Mission questions
+const QUESTIONS = [
+  {q:'Which planet has the most moons?',  opts:['Jupiter','Saturn','Uranus','Neptune'], ans:'Saturn'},
+  {q:'What is the Great Red Spot?',       opts:['A crater','A storm','A sea','A volcano'], ans:'A storm'},
+  {q:'Which planet rotates on its side?', opts:['Pluto','Neptune','Uranus','Mars'], ans:'Uranus'},
+  {q:'How long does sunlight take to reach Earth?', opts:['8 seconds','8 minutes','8 hours','8 days'], ans:'8 minutes'},
+  {q:'What is the hottest planet?',       opts:['Mercury','Venus','Mars','Jupiter'], ans:'Venus'},
+  {q:'Which planet could float on water?',opts:['Jupiter','Uranus','Saturn','Neptune'], ans:'Saturn'},
+  {q:'What are Saturn\'s rings mostly made of?', opts:['Rock','Dust','Water ice','Gas'], ans:'Water ice'},
+  {q:'Which planet has the tallest volcano?', opts:['Earth','Mars','Venus','Mercury'], ans:'Mars'},
+  {q:'How old is the Sun?',               opts:['1 billion','2.3 billion','4.6 billion','10 billion'], ans:'4.6 billion'},
+  {q:'What percentage of the solar system\'s mass is the Sun?', opts:['50%','75%','90%','99.86%'], ans:'99.86%'},
+  {q:'Which was the first planet discovered mathematically?', opts:['Uranus','Neptune','Pluto','Saturn'], ans:'Neptune'},
+  {q:'How fast are Neptune\'s winds?',    opts:['500 km/h','1,000 km/h','2,100 km/h','5,000 km/h'], ans:'2,100 km/h'},
+  {q:'What year was Pluto reclassified as a dwarf planet?', opts:['1996','2001','2006','2012'], ans:'2006'},
+  {q:'Which planet is the densest?',      opts:['Earth','Mercury','Venus','Mars'], ans:'Earth'},
+  {q:'How many Earths fit inside the Sun?', opts:['100','1,000','100,000','1.3 million'], ans:'1.3 million'},
+  {q:'Which moon is the most volcanically active body in the solar system?', opts:['Titan','Europa','Io','Triton'], ans:'Io'},
+  {q:'Which moon has lakes of liquid methane?', opts:['Europa','Enceladus','Titan','Triton'], ans:'Titan'},
+  {q:'Where is the best bet for finding life in our solar system?', opts:['Mars','Venus','Europa','Titan'], ans:'Europa'},
+  {q:'What did Voyager 1 carry into space?', opts:['A flag','A Golden Record','A time capsule','A Bible'], ans:'A Golden Record'},
+  {q:'What year did Voyager 1 enter interstellar space?', opts:['1990','2004','2012','2020'], ans:'2012'},
+  {q:'What is the tallest mountain in the solar system?', opts:['Mount Everest','Mauna Kea','Olympus Mons','Maxwell Montes'], ans:'Olympus Mons'},
+  {q:'Why does Io have so many volcanoes?', opts:['Internal heat','Solar radiation','Jupiter\'s tidal forces','Radioactive decay'], ans:'Jupiter\'s tidal forces'},
+  {q:'Which dwarf planet caused Pluto to be reclassified?', opts:['Ceres','Eris','Haumea','Makemake'], ans:'Eris'},
+  {q:'How fast are winds on Neptune?', opts:['500 km/h','1,000 km/h','2,100 km/h','5,000 km/h'], ans:'2,100 km/h'},
+  {q:'What creates Saturn\'s E ring?', opts:['Asteroid impacts','Enceladus geysers','Titan\'s atmosphere','Ring collisions'], ans:'Enceladus geysers'},
+  {q:'What direction does Triton orbit Neptune?', opts:['Clockwise','Counter-clockwise','Retrograde','Elliptical'], ans:'Retrograde'},
+  {q:'What is the Pale Blue Dot?', opts:['Neptune','Uranus','Earth from far away','A nebula'], ans:'Earth from far away'},
+  {q:'What will happen to Triton eventually?', opts:['Escape Neptune','Be torn apart','Hit Neptune','Become a planet'], ans:'Be torn apart'},
+  {q:'What probe landed on Titan?', opts:['Cassini','Huygens','Voyager','New Horizons'], ans:'Huygens'},
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let score = 0;
+let explored = new Set(['sun','mercury','venus','earth','mars']);
+let currentBody = null;
+let missionActive = false;
+let missionScore = 0;
+let missionQ = 0;
+let missionTimer = null;
+let timerVal = 100;
+
+function loadState(){
+  try{
+    const s = localStorage.getItem('cosmos_v1');
+    if(s){const d=JSON.parse(s);score=d.score||0;explored=new Set(d.explored||['sun','mercury','venus','earth','mars']);}
+  }catch(e){}
+}
+function saveState(){
+  try{localStorage.setItem('cosmos_v1',JSON.stringify({score,explored:[...explored]}));}catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// STARS BACKGROUND
+// ═══════════════════════════════════════════════════════
+function initStars(){
+  const el = document.getElementById('starsEl');
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div');
+    s.className='star-particle';
+    const size=Math.random()>0.8?3:Math.random()>0.5?2:1;
+    s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:white;--d:${2+Math.random()*5}s;--del:${Math.random()*4}s;opacity:${0.2+Math.random()*0.5}`;
+    el.appendChild(s);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// SOLAR SYSTEM RENDER
+// ═══════════════════════════════════════════════════════
+function renderSolar(){
+  const canvas = document.getElementById('solarCanvas');
+  canvas.innerHTML = '';
+
+  // Sun
+  const sun = BODIES[0];
+  const sunEl = document.createElement('div');
+  sunEl.className = 'sun';
+  sunEl.onclick = () => showBody(sun);
+  canvas.appendChild(sunEl);
+
+  // Planets
+  BODIES.slice(1).forEach(body => {
+    const isUnlocked = explored.has(body.id) || score >= (body.unlockScore||0);
+
+    // Orbit line
+    const orbit = document.createElement('div');
+    orbit.className = 'orbit-line';
+    orbit.style.width = '50px';
+    canvas.appendChild(orbit);
+
+    // Planet wrap
+    const wrap = document.createElement('div');
+    wrap.className = 'planet-wrap' + (isUnlocked ? '' : ' locked');
+
+    // Planet visual
+    const planet = document.createElement('div');
+    planet.className = 'planet';
+    planet.style.width = body.sizePx + 'px';
+    planet.style.height = body.sizePx + 'px';
+
+    if(isUnlocked){
+      planet.style.background = body.gradient || `radial-gradient(circle at 35% 35%, ${lighten(body.color)}, ${body.color})`;
+      planet.style.boxShadow = `0 0 ${body.sizePx*0.5}px ${body.glow}`;
+
+      // Saturn rings
+      if(body.id === 'saturn'){
+        planet.style.position = 'relative';
+        planet.style.overflow = 'visible';
+        const ring = document.createElement('div');
+        ring.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotateX(70deg);width:${body.sizePx*2.2}px;height:${body.sizePx*2.2}px;border-radius:50%;border:${body.sizePx*0.18}px solid rgba(244,208,63,0.5);pointer-events:none;`;
+        planet.appendChild(ring);
+      }
+    } else {
+      planet.style.background = 'rgba(255,255,255,0.04)';
+      const lock = document.createElement('div');
+      lock.className = 'planet-lock';
+      lock.textContent = '🔒';
+      planet.appendChild(lock);
+    }
+
+    wrap.appendChild(planet);
+
+    // Name
+    const name = document.createElement('div');
+    name.className = 'planet-name';
+    name.textContent = isUnlocked ? body.name : '???';
+    wrap.appendChild(name);
+
+    // Moon dots
+    if(isUnlocked && body.moons > 0){
+      const moons = document.createElement('div');
+      moons.className = 'moon-dots';
+      const dotCount = Math.min(body.moons, 5);
+      for(let i=0;i<dotCount;i++){
+        const d = document.createElement('div');
+        d.className = 'moon-dot';
+        moons.appendChild(d);
+      }
+      if(body.moons > 5){
+        const more = document.createElement('div');
+        more.style.cssText='font-size:8px;color:var(--muted);font-weight:800;';
+        more.textContent='+'+( body.moons-5);
+        moons.appendChild(more);
+      }
+      wrap.appendChild(moons);
+    }
+
+    if(isUnlocked){
+      wrap.onclick = () => showBody(body);
+    } else {
+      // Show unlock requirement
+      wrap.onclick = () => {
+        if(score >= (body.unlockScore||9999)){
+          unlockBody(body);
+        }
+      };
+    }
+
+    canvas.appendChild(wrap);
+  });
+
+  // Check for unlocks
+  checkUnlocks();
+}
+
+function checkUnlocks(){
+  BODIES.slice(1).forEach(body=>{
+    if(!explored.has(body.id) && score >= (body.unlockScore||9999)){
+      // Auto-unlock
+      explored.add(body.id);
+      saveState();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BODY DETAIL
+// ═══════════════════════════════════════════════════════
+function showBody(body){
+  currentBody = body;
+  const overlay = document.getElementById('bodyOverlay');
+
+  // Hero
+  const hero = document.getElementById('sheetHero');
+  hero.style.background = `radial-gradient(ellipse at 50% 50%, ${body.glow.replace('0.8','0.3').replace('0.6','0.2').replace('0.5','0.2')}, transparent)`;
+
+  const visual = document.createElement('div');
+  visual.className = 'sheet-body-visual';
+  const heroSize = body.id==='sun' ? 110 : Math.max(body.sizePx*3, 80);
+  visual.style.width = heroSize+'px';
+  visual.style.height = heroSize+'px';
+  visual.style.background = body.id==='sun'
+    ? 'radial-gradient(circle at 35% 35%, #FFFAAA, #FFD700, #FF8C00, #FF4500)'
+    : (body.gradient||`radial-gradient(circle at 35% 35%, ${lighten(body.color)}, ${body.color})`);
+  visual.style.boxShadow = `0 0 ${heroSize*0.5}px ${body.glow}`;
+  if(body.id==='sun') visual.style.animation='sunPulse 4s ease-in-out infinite';
+  hero.innerHTML = '';
+  hero.appendChild(visual);
+
+  // Info
+  document.getElementById('sheetType').textContent = body.type;
+  document.getElementById('sheetType').style.color = body.color;
+  document.getElementById('sheetName').textContent = body.name;
+  document.getElementById('sheetTagline').textContent = body.tagline;
+  document.getElementById('sheetFact').textContent = body.fact;
+
+  // Stats
+  const stats = document.getElementById('sheetStats');
+  stats.innerHTML = '';
+  body.stats.forEach(s=>{
+    const chip = document.createElement('div');
+    chip.className = 'stat-chip';
+    chip.innerHTML = `<div class="stat-chip-val" style="color:${body.color}">${s.val}</div><div class="stat-chip-label">${s.label}</div>`;
+    stats.appendChild(chip);
+  });
+
+  overlay.classList.add('show');
+}
+
+function closeSheet(){
+  document.getElementById('bodyOverlay').classList.remove('show');
+}
+
+function markExplored(){
+  if(!currentBody) return;
+  const isNew = !explored.has(currentBody.id);
+  explored.add(currentBody.id);
+  score += 25;
+  saveState();
+  updateUI();
+  closeSheet();
+  if(isNew){
+    addFlash();
+    spawnConfetti(currentBody.color);
+    checkAndUnlockNext();
+  }
+}
+
+function checkAndUnlockNext(){
+  BODIES.slice(1).forEach(body=>{
+    if(!explored.has(body.id) && score >= (body.unlockScore||9999)){
+      explored.add(body.id);
+      saveState();
+      setTimeout(()=>showUnlock(body), 600);
+    }
+  });
+  renderSolar();
+}
+
+function showUnlock(body){
+  const planet = document.getElementById('uoPlanet');
+  const size = Math.max(body.sizePx*2, 60);
+  planet.style.width = size+'px';
+  planet.style.height = size+'px';
+  planet.style.background = body.gradient||`radial-gradient(circle at 35% 35%, ${lighten(body.color)}, ${body.color})`;
+  planet.style.boxShadow = `0 0 30px ${body.glow}`;
+  document.getElementById('uoName').textContent = body.name;
+  document.getElementById('uoType').textContent = body.type;
+  document.getElementById('uoFact').textContent = body.fact.substring(0,160)+'...';
+  document.getElementById('unlockOverlay').classList.add('show');
+  spawnConfetti(body.color);
+}
+
+function closeUnlock(){
+  document.getElementById('unlockOverlay').classList.remove('show');
+}
+
+function unlockBody(body){
+  explored.add(body.id);
+  saveState();
+  renderSolar();
+  showUnlock(body);
+}
+
+// ═══════════════════════════════════════════════════════
+// SCALE SCREEN
+// ═══════════════════════════════════════════════════════
+function renderScale(){
+  // Size comparison
+  const sizeEl = document.getElementById('sizeComparison');
+  sizeEl.innerHTML = '';
+  const sizeBodies = BODIES.filter(b=>explored.has(b.id)).slice(0,7);
+  const maxSize = Math.max(...sizeBodies.map(b=>b.sizePx));
+
+  sizeBodies.forEach(body=>{
+    const item = document.createElement('div');
+    item.className = 'size-item';
+    const circle = document.createElement('div');
+    circle.className = 'size-body';
+    const displaySize = Math.max((body.sizePx/maxSize)*70, 6);
+    circle.style.width = displaySize+'px';
+    circle.style.height = displaySize+'px';
+    circle.style.background = body.id==='sun'
+      ? 'radial-gradient(circle at 35% 35%, #FFFAAA, #FFD700, #FF8C00)'
+      : (body.gradient||`radial-gradient(circle at 35% 35%, ${lighten(body.color)}, ${body.color})`);
+    circle.style.boxShadow = `0 0 ${displaySize*0.4}px ${body.glow}`;
+    item.appendChild(circle);
+    const label = document.createElement('div');
+    label.className = 'size-label';
+    label.textContent = body.name;
+    item.appendChild(label);
+    sizeEl.appendChild(item);
+  });
+
+  // Distance bars
+  const distEl = document.getElementById('distanceBars');
+  distEl.innerHTML = '';
+  const distBodies = BODIES.filter(b=>b.distAU>0 && explored.has(b.id));
+  const maxDist = Math.max(...distBodies.map(b=>b.distAU));
+
+  distBodies.forEach(body=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'distance-bar-wrap';
+    const pct = (body.distAU/maxDist)*100;
+    wrap.innerHTML = `
+      <div class="distance-bar-label">
+        <div class="distance-bar-name" style="color:${body.color}">${body.name}</div>
+        <div class="distance-bar-val">${body.distAU} AU</div>
+      </div>
+      <div class="distance-bar">
+        <div class="distance-fill" style="width:${pct}%;background:${body.color}"></div>
+      </div>`;
+    distEl.appendChild(wrap);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// MISSION GAME
+// ═══════════════════════════════════════════════════════
+let qPool = [];
+let currentQ = null;
+let missionAnswered = 0;
+let missionRight = 0;
+const MISSION_TOTAL = 8;
+
+function renderMission(){
+  qPool = [...QUESTIONS].sort(()=>Math.random()-0.5);
+  missionScore = 0;
+  missionAnswered = 0;
+  missionRight = 0;
+  showMissionQ();
+}
+
+function showMissionQ(){
+  const wrap = document.getElementById('missionWrap');
+  if(missionAnswered >= MISSION_TOTAL){ showMissionDone(); return; }
+
+  currentQ = qPool[missionAnswered % qPool.length];
+  timerVal = 100;
+  if(missionTimer) clearInterval(missionTimer);
+
+  wrap.innerHTML = `
+    <div class="mission-score-row">
+      <div><div class="mission-score-label">Mission Score</div></div>
+      <div class="mission-score-val" id="mScoreVal">${missionScore}</div>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+    <div style="font-size:10px;font-weight:800;color:var(--muted);text-align:center;margin-bottom:10px">${missionAnswered+1} / ${MISSION_TOTAL}</div>
+    <div class="mission-q-box">
+      <div class="mission-q-label">🚀 Mission Question</div>
+      <div class="mission-q">${currentQ.q}</div>
+    </div>
+    <div class="mission-opts" id="mOpts"></div>
+  `;
+
+  const opts = document.getElementById('mOpts');
+  currentQ.opts.forEach(opt=>{
+    const div = document.createElement('div');
+    div.className = 'mission-opt';
+    div.textContent = opt;
+    div.onclick = () => selectMissionOpt(div, opt===currentQ.ans);
+    opts.appendChild(div);
+  });
+
+  // Timer
+  missionTimer = setInterval(()=>{
+    timerVal -= 1;
+    const fill = document.getElementById('timerFill');
+    if(fill) fill.style.width = timerVal+'%';
+    if(timerVal <= 0){
+      clearInterval(missionTimer);
+      // Time out — show correct
+      document.querySelectorAll('.mission-opt').forEach(o=>{
+        o.onclick=null;
+        if(o.textContent===currentQ.ans) o.classList.add('correct');
+      });
+      missionAnswered++;
+      setTimeout(showMissionQ, 1200);
+    }
+  }, 80);
+}
+
+function selectMissionOpt(div, isCorrect){
+  if(missionTimer) clearInterval(missionTimer);
+  document.querySelectorAll('.mission-opt').forEach(o=>o.onclick=null);
+
+  if(isCorrect){
+    div.classList.add('correct');
+    const pts = Math.round(timerVal * 0.5) + 10;
+    missionScore += pts;
+    missionRight++;
+    score += pts;
+    addFlash();
+    saveState();
+    updateUI();
+  } else {
+    div.classList.add('wrong');
+    document.querySelectorAll('.mission-opt').forEach(o=>{
+      if(o.textContent===currentQ.ans) o.classList.add('correct');
+    });
+  }
+
+  const scoreEl = document.getElementById('mScoreVal');
+  if(scoreEl) scoreEl.textContent = missionScore;
+  missionAnswered++;
+  setTimeout(showMissionQ, 1000);
+}
+
+function showMissionDone(){
+  if(missionTimer) clearInterval(missionTimer);
+  const wrap = document.getElementById('missionWrap');
+  const emoji = missionRight >= 7 ? '🏆' : missionRight >= 5 ? '🚀' : '🌍';
+  const title = missionRight >= 7 ? 'Stellar Performance!' : missionRight >= 5 ? 'Mission Accomplished!' : 'Keep Exploring!';
+
+  checkAndUnlockNext();
+
+  wrap.innerHTML = `
+    <div class="mission-done">
+      <span class="md-emoji">${emoji}</span>
+      <div class="md-title">${title}</div>
+      <div class="md-score">${missionRight}/${MISSION_TOTAL} correct · +${missionScore} XP</div>
+      <button class="md-btn" onclick="renderMission()">Launch Again 🚀</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('screen-'+tab).classList.add('active');
+  if(tab==='solar'){ renderSolar(); }
+  if(tab==='scale'){ renderScale(); }
+  if(tab==='mission'){ renderMission(); }
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function updateUI(){
+  document.getElementById('scoreEl').textContent = score;
+  document.getElementById('exploredEl').textContent = explored.size;
+}
+
+function addFlash(){
+  const f=document.createElement('div');f.className='sf';f.style.background='white';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),400);
+}
+
+function spawnConfetti(color){
+  const colors=[color,'#FFD23F','#00E5B0','#FF6B35','#FFFFFF','#FF6B9D'];
+  for(let i=0;i<45;i++){
+    const c=document.createElement('div');c.className='confetti-piece';
+    const size=5+Math.random()*8;
+    c.style.cssText=`left:${10+Math.random()*80}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${1.2+Math.random()*1.5}s;--delay:${Math.random()*0.5}s;width:${size}px;height:${size}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3000);
+  }
+}
+
+function lighten(hex){
+  try{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return `rgb(${Math.min(255,r+60)},${Math.min(255,g+60)},${Math.min(255,b+60)})`;}
+  catch(e){return hex;}
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+loadState();
+initStars();
+updateUI();
+renderSolar();
+
+// Desktop drag-scroll for solar system
+(function(){
+  const el = document.getElementById('solarScroll');
+  let isDown=false, startX, scrollL;
+  el.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX;scrollL=el.scrollLeft;el.style.cursor='grabbing';});
+  el.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();el.scrollLeft=scrollL-(e.pageX-startX);});
+  el.addEventListener('mouseup',()=>{isDown=false;el.style.cursor='grab';});
+  el.addEventListener('mouseleave',()=>{isDown=false;el.style.cursor='grab';});
+})();
+</script>
+</body>
+</html>

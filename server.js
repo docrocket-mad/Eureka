@@ -31,6 +31,9 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'eureka.html'));
 });
+app.get('/cosmos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'cosmos.html'));
+});
 app.get('/data.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(path.join(__dirname, 'data.js'));
