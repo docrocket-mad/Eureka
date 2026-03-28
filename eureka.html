@@ -225,8 +225,10 @@ body {
   position: relative;
   z-index: 40;
   max-height: 45vh;
+  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none;
+  width: 100%;
 }
 .tray::-webkit-scrollbar { display: none; }
 
@@ -254,12 +256,15 @@ body {
 
 .tray-row {
   display: flex;
+  flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   gap: 8px;
   padding: 4px 14px 6px;
   scrollbar-width: none;
   align-items: center;
+  min-width: 0;
 }
 .tray-row::-webkit-scrollbar { display: none; }
 
