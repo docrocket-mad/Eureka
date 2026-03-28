@@ -222,6 +222,11 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 /* ══════════════════════════════
    CONSTELLATION CONNECT
 ══════════════════════════════ */
+.stars-sub-nav{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.stars-sub{flex:1;padding:8px 4px;text-align:center;font-size:10px;font-weight:900;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;text-transform:uppercase;}
+.stars-sub.active{color:var(--gold);border-bottom-color:var(--gold);}
+.stars-sub-content{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+
 .stars-game-wrap{flex:1;display:flex;flex-direction:column;padding:12px;overflow-y:auto;}
 .stars-header{text-align:center;margin-bottom:10px;}
 .stars-title{font-size:12px;font-weight:800;color:var(--muted);}
@@ -238,6 +243,16 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 .stars-info-myth{font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px;line-height:1.5;}
 .stars-info-fact{font-size:12px;font-weight:700;color:var(--muted);line-height:1.6;margin-bottom:12px;}
 .stars-next-btn{width:100%;background:linear-gradient(135deg,var(--teal),var(--blue));border:none;border-radius:12px;color:white;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;padding:12px;cursor:pointer;}
+
+/* Star Types cards */
+.startypes-wrap{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.startype-card{background:var(--card);border-radius:18px;padding:16px;border:1px solid var(--border);display:flex;gap:14px;align-items:center;}
+.startype-visual{flex-shrink:0;border-radius:50%;position:relative;}
+.startype-info{flex:1;min-width:0;}
+.startype-name{font-family:'Fredoka One',cursive;font-size:16px;margin-bottom:2px;}
+.startype-meta{font-size:10px;font-weight:800;color:var(--muted);margin-bottom:6px;}
+.startype-fact{font-size:11px;font-weight:700;color:rgba(240,240,255,0.8);line-height:1.55;}
+.startype-size{font-size:9px;font-weight:800;color:var(--muted);margin-top:4px;}
 
 /* ══════════════════════════════
    ORBIT BUILDER
@@ -270,6 +285,21 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 #slingCanvas{background:radial-gradient(ellipse at 50% 50%,#0a0a20,#040410);border-radius:16px;border:1px solid var(--border);max-width:100%;max-height:100%;cursor:crosshair;touch-action:none;}
 .sling-hint{text-align:center;font-size:11px;font-weight:800;color:var(--muted);margin-top:8px;}
 
+/* ══════════════════════════════
+   LAND THE ROVER
+══════════════════════════════ */
+.rover-game-wrap{flex:1;display:flex;flex-direction:column;padding:12px;}
+.rover-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.rover-mission{font-size:11px;font-weight:900;color:var(--gold);}
+.rover-status{font-size:12px;font-weight:900;color:var(--teal);}
+.rover-canvas-wrap{display:flex;justify-content:center;flex:1;min-height:0;}
+#roverCanvas{background:linear-gradient(180deg,#1a0a05 0%,#331a0a 60%,#553322 100%);border-radius:16px;border:1px solid var(--border);max-width:100%;max-height:100%;touch-action:none;}
+.rover-controls{display:flex;gap:8px;margin-top:8px;}
+.rover-btn{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;text-align:center;transition:all 0.1s;touch-action:none;user-select:none;}
+.rover-btn:active{background:rgba(255,210,63,0.15);border-color:var(--gold);}
+.rover-boost{background:rgba(255,107,53,0.12);border-color:rgba(255,107,53,0.3);color:var(--spark);}
+.rover-result{text-align:center;margin-top:8px;padding:14px;background:var(--card);border-radius:14px;border:1px solid var(--border);animation:sheetUp 0.3s ease both;}
+
 /* ── CONFETTI ── */
 .confetti-piece{position:fixed;pointer-events:none;z-index:400;animation:cfFall var(--dur) var(--delay) ease-in forwards;}
 @keyframes cfFall{0%{transform:translateY(-10px)rotate(0);opacity:1}100%{transform:translateY(100vh)rotate(720deg);opacity:0}}
@@ -301,6 +331,7 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
     <div class="tab"        id="tab-stars"   onclick="switchTab('stars')">⭐ Stars</div>
     <div class="tab"        id="tab-orbit"   onclick="switchTab('orbit')">🌡️ Orbit</div>
     <div class="tab"        id="tab-sling"   onclick="switchTab('sling')">🛸 Sling</div>
+    <div class="tab"        id="tab-rover"   onclick="switchTab('rover')">🔴 Rover</div>
     <div class="tab"        id="tab-scale"   onclick="switchTab('scale')">📏 Scale</div>
     <div class="tab"        id="tab-mission" onclick="switchTab('mission')">🚀 Mission</div>
   </div>
@@ -316,22 +347,31 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
       </div>
     </div>
 
-    <!-- CONSTELLATION CONNECT -->
+    <!-- STARS TAB (Constellations + Star Types) -->
     <div class="screen" id="screen-stars">
-      <div class="stars-game-wrap">
-        <div class="stars-header">
-          <div class="stars-title" id="starsTitle">Tap stars in order to draw the constellation</div>
-          <div class="stars-progress" id="starsProgress"></div>
+      <div class="stars-sub-nav">
+        <div class="stars-sub active" id="sub-constellations" onclick="switchStarsSub('constellations')">✨ Constellations</div>
+        <div class="stars-sub" id="sub-startypes" onclick="switchStarsSub('startypes')">⭐ Star Types</div>
+      </div>
+      <div class="stars-sub-content" id="sub-content-constellations">
+        <div class="stars-game-wrap">
+          <div class="stars-header">
+            <div class="stars-title" id="starsTitle">Tap stars in order to draw the constellation</div>
+            <div class="stars-progress" id="starsProgress"></div>
+          </div>
+          <div class="stars-canvas-wrap">
+            <canvas id="starsCanvas" width="360" height="360"></canvas>
+          </div>
+          <div class="stars-info" id="starsInfo" style="display:none">
+            <div class="stars-info-name" id="starsName"></div>
+            <div class="stars-info-myth" id="starsMyth"></div>
+            <div class="stars-info-fact" id="starsFact"></div>
+            <button class="stars-next-btn" onclick="nextConstellation()">Next Constellation →</button>
+          </div>
         </div>
-        <div class="stars-canvas-wrap">
-          <canvas id="starsCanvas" width="360" height="360"></canvas>
-        </div>
-        <div class="stars-info" id="starsInfo" style="display:none">
-          <div class="stars-info-name" id="starsName"></div>
-          <div class="stars-info-myth" id="starsMyth"></div>
-          <div class="stars-info-fact" id="starsFact"></div>
-          <button class="stars-next-btn" onclick="nextConstellation()">Next Constellation →</button>
-        </div>
+      </div>
+      <div class="stars-sub-content" id="sub-content-startypes" style="display:none">
+        <div class="startypes-wrap" id="startypesWrap"></div>
       </div>
     </div>
 
@@ -364,6 +404,25 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
           <canvas id="slingCanvas" width="360" height="360"></canvas>
         </div>
         <div class="sling-hint" id="slingHint">Drag from the spacecraft to aim, release to launch</div>
+      </div>
+    </div>
+
+    <!-- LAND THE ROVER -->
+    <div class="screen" id="screen-rover">
+      <div class="rover-game-wrap">
+        <div class="rover-hud">
+          <div class="rover-mission" id="roverMission">Mission: Reach the target</div>
+          <div class="rover-status" id="roverStatus">🔋 100%</div>
+        </div>
+        <div class="rover-canvas-wrap">
+          <canvas id="roverCanvas" width="400" height="300"></canvas>
+        </div>
+        <div class="rover-controls">
+          <button class="rover-btn" id="roverLeft" ontouchstart="roverDir=-1" ontouchend="roverDir=0" onmousedown="roverDir=-1" onmouseup="roverDir=0">← Left</button>
+          <button class="rover-btn rover-boost" id="roverBoost" ontouchstart="roverBoost=true" ontouchend="roverBoost=false" onmousedown="roverBoost=true" onmouseup="roverBoost=false">🚀 Boost</button>
+          <button class="rover-btn" id="roverRight" ontouchstart="roverDir=1" ontouchend="roverDir=0" onmousedown="roverDir=1" onmouseup="roverDir=0">Right →</button>
+        </div>
+        <div class="rover-result" id="roverResult" style="display:none"></div>
       </div>
     </div>
 
@@ -1550,6 +1609,58 @@ function nextConstellation(){
   renderStars();
 }
 
+// Star Types data
+const STAR_TYPES = [
+  { name:'Red Dwarf', color:'#FF4422', size:14, sunScale:'0.1-0.5x Sun', lifespan:'1-10 trillion years', temp:'2,500-3,500°C', example:'Proxima Centauri',
+    fact:'The most common stars — 73% of all stars are red dwarfs. So dim you can\'t see any with the naked eye. But they live TRILLIONS of years. No red dwarf has ever died of old age — the universe isn\'t old enough.' },
+  { name:'Yellow Dwarf', color:'#FFD700', size:22, sunScale:'1x Sun', lifespan:'~10 billion years', temp:'5,500°C', example:'The Sun',
+    fact:'Our Sun is a yellow dwarf (technically G-type main sequence). Middle-aged at 4.6 billion years. Not particularly big, hot, or special by cosmic standards. But it\'s ours, and it\'s perfect for life.' },
+  { name:'Orange Giant', color:'#FF8800', size:32, sunScale:'2-10x Sun', lifespan:'~1 billion years (phase)', temp:'3,500-5,000°C', example:'Arcturus',
+    fact:'When a star starts running low on hydrogen it expands and cools. Arcturus is 25 times the Sun\'s diameter. It\'s what our Sun will look like in about 5 billion years. Earth will not enjoy the experience.' },
+  { name:'Red Giant', color:'#CC3300', size:44, sunScale:'10-100x Sun', lifespan:'~100 million years (phase)', temp:'3,000-4,000°C', example:'Aldebaran',
+    fact:'A dying Sun-like star swells to engulf Mercury, Venus, and possibly Earth. The Sun will become a red giant in 5 billion years. It will be 200 times its current size. Plan accordingly.' },
+  { name:'White Dwarf', color:'#EEEEFF', size:8, sunScale:'Earth-sized', lifespan:'Trillions of years (cooling)', temp:'8,000-40,000°C (initially)', example:'Sirius B',
+    fact:'The dead core of a Sun-like star after it sheds its outer layers. Earth-sized but with the mass of the Sun. A teaspoon weighs 5 tonnes. It slowly cools over trillions of years. A cosmic ember.' },
+  { name:'Blue Giant', color:'#4488FF', size:38, sunScale:'5-20x Sun', lifespan:'10-100 million years', temp:'10,000-30,000°C', example:'Rigel',
+    fact:'Massive, hot, and short-lived. Blue giants burn through fuel so fast they live millions of years, not billions. Rigel produces 120,000 times the Sun\'s luminosity. Live fast, die young, leave a beautiful nebula.' },
+  { name:'Supergiant', color:'#FF6644', size:56, sunScale:'100-1,700x Sun', lifespan:'~10 million years', temp:'3,000-25,000°C', example:'Betelgeuse',
+    fact:'Betelgeuse is so large that if it replaced our Sun, it would extend past Jupiter\'s orbit. It will explode as a supernova within the next 100,000 years — visible in broad daylight from Earth. Astronomically, that\'s "any minute now."' },
+  { name:'Neutron Star', color:'#AABBFF', size:5, sunScale:'20 km (!)', lifespan:'Effectively forever', temp:'600,000°C (surface)', example:'PSR B1919+21',
+    fact:'When a supergiant explodes, the core collapses until protons and electrons merge into neutrons. A city-sized ball with the mass of the Sun. Spins up to 716 times per second. Magnetic field: trillion times Earth\'s. The most extreme object that isn\'t a black hole.' },
+  { name:'Black Hole', color:'#000000', size:30, sunScale:'Infinite density (singularity)', lifespan:'10⁶⁷ years (Hawking radiation)', temp:'Undefined', example:'Sagittarius A*',
+    fact:'When a star 20+ times the Sun\'s mass dies, nothing can stop the core from collapsing. The result: a singularity where density is infinite and physics breaks. Not even light escapes. Time stops at the event horizon. We photographed one in 2019. That image required a telescope the size of Earth.' },
+];
+
+function renderStarTypes(){
+  const wrap = document.getElementById('startypesWrap');
+  wrap.innerHTML = '<div style="font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;text-align:center">Stellar Evolution — from birth to death</div>';
+  STAR_TYPES.forEach(st => {
+    const grad = st.color === '#000000'
+      ? 'radial-gradient(circle at 50% 50%, #222, #000)'
+      : `radial-gradient(circle at 35% 35%, ${lighten(st.color)}, ${st.color})`;
+    const glow = st.color === '#000000' ? '0 0 15px rgba(255,100,50,0.4)' : `0 0 ${st.size*0.6}px ${st.color}66`;
+    wrap.innerHTML += `
+      <div class="startype-card">
+        <div class="startype-visual" style="width:${st.size}px;height:${st.size}px;background:${grad};box-shadow:${glow}"></div>
+        <div class="startype-info">
+          <div class="startype-name" style="color:${st.color==='#000000'?'#FF6644':st.color}">${st.name}</div>
+          <div class="startype-meta">${st.example} · ${st.temp} · ${st.lifespan}</div>
+          <div class="startype-fact">${st.fact}</div>
+          <div class="startype-size">Size: ${st.sunScale}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function switchStarsSub(sub){
+  document.querySelectorAll('.stars-sub').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sub-'+sub).classList.add('active');
+  document.getElementById('sub-content-constellations').style.display = sub==='constellations' ? 'flex' : 'none';
+  document.getElementById('sub-content-startypes').style.display = sub==='startypes' ? 'flex' : 'none';
+  if(sub==='constellations') renderStars();
+  if(sub==='startypes') renderStarTypes();
+}
+
 // Wire up canvas click/touch
 document.getElementById('starsCanvas').addEventListener('click', handleStarsClick);
 document.getElementById('starsCanvas').addEventListener('touchend', e => {
@@ -1953,6 +2064,191 @@ function nextSlingLevel(){
 })();
 
 // ═══════════════════════════════════════════════════════
+// LAND THE ROVER
+// ═══════════════════════════════════════════════════════
+const ROVER_MISSIONS = [
+  { name:'Jezero Crater — Ancient Riverbed', target:'an ancient riverbed', color:'#CC8844',
+    fact:'Perseverance landed in Jezero Crater in 2021. It was a lake 3.5 billion years ago. The rover is collecting rock samples that will be returned to Earth in the 2030s — the first Mars sample return.' },
+  { name:'Gale Crater — Clay Deposits', target:'clay deposits', color:'#AA9966',
+    fact:'Curiosity has been exploring Gale Crater since 2012. It found clay minerals that only form in water, proving Mars had long-standing lakes. Mount Sharp in the center is a 5 km tall mountain of layered history.' },
+  { name:'Meridiani Planum — Ice Deposit', target:'an ice deposit', color:'#BBAA88',
+    fact:'Opportunity explored here for 15 YEARS on a 90-day mission. Its final message in 2018 during a dust storm translated roughly to: "My battery is low and it\'s getting dark." We are not crying.' },
+  { name:'Olympus Mons Base — Rock Samples', target:'volcanic rock samples', color:'#DD7755',
+    fact:'Olympus Mons is 21 km tall — nearly 3 times Everest. Its base is the size of France. The caldera alone could contain a city. Mars doesn\'t do small.' },
+];
+
+let roverDir = 0;
+let roverBoost = false;
+let roverX = 40, roverY = 0, roverVY = 0;
+let roverBattery = 100;
+let roverTerrain = [];
+let roverTargetX = 0;
+let roverMissionIdx = 0;
+let roverAF = null;
+let roverGameOver = false;
+let roverScrollX = 0;
+
+function renderRover(){
+  roverDir = 0; roverBoost = false;
+  roverX = 40; roverVY = 0; roverBattery = 100;
+  roverGameOver = false; roverScrollX = 0;
+  document.getElementById('roverResult').style.display = 'none';
+  const m = ROVER_MISSIONS[roverMissionIdx];
+  document.getElementById('roverMission').textContent = m.name;
+  document.getElementById('roverStatus').textContent = '🔋 100%';
+
+  // Generate terrain
+  roverTerrain = [];
+  let y = 200;
+  roverTargetX = 700 + Math.random()*200;
+  for(let x=0; x<roverTargetX+200; x+=4){
+    y += (Math.random()-0.5)*6;
+    y = Math.max(140, Math.min(260, y));
+    // Add craters
+    if(Math.random()<0.02 && x>100) y += 20;
+    if(Math.random()<0.02 && x>100) y -= 15;
+    roverTerrain.push({x, y});
+  }
+
+  if(roverAF) cancelAnimationFrame(roverAF);
+  roverLoop();
+}
+
+function getTerrainY(px){
+  for(let i=0;i<roverTerrain.length-1;i++){
+    if(roverTerrain[i].x <= px && roverTerrain[i+1].x > px){
+      const t = (px - roverTerrain[i].x) / (roverTerrain[i+1].x - roverTerrain[i].x);
+      return roverTerrain[i].y + t * (roverTerrain[i+1].y - roverTerrain[i].y);
+    }
+  }
+  return 200;
+}
+
+function roverLoop(){
+  if(roverGameOver) return;
+  const canvas = document.getElementById('roverCanvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const w = rect.width, h = rect.height;
+  const m = ROVER_MISSIONS[roverMissionIdx];
+
+  // Update rover
+  const speed = roverBoost ? 2.5 : 1.2;
+  if(roverDir !== 0) roverBattery -= roverBoost ? 0.3 : 0.1;
+  roverX += roverDir * speed;
+  if(roverX < 10) roverX = 10;
+
+  // Scroll camera
+  roverScrollX = Math.max(0, roverX - w*0.3);
+
+  document.getElementById('roverStatus').textContent = `🔋 ${Math.max(0,Math.round(roverBattery))}%`;
+
+  // Clear — Mars sky gradient
+  const sky = ctx.createLinearGradient(0,0,0,h);
+  sky.addColorStop(0, '#1a0a05');
+  sky.addColorStop(0.4, '#331a0a');
+  sky.addColorStop(1, m.color);
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,w,h);
+
+  // Terrain
+  ctx.beginPath();
+  const startI = Math.max(0, Math.floor(roverScrollX/4)-1);
+  let first = true;
+  for(let i=startI; i<roverTerrain.length; i++){
+    const sx = roverTerrain[i].x - roverScrollX;
+    if(sx > w+10) break;
+    const sy = roverTerrain[i].y * (h/300);
+    if(first){ ctx.moveTo(sx, sy); first=false; }
+    else ctx.lineTo(sx, sy);
+  }
+  ctx.lineTo(w+10, h+10);
+  ctx.lineTo(-10, h+10);
+  ctx.closePath();
+  ctx.fillStyle = m.color;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Boulders (decorative)
+  for(let i=0;i<roverTerrain.length;i+=40){
+    const bx = roverTerrain[i].x - roverScrollX;
+    const by = roverTerrain[i].y * (h/300) - 4;
+    if(bx < -20 || bx > w+20) continue;
+    ctx.beginPath();
+    ctx.arc(bx, by, 3+Math.sin(i)*2, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fill();
+  }
+
+  // Target flag
+  const tx = roverTargetX - roverScrollX;
+  const ty = getTerrainY(roverTargetX) * (h/300);
+  ctx.fillStyle = '#44FF88';
+  ctx.fillRect(tx, ty-30, 2, 30);
+  ctx.fillStyle = 'rgba(68,255,136,0.8)';
+  ctx.fillRect(tx+2, ty-30, 14, 10);
+  ctx.font = '700 8px Nunito';
+  ctx.fillStyle = '#002';
+  ctx.textAlign = 'left';
+  ctx.fillText('🎯', tx+3, ty-22);
+
+  // Rover
+  const rx = roverX - roverScrollX;
+  const ry = getTerrainY(roverX) * (h/300);
+  // Body
+  ctx.fillStyle = '#DDDDDD';
+  ctx.fillRect(rx-10, ry-12, 20, 8);
+  // Wheels
+  ctx.beginPath(); ctx.arc(rx-6, ry-2, 4, 0, Math.PI*2); ctx.fillStyle='#555'; ctx.fill();
+  ctx.beginPath(); ctx.arc(rx+6, ry-2, 4, 0, Math.PI*2); ctx.fill();
+  // Arm
+  ctx.strokeStyle = '#AAA';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(rx+5, ry-12); ctx.lineTo(rx+12, ry-20); ctx.stroke();
+  // Antenna
+  ctx.beginPath(); ctx.moveTo(rx, ry-12); ctx.lineTo(rx, ry-20); ctx.stroke();
+  ctx.beginPath(); ctx.arc(rx, ry-20, 2, 0, Math.PI*2); ctx.fillStyle='#4488FF'; ctx.fill();
+
+  // Check win
+  if(Math.abs(roverX - roverTargetX) < 15){
+    roverGameOver = true;
+    score += 35;
+    saveState(); updateUI(); addFlash();
+    spawnConfetti('#FF6B35');
+    const res = document.getElementById('roverResult');
+    res.innerHTML = `<span style="font-size:28px">🎯</span><div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--teal);margin:4px 0">Target Reached!</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);line-height:1.5;margin-bottom:10px">${m.fact}</div>
+      <button onclick="nextRoverMission()" style="background:linear-gradient(135deg,var(--spark),#FF3B6B);border:none;border-radius:10px;color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;padding:10px 24px;cursor:pointer">Next Mission →</button>`;
+    res.style.display = 'block';
+    return;
+  }
+
+  // Check battery
+  if(roverBattery <= 0){
+    roverGameOver = true;
+    const res = document.getElementById('roverResult');
+    res.innerHTML = `<span style="font-size:28px">🔋</span><div style="font-family:'Fredoka One',cursive;font-size:16px;color:var(--spark);margin:4px 0">Battery Depleted</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px">"My battery is low and it's getting dark." — Opportunity, 2018</div>
+      <button onclick="renderRover()" style="background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;padding:10px 24px;cursor:pointer">Retry Mission</button>`;
+    res.style.display = 'block';
+    return;
+  }
+
+  roverAF = requestAnimationFrame(roverLoop);
+}
+
+function nextRoverMission(){
+  roverMissionIdx = (roverMissionIdx + 1) % ROVER_MISSIONS.length;
+  renderRover();
+}
+
+// ═══════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════
 function switchTab(tab){
@@ -1964,6 +2260,7 @@ function switchTab(tab){
   if(tab==='stars'){ renderStars(); }
   if(tab==='orbit'){ renderOrbit(); }
   if(tab==='sling'){ renderSling(); }
+  if(tab==='rover'){ renderRover(); }
   if(tab==='scale'){ renderScale(); }
   if(tab==='mission'){ renderMission(); }
 }
