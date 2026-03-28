@@ -425,8 +425,10 @@ body {
   scrollbar-width: none;
   align-items: center;
   min-width: 0;
+  cursor: grab;
 }
 .tray-row::-webkit-scrollbar { display: none; }
+.tray-row.dragging { cursor: grabbing; }
 
 .tray-item {
   flex-shrink: 0;
@@ -1331,6 +1333,23 @@ function renderTray() {
       }
       row.appendChild(item);
     });
+    // Mouse drag-to-scroll on desktop
+    let isRowDrag = false, rowStartX = 0, rowScrollLeft = 0;
+    row.addEventListener('mousedown', e => {
+      if (e.target.closest('.tray-item')) return; // let item clicks through
+      isRowDrag = true;
+      rowStartX = e.pageX;
+      rowScrollLeft = row.scrollLeft;
+      row.classList.add('dragging');
+    });
+    row.addEventListener('mousemove', e => {
+      if (!isRowDrag) return;
+      e.preventDefault();
+      row.scrollLeft = rowScrollLeft - (e.pageX - rowStartX);
+    });
+    row.addEventListener('mouseup', () => { isRowDrag = false; row.classList.remove('dragging'); });
+    row.addEventListener('mouseleave', () => { isRowDrag = false; row.classList.remove('dragging'); });
+
     scroll.appendChild(row);
   });
 }
