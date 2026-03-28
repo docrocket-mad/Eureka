@@ -285,6 +285,40 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 #slingCanvas{background:radial-gradient(ellipse at 50% 50%,#0a0a20,#040410);border-radius:16px;border:1px solid var(--border);max-width:100%;max-height:100%;cursor:crosshair;touch-action:none;}
 .sling-hint{text-align:center;font-size:11px;font-weight:800;color:var(--muted);margin-top:8px;}
 
+/* Life Finder */
+.lifefinder-wrap{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px;}
+.lf-card{background:var(--card);border-radius:18px;padding:16px;border:1px solid var(--border);}
+.lf-planet-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.lf-planet-vis{border-radius:50%;flex-shrink:0;}
+.lf-planet-name{font-family:'Fredoka One',cursive;font-size:18px;}
+.lf-planet-type{font-size:10px;font-weight:800;color:var(--muted);}
+.lf-stats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.lf-stat{background:var(--card2);border-radius:8px;padding:5px 8px;font-size:10px;font-weight:800;border:1px solid var(--border);}
+.lf-stat-label{color:var(--muted);font-size:8px;text-transform:uppercase;}
+.lf-verdict{font-size:12px;font-weight:800;line-height:1.6;padding:10px;border-radius:10px;margin-bottom:8px;}
+.lf-verdict.possible{background:rgba(68,255,136,0.08);border:1px solid rgba(68,255,136,0.2);color:var(--teal);}
+.lf-verdict.unlikely{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);color:var(--spark);}
+.lf-verdict.unknown{background:rgba(77,159,255,0.08);border:1px solid rgba(77,159,255,0.2);color:var(--blue);}
+.lf-fact{font-size:11px;font-weight:700;color:rgba(240,240,255,0.75);line-height:1.55;}
+.lf-btn-row{display:flex;gap:8px;margin-top:8px;}
+.lf-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card2);font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;text-align:center;transition:all 0.15s;}
+.lf-btn:active{transform:scale(0.97);}
+.lf-btn.selected-yes{background:rgba(68,255,136,0.15);border-color:var(--teal);color:var(--teal);}
+.lf-btn.selected-no{background:rgba(255,107,53,0.15);border-color:var(--spark);color:var(--spark);}
+.lf-btn.selected-maybe{background:rgba(77,159,255,0.15);border-color:var(--blue);color:var(--blue);}
+
+/* Cosmic Timeline */
+.timeline-section{margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
+.timeline-title{font-family:'Fredoka One',cursive;font-size:20px;color:var(--gold);margin-bottom:4px;}
+.timeline-sub{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.timeline-events{position:relative;padding-left:20px;}
+.timeline-line{position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--gold),var(--spark),var(--teal),var(--blue),var(--pink));}
+.timeline-event{position:relative;margin-bottom:14px;padding-left:16px;}
+.timeline-dot{position:absolute;left:-16px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--dark);}
+.timeline-when{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;}
+.timeline-what{font-size:13px;font-weight:800;}
+.timeline-detail{font-size:10px;font-weight:700;color:var(--muted);line-height:1.5;margin-top:2px;}
+
 /* ══════════════════════════════
    LAND THE ROVER
 ══════════════════════════════ */
@@ -352,6 +386,7 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
       <div class="stars-sub-nav">
         <div class="stars-sub active" id="sub-constellations" onclick="switchStarsSub('constellations')">✨ Constellations</div>
         <div class="stars-sub" id="sub-startypes" onclick="switchStarsSub('startypes')">⭐ Star Types</div>
+        <div class="stars-sub" id="sub-lifefinder" onclick="switchStarsSub('lifefinder')">🔬 Life Finder</div>
       </div>
       <div class="stars-sub-content" id="sub-content-constellations">
         <div class="stars-game-wrap">
@@ -372,6 +407,9 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
       </div>
       <div class="stars-sub-content" id="sub-content-startypes" style="display:none">
         <div class="startypes-wrap" id="startypesWrap"></div>
+      </div>
+      <div class="stars-sub-content" id="sub-content-lifefinder" style="display:none">
+        <div class="lifefinder-wrap" id="lifefinderWrap"></div>
       </div>
     </div>
 
@@ -464,6 +502,12 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
             <div class="mb-title">The Sun is Enormous</div>
             <div class="mb-text">1.3 million Earths could fit inside the Sun. Yet the Sun is a medium-sized star. The largest known star, UY Scuti, is so big that if it replaced the Sun, it would engulf Jupiter. You are very, very small.</div>
           </div>
+        </div>
+
+        <div class="timeline-section">
+          <div class="timeline-title">⏳ Cosmic Timeline</div>
+          <div class="timeline-sub">If the universe's 13.8 billion year history were compressed into one calendar year, all of recorded human history happens in the last 14 seconds of December 31st.</div>
+          <div class="timeline-events" id="timelineEvents"></div>
         </div>
       </div>
     </div>
@@ -1655,10 +1699,146 @@ function renderStarTypes(){
 function switchStarsSub(sub){
   document.querySelectorAll('.stars-sub').forEach(s=>s.classList.remove('active'));
   document.getElementById('sub-'+sub).classList.add('active');
-  document.getElementById('sub-content-constellations').style.display = sub==='constellations' ? 'flex' : 'none';
-  document.getElementById('sub-content-startypes').style.display = sub==='startypes' ? 'flex' : 'none';
+  ['constellations','startypes','lifefinder'].forEach(k => {
+    document.getElementById('sub-content-'+k).style.display = k===sub ? 'flex' : 'none';
+  });
   if(sub==='constellations') renderStars();
   if(sub==='startypes') renderStarTypes();
+  if(sub==='lifefinder') renderLifeFinder();
+}
+
+// ═══════════════════════════════════════════════════════
+// LIFE FINDER
+// ═══════════════════════════════════════════════════════
+const LIFE_CANDIDATES = [
+  { name:'Europa', type:'Moon of Jupiter', color:'#99CCEE', size:28,
+    stats:{distance:'5.2 AU',size:'0.25x Earth',atmosphere:'Trace O₂',temp:'-160°C',water:'Subsurface ocean'},
+    verdict:'possible', verdictText:'Strong candidate for microbial life',
+    detail:'Europa has a global saltwater ocean beneath 15-25 km of ice. Tidal heating from Jupiter keeps it liquid. Hydrothermal vents on the ocean floor could provide energy and chemistry — exactly how life may have started on Earth. The Europa Clipper mission will investigate.',
+    lifeType:'Microbial — chemosynthetic organisms near hydrothermal vents, similar to deep ocean life on Earth' },
+  { name:'Titan', type:'Moon of Saturn', color:'#CC9944', size:30,
+    stats:{distance:'9.5 AU',size:'0.4x Earth',atmosphere:'N₂ (98%)',temp:'-179°C',water:'Subsurface + methane lakes'},
+    verdict:'unknown', verdictText:'Exotic life? Methane-based biochemistry is theoretically possible',
+    detail:'Titan has the ingredients for exotic biochemistry: complex organic molecules, liquid methane as solvent, energy from UV and cosmic rays. Life there would be fundamentally different from anything on Earth — methane instead of water, possibly using acetylene instead of glucose. We genuinely don\'t know if this is possible.',
+    lifeType:'Exotic — possibly methane-based organisms using liquid methane instead of water as a solvent' },
+  { name:'Mars', type:'Planet', color:'#E74C3C', size:26,
+    stats:{distance:'1.52 AU',size:'0.53x Earth',atmosphere:'CO₂ (95%)',temp:'-65°C',water:'Ancient lakes, polar ice'},
+    verdict:'possible', verdictText:'Ancient microbial life is plausible — current life unlikely but not impossible',
+    detail:'Mars had liquid water, a thicker atmosphere, and a magnetic field 3.5 billion years ago. If life started there, it may have retreated underground as conditions worsened. Perseverance is collecting rock samples from an ancient lakebed. The answer may literally be in a tube on Mars right now.',
+    lifeType:'Microbial — ancient fossils or extant organisms sheltering underground in briny aquifers' },
+  { name:'Enceladus', type:'Moon of Saturn', color:'#EEEEFF', size:16,
+    stats:{distance:'9.5 AU',size:'0.04x Earth',atmosphere:'Water vapor plumes',temp:'-201°C',water:'Subsurface ocean + geysers'},
+    verdict:'possible', verdictText:'Surprisingly strong candidate — has all ingredients',
+    detail:'Enceladus is only 500 km across but Cassini flew through its water geysers and found hydrogen, organic molecules, and silica nanoparticles indicating hydrothermal activity. Liquid water + organic chemistry + energy source = all the requirements for life. In a moon smaller than the UK.',
+    lifeType:'Microbial — chemosynthetic organisms at hydrothermal vents in a subsurface ocean' },
+  { name:'Venus', type:'Planet', color:'#E8C85A', size:28,
+    stats:{distance:'0.72 AU',size:'0.95x Earth',atmosphere:'CO₂ (96%)',temp:'465°C (surface)',water:'None (surface)'},
+    verdict:'unlikely', verdictText:'Surface: absolutely not. Cloud layer: ...maybe?',
+    detail:'Venus\'s surface is a 465°C sulfuric acid hellscape. BUT at 50-65 km altitude, temperature and pressure are Earth-like. In 2020, scientists reported phosphine in Venus\'s clouds — a gas produced by anaerobic bacteria on Earth. The detection is disputed. If true, something alive is floating in Venus\'s clouds. If false, we learned Venus has very weird chemistry.',
+    lifeType:'Aerial — microbes floating in temperate cloud layer, using sulfur chemistry instead of oxygen' },
+  { name:'TRAPPIST-1e', type:'Exoplanet', color:'#3388DD', size:26,
+    stats:{distance:'40 light years',size:'0.92x Earth',atmosphere:'Unknown — JWST analyzing',temp:'~-27°C (est.)',water:'Possibly liquid (habitable zone)'},
+    verdict:'unknown', verdictText:'Most Earth-like exoplanet known — we simply don\'t have enough data yet',
+    detail:'TRAPPIST-1e orbits in the habitable zone of a red dwarf star 40 light years away. It\'s roughly Earth\'s size and mass. JWST is currently analyzing its atmosphere for biosignatures — water, oxygen, methane. If it finds all three in the right ratios, it would be the strongest evidence yet for life beyond Earth. We\'re watching. The whole species is watching.',
+    lifeType:'Unknown — could range from microbial to complex depending on atmospheric and geological conditions' },
+];
+let lfIdx = 0;
+let lfRevealed = false;
+
+function renderLifeFinder(){
+  const wrap = document.getElementById('lifefinderWrap');
+  const c = LIFE_CANDIDATES[lfIdx];
+  lfRevealed = false;
+
+  const grad = `radial-gradient(circle at 35% 35%, ${lighten(c.color)}, ${c.color})`;
+  wrap.innerHTML = `
+    <div style="text-align:center;font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🔬 Could Life Exist Here?</div>
+    <div class="lf-card">
+      <div class="lf-planet-row">
+        <div class="lf-planet-vis" style="width:${c.size}px;height:${c.size}px;background:${grad};box-shadow:0 0 ${c.size*0.5}px ${c.color}44"></div>
+        <div>
+          <div class="lf-planet-name" style="color:${c.color}">${c.name}</div>
+          <div class="lf-planet-type">${c.type}</div>
+        </div>
+      </div>
+      <div class="lf-stats">
+        ${Object.entries(c.stats).map(([k,v]) => `<div class="lf-stat"><div class="lf-stat-label">${k}</div>${v}</div>`).join('')}
+      </div>
+      <div class="lf-btn-row" id="lfBtns">
+        <div class="lf-btn" onclick="lfAnswer('yes')" style="color:var(--teal)">🌿 Yes</div>
+        <div class="lf-btn" onclick="lfAnswer('maybe')" style="color:var(--blue)">🤔 Maybe</div>
+        <div class="lf-btn" onclick="lfAnswer('no')" style="color:var(--spark)">❌ No</div>
+      </div>
+      <div id="lfResult"></div>
+    </div>
+    <div style="text-align:center;font-size:10px;color:var(--muted);font-weight:700;margin-top:4px">${lfIdx+1} / ${LIFE_CANDIDATES.length}</div>
+  `;
+}
+
+function lfAnswer(choice){
+  if(lfRevealed) return;
+  lfRevealed = true;
+  const c = LIFE_CANDIDATES[lfIdx];
+  const verdictClass = c.verdict === 'possible' ? 'possible' : c.verdict === 'unlikely' ? 'unlikely' : 'unknown';
+
+  // Highlight selected button
+  const btns = document.querySelectorAll('.lf-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const correct = c.verdict === 'possible' ? 'yes' : c.verdict === 'unlikely' ? 'no' : 'maybe';
+  const picked = choice === 'yes' ? 0 : choice === 'maybe' ? 1 : 2;
+  btns[picked].classList.add(choice === 'yes' ? 'selected-yes' : choice === 'maybe' ? 'selected-maybe' : 'selected-no');
+
+  if(choice === correct || (c.verdict === 'possible' && choice === 'maybe') || (c.verdict === 'unknown' && choice !== 'no')){
+    score += 20; saveState(); updateUI();
+  }
+
+  document.getElementById('lfResult').innerHTML = `
+    <div class="lf-verdict ${verdictClass}" style="margin-top:10px">
+      <strong>${c.verdictText}</strong>
+    </div>
+    <div class="lf-fact">${c.detail}</div>
+    <div style="font-size:10px;font-weight:800;color:var(--teal);margin-top:8px">Potential life type: ${c.lifeType}</div>
+    <button onclick="nextLifeCandidate()" style="margin-top:10px;width:100%;background:linear-gradient(135deg,var(--teal),var(--blue));border:none;border-radius:10px;color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;padding:10px;cursor:pointer">Next Candidate →</button>
+  `;
+}
+
+function nextLifeCandidate(){
+  lfIdx = (lfIdx + 1) % LIFE_CANDIDATES.length;
+  renderLifeFinder();
+}
+
+// ═══════════════════════════════════════════════════════
+// COSMIC TIMELINE
+// ═══════════════════════════════════════════════════════
+const TIMELINE_EVENTS = [
+  { when:'13.8 billion years ago', what:'The Big Bang', color:'#FFD23F', detail:'Everything that exists — all matter, energy, space, and time — began from an infinitely dense point. The universe has been expanding ever since.' },
+  { when:'13.6 billion years ago', what:'First Stars Ignite', color:'#FFFFFF', detail:'200 million years of darkness ended when hydrogen clouds collapsed under gravity and ignited. These first stars were massive, short-lived, and forged the first heavy elements.' },
+  { when:'13.5 billion years ago', what:'Milky Way Forms', color:'#DDDDFF', detail:'Our galaxy assembled from merging smaller galaxies. It\'s still cannibalizing dwarf galaxies today. In 4.5 billion years it will merge with Andromeda.' },
+  { when:'4.6 billion years ago', what:'Solar System Forms', color:'#FFD700', detail:'A cloud of gas and dust collapsed, forming the Sun and a spinning disc of debris that became the planets. The whole process took about 100 million years.' },
+  { when:'4.5 billion years ago', what:'Earth Forms', color:'#3498DB', detail:'Earth was initially a molten ball of rock. A Mars-sized object (Theia) smashed into it, creating the Moon. The Moon stabilized Earth\'s axial tilt — making seasons possible.' },
+  { when:'3.8 billion years ago', what:'First Life on Earth', color:'#44FF88', detail:'Simple single-celled organisms appeared in the oceans. We don\'t know exactly how — the origin of life is one of the biggest unsolved questions in science.' },
+  { when:'2.4 billion years ago', what:'Great Oxidation Event', color:'#FF6B35', detail:'Cyanobacteria started producing oxygen as waste. This was CATASTROPHIC for most existing life (oxygen was toxic to them). The biggest mass extinction in history, caused by bacteria.' },
+  { when:'600 million years ago', what:'First Complex Life', color:'#00E5B0', detail:'After 3 billion years of single cells, multicellular organisms finally appeared. The Cambrian Explosion: in 20 million years, most major animal groups appeared. Evolution got creative.' },
+  { when:'230 million years ago', what:'First Dinosaurs', color:'#E74C3C', detail:'Dinosaurs emerged and dominated for 165 million years. For context, modern humans have existed for 0.3 million years. Dinosaurs were 550x more successful (so far).' },
+  { when:'66 million years ago', what:'Asteroid Extinction', color:'#FF4400', detail:'A 10 km asteroid hit what is now Mexico. The impact energy was 10 billion times the Hiroshima bomb. 75% of all species died. Mammals survived. We owe our existence to a rock.' },
+  { when:'300,000 years ago', what:'First Homo Sapiens', color:'#FF6B9D', detail:'Anatomically modern humans appeared in Africa. We\'ve existed for 0.002% of Earth\'s history. If Earth\'s history were a 24-hour clock, we arrive at 11:59:56 PM.' },
+  { when:'5,000 years ago', what:'Written History Begins', color:'#9B59B6', detail:'Sumerians invented writing. Everything before this is "prehistory." All of recorded human civilization fits in the last 14 seconds of the cosmic calendar year.' },
+  { when:'Now', what:'You Are Here', color:'#4D9FFF', detail:'You are a collection of atoms that the universe assembled into a pattern capable of contemplating the universe. You are the cosmos experiencing itself. That\'s not poetry — it\'s chemistry.' },
+];
+
+function renderTimeline(){
+  const el = document.getElementById('timelineEvents');
+  if(!el) return;
+  el.innerHTML = '';
+  TIMELINE_EVENTS.forEach(ev => {
+    el.innerHTML += `
+      <div class="timeline-event">
+        <div class="timeline-dot" style="border-color:${ev.color}"></div>
+        <div class="timeline-when" style="color:${ev.color}">${ev.when}</div>
+        <div class="timeline-what">${ev.what}</div>
+        <div class="timeline-detail">${ev.detail}</div>
+      </div>`;
+  });
 }
 
 // Wire up canvas click/touch
@@ -2261,7 +2441,7 @@ function switchTab(tab){
   if(tab==='orbit'){ renderOrbit(); }
   if(tab==='sling'){ renderSling(); }
   if(tab==='rover'){ renderRover(); }
-  if(tab==='scale'){ renderScale(); }
+  if(tab==='scale'){ renderScale(); renderTimeline(); }
   if(tab==='mission'){ renderMission(); }
 }
 
