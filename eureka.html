@@ -2134,7 +2134,17 @@ function showPTDetail(sym) {
   document.getElementById('discFormula').textContent = el.symbol;
   document.getElementById('discFormula').className = 'disc-formula ' + (isDanger ? 'danger' : 'normal');
   document.getElementById('discReaction').textContent = pe ? `#${pe.num} · ${pe.mass} u · ${pe.cat}` : (el.sub || el.tier);
-  document.getElementById('discFact').textContent = el.fact;
+  // Show recipe(s) for non-atoms
+  const factEl = document.getElementById('discFact');
+  if (el.tier !== 'atom') {
+    const recipes = REACTIONS_RAW.filter(([,r]) => r === sym).map(([pair]) => {
+      return pair.map(id => E[id]?.symbol || id).join(' + ') + ' → ' + el.symbol;
+    });
+    const recipeHtml = recipes.length ? `<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);font-size:11px;font-weight:800;color:var(--gold)">🧪 How to make it:</div><div style="font-size:12px;margin-top:4px;line-height:1.8">${recipes.join('<br>')}</div>` : '';
+    factEl.innerHTML = el.fact + recipeHtml;
+  } else {
+    factEl.textContent = el.fact;
+  }
 
   const mode = isDanger ? 'danger' : 'normal';
   overlay.className = 'discovery-overlay' + (isDanger ? ' danger-overlay' : '');
