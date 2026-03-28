@@ -249,26 +249,23 @@ body {
 .tray-handle:active { color: var(--gold); }
 .tray.expanded .tray-handle { color: var(--gold); }
 
-.tray-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
+.tray-section-label {
   flex-shrink: 0;
-}
-.tray-tab {
-  flex: 1;
-  padding: 7px 4px;
-  text-align: center;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 900;
   color: var(--muted);
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 4px 2px;
+  display: flex;
+  align-items: center;
+  border-left: 2px solid var(--border);
+  margin-left: 4px;
 }
-.tray-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-.tray-tab.danger-tab.active { color: var(--danger); border-bottom-color: var(--danger); }
+.tray-section-label:first-child { border-left: none; margin-left: 0; }
+.tray-section-label.danger-label { color: var(--danger); border-left-color: rgba(255,34,68,0.3); }
 
 .tray-scroll {
   flex: 1;
@@ -890,12 +887,6 @@ body {
 
   <div class="tray" id="tray">
     <div class="tray-handle" id="trayHandle">▲ expand</div>
-    <div class="tray-tabs">
-      <div class="tray-tab active" id="tab-atoms" onclick="switchTab('atoms')">⚛️ Atoms</div>
-      <div class="tray-tab" id="tab-molecules" onclick="switchTab('molecules')">🧪 Molecules</div>
-      <div class="tray-tab" id="tab-compounds" onclick="switchTab('compounds')">🌍 Compounds</div>
-      <div class="tray-tab danger-tab" id="tab-danger" onclick="switchTab('danger')">☠️ Danger</div>
-    </div>
     <div class="tray-scroll" id="trayScroll"></div>
   </div>
 </div>
@@ -1066,7 +1057,6 @@ const SFX = {
 let discovered = new Set(STARTER_ATOMS);
 let canvasEls = [];
 let nextId = 0;
-let currentTab = 'atoms';
 let dragging = null, dragOffX = 0, dragOffY = 0;
 
 function loadState() {
@@ -1084,7 +1074,6 @@ function saveState() {
 // ═══════════════════════════════════════════════════════
 // TRAY
 // ═══════════════════════════════════════════════════════
-const TIER_TAB = { atom:'atoms', molecule:'molecules', compound:'compounds', danger:'danger' };
 
 function initTrayDrawer() {
   const tray = document.getElementById('tray');
@@ -1095,43 +1084,55 @@ function initTrayDrawer() {
   });
 }
 
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tray-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  renderTray();
-}
-
 function renderTray() {
   const scroll = document.getElementById('trayScroll');
   scroll.innerHTML = '';
-  const all = Object.values(E);
-  const items = all.filter(el => TIER_TAB[el.tier] === currentTab);
 
-  items.forEach(el => {
-    const isDisc = discovered.has(el.id);
-    const isDanger = el.danger || el.tier === 'danger';
-    const item = document.createElement('div');
-    item.className = 'tray-item' + (isDisc ? '' : ' tray-locked');
+  const sections = [
+    { key:'atom',     label:'⚛️ Atoms' },
+    { key:'molecule', label:'🧪 Molecules' },
+    { key:'compound', label:'🌍 Compounds' },
+    { key:'danger',   label:'☠️ Danger', danger:true },
+  ];
 
-    const bubbleBg = `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})`;
-    item.innerHTML = `
-      <div class="tray-bubble ${isDanger && isDisc ? 'danger-tray' : ''}"
-           style="background:${isDisc ? bubbleBg : 'rgba(255,255,255,0.04)'};
-                  box-shadow:0 3px 14px ${isDisc ? el.shadow : 'transparent'};
-                  color:${el.tc}">
-        ${!isDisc ? '<div class="lock-badge">🔒</div>' : ''}
-        <span class="tray-symbol" style="${isDisc && el.symbol.length > 6 ? 'font-size:7px' : isDisc && el.symbol.length > 3 ? 'font-size:10px' : ''}">${isDisc ? el.symbol : ''}</span>
-        <span class="tray-sub">${isDisc ? (el.sub||'') : ''}</span>
-      </div>
-      <span class="tray-name ${isDanger && isDisc ? 'danger-tray-name' : ''}">${isDisc ? el.name : '???'}</span>
-    `;
+  sections.forEach(sec => {
+    const items = Object.values(E).filter(el => el.tier === sec.key || (sec.key === 'danger' && el.danger && el.tier !== 'danger'));
+    // Only show section if it has any discovered items or any items at all
+    const hasAny = items.some(el => discovered.has(el.id));
+    if (!hasAny && sec.key !== 'atom') return; // always show atoms
 
-    if (isDisc) {
-      item.addEventListener('touchstart', e => { e.preventDefault(); spawnFromTray(el.id, e); }, {passive:false});
-      item.addEventListener('mousedown', e => spawnFromTray(el.id, e));
-    }
-    scroll.appendChild(item);
+    const label = document.createElement('div');
+    label.className = 'tray-section-label' + (sec.danger ? ' danger-label' : '');
+    label.textContent = sec.label;
+    scroll.appendChild(label);
+
+    items.forEach(el => {
+      // Skip danger-flagged molecules from the molecule section (shown in danger)
+      if (sec.key === 'molecule' && (el.danger || el.tier === 'danger')) return;
+      const isDisc = discovered.has(el.id);
+      const isDanger = el.danger || el.tier === 'danger';
+      const item = document.createElement('div');
+      item.className = 'tray-item' + (isDisc ? '' : ' tray-locked');
+
+      const bubbleBg = `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})`;
+      item.innerHTML = `
+        <div class="tray-bubble ${isDanger && isDisc ? 'danger-tray' : ''}"
+             style="background:${isDisc ? bubbleBg : 'rgba(255,255,255,0.04)'};
+                    box-shadow:0 3px 14px ${isDisc ? el.shadow : 'transparent'};
+                    color:${el.tc}">
+          ${!isDisc ? '<div class="lock-badge">🔒</div>' : ''}
+          <span class="tray-symbol" style="${isDisc && el.symbol.length > 6 ? 'font-size:7px' : isDisc && el.symbol.length > 3 ? 'font-size:10px' : ''}">${isDisc ? el.symbol : ''}</span>
+          <span class="tray-sub">${isDisc ? (el.sub||'') : ''}</span>
+        </div>
+        <span class="tray-name ${isDanger && isDisc ? 'danger-tray-name' : ''}">${isDisc ? el.name : '???'}</span>
+      `;
+
+      if (isDisc) {
+        item.addEventListener('touchstart', e => { e.preventDefault(); spawnFromTray(el.id, e); }, {passive:false});
+        item.addEventListener('mousedown', e => spawnFromTray(el.id, e));
+      }
+      scroll.appendChild(item);
+    });
   });
 }
 
