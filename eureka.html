@@ -1315,37 +1315,49 @@ function renderTray() {
       `;
 
       if (isDisc) {
-        // Touch: only spawn if it's a tap (no scroll movement)
-        let touchStartX, touchStartY;
-        item.addEventListener('touchstart', e => {
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-        }, {passive:true});
-        item.addEventListener('touchend', e => {
-          const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
-          const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-          if (dx < 10 && dy < 10) {
-            e.preventDefault();
+        // Tap vs drag detection — works for both touch and mouse
+        let tStartX, tStartY, tStartTime, tMoved;
+        const onStart = (e) => {
+          const p = e.touches ? e.touches[0] : e;
+          tStartX = p.clientX; tStartY = p.clientY;
+          tStartTime = Date.now(); tMoved = false;
+        };
+        const onMove = () => { tMoved = true; };
+        const onEnd = (e) => {
+          const p = e.changedTouches ? e.changedTouches[0] : e;
+          const dx = Math.abs(p.clientX - tStartX);
+          const dy = Math.abs(p.clientY - tStartY);
+          const dt = Date.now() - tStartTime;
+          // Quick tap with minimal movement = spawn element
+          if (dx < 12 && dy < 12 && dt < 300) {
+            if (e.cancelable) e.preventDefault();
             spawnFromTray(el.id, e);
           }
-        });
-        item.addEventListener('mousedown', e => spawnFromTray(el.id, e));
+        };
+        item.addEventListener('touchstart', onStart, {passive:true});
+        item.addEventListener('touchmove', onMove, {passive:true});
+        item.addEventListener('touchend', onEnd);
+        item.addEventListener('mousedown', onStart);
+        item.addEventListener('mousemove', onMove);
+        item.addEventListener('mouseup', onEnd);
       }
       row.appendChild(item);
     });
-    // Mouse drag-to-scroll on desktop
-    let isRowDrag = false, rowStartX = 0, rowScrollLeft = 0;
+    // Mouse drag-to-scroll on desktop — works everywhere including on items
+    let isRowDrag = false, rowStartX = 0, rowScrollLeft = 0, rowDragged = false;
     row.addEventListener('mousedown', e => {
-      if (e.target.closest('.tray-item')) return; // let item clicks through
-      isRowDrag = true;
+      isRowDrag = true; rowDragged = false;
       rowStartX = e.pageX;
       rowScrollLeft = row.scrollLeft;
-      row.classList.add('dragging');
     });
     row.addEventListener('mousemove', e => {
       if (!isRowDrag) return;
-      e.preventDefault();
-      row.scrollLeft = rowScrollLeft - (e.pageX - rowStartX);
+      const dx = Math.abs(e.pageX - rowStartX);
+      if (dx > 5) { rowDragged = true; row.classList.add('dragging'); }
+      if (rowDragged) {
+        e.preventDefault();
+        row.scrollLeft = rowScrollLeft - (e.pageX - rowStartX);
+      }
     });
     row.addEventListener('mouseup', () => { isRowDrag = false; row.classList.remove('dragging'); });
     row.addEventListener('mouseleave', () => { isRowDrag = false; row.classList.remove('dragging'); });
