@@ -168,8 +168,9 @@ body {
 @keyframes mergePop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4)} }
 
 .el-bubble {
-  width: 66px; height: 66px;
-  border-radius: 50%;
+  min-width: 66px; height: 66px;
+  padding: 0 8px;
+  border-radius: 33px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   position: relative; overflow: hidden;
@@ -193,7 +194,9 @@ body {
   50% { box-shadow: 0 0 28px var(--danger-glow), 0 0 50px rgba(255,34,68,0.3); }
 }
 
-.el-symbol { font-size: 15px; font-weight: 900; line-height: 1; }
+.el-symbol { font-size: 15px; font-weight: 900; line-height: 1; white-space: nowrap; }
+.el-symbol.sm { font-size: 11px; }
+.el-symbol.xs { font-size: 9px; }
 .el-sub { font-size: 8px; font-weight: 700; opacity: 0.85; line-height: 1; }
 .el-name {
   font-size: 10px; font-weight: 800;
@@ -302,8 +305,9 @@ body {
 .tray-item:active { transform: scale(0.88); }
 
 .tray-bubble {
-  width: 54px; height: 54px;
-  border-radius: 50%;
+  min-width: 54px; height: 54px;
+  padding: 0 6px;
+  border-radius: 27px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   position: relative; overflow: hidden;
@@ -1117,7 +1121,7 @@ function renderTray() {
                   box-shadow:0 3px 14px ${isDisc ? el.shadow : 'transparent'};
                   color:${el.tc}">
         ${!isDisc ? '<div class="lock-badge">🔒</div>' : ''}
-        <span class="tray-symbol">${isDisc ? el.symbol : ''}</span>
+        <span class="tray-symbol" style="${isDisc && el.symbol.length > 6 ? 'font-size:7px' : isDisc && el.symbol.length > 3 ? 'font-size:10px' : ''}">${isDisc ? el.symbol : ''}</span>
         <span class="tray-sub">${isDisc ? (el.sub||'') : ''}</span>
       </div>
       <span class="tray-name ${isDanger && isDisc ? 'danger-tray-name' : ''}">${isDisc ? el.name : '???'}</span>
@@ -1163,7 +1167,7 @@ function spawnElement(elId, x, y) {
                 box-shadow:0 4px 20px ${el.shadow}, inset 0 1px 0 rgba(255,255,255,0.2);
                 color:${el.tc}">
       ${isDanger ? '<span class="danger-skull">☠️</span>' : ''}
-      <span class="el-symbol">${el.symbol}</span>
+      <span class="el-symbol${el.symbol.length > 6 ? ' xs' : el.symbol.length > 3 ? ' sm' : ''}">${el.symbol}</span>
       <span class="el-sub">${el.sub||''}</span>
     </div>
     <span class="el-name ${isDanger ? 'danger-name' : ''}">${el.name}</span>
