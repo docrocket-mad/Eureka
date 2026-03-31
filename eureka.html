@@ -1410,8 +1410,13 @@ function spawnFromTray(elId, event) {
   const rect = canvas.getBoundingClientRect();
   const cx = rect.width/2 - 33 + (Math.random()-0.5)*120;
   const cy = rect.height/2 - 33 + (Math.random()-0.5)*80;
-  spawnElement(elId, cx, cy);
+  const obj = spawnElement(elId, cx, cy);
   SFX.pop();
+  // Check for immediate collision with existing elements
+  if (obj) {
+    const hit = findClosest(obj);
+    if (hit) attemptReaction(obj, hit);
+  }
 }
 
 function spawnElement(elId, x, y) {
