@@ -1778,7 +1778,7 @@ function gizmoSpeak(text, state, isDangerText) {
   bubble.textContent = text;
 
   // Auto-hide bubble after a while
-  const dur = state === 'panic' ? 5000 : state === 'worried' ? 4000 : 3500;
+  const dur = state === 'panic' ? 8000 : state === 'worried' ? 7000 : 6000;
   gizmoTimeout = setTimeout(() => {
     bubble.classList.remove('show');
     setTimeout(() => {
