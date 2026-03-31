@@ -1031,6 +1031,7 @@ body {
       <div class="stat-pill gold" id="discPill" onclick="switchMode('encyclo')">🔬 <span id="discCount">0</span></div>
       <div class="stat-pill danger" id="dangerPill" onclick="switchMode('encyclo')">☠️ <span id="dangerCount">0</span></div>
       <div class="cloud-pill" onclick="showSaveModal()">☁️ Sync</div>
+      <div class="cloud-pill" id="musicToggle" onclick="toggleMusic()" style="cursor:pointer">🔇</div>
     </div>
   </div>
 
@@ -1255,10 +1256,38 @@ const SFX = {
 };
 
 // ═══════════════════════════════════════════════════════
-
+// BACKGROUND MUSIC
 // ═══════════════════════════════════════════════════════
+const bgMusic = new Audio('/music/eureka-loop.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.18;
+let musicPlaying = false;
 
-// ═══════════════════════════════════════════════════════
+function toggleMusic() {
+  const btn = document.getElementById('musicToggle');
+  if (musicPlaying) {
+    bgMusic.pause();
+    musicPlaying = false;
+    btn.textContent = '🔇';
+    localStorage.setItem('eureka_music', 'off');
+  } else {
+    bgMusic.play().catch(() => {});
+    musicPlaying = true;
+    btn.textContent = '🎵';
+    localStorage.setItem('eureka_music', 'on');
+  }
+}
+
+// Restore music preference
+if (localStorage.getItem('eureka_music') === 'on') {
+  document.addEventListener('click', function startMusic() {
+    bgMusic.play().then(() => {
+      musicPlaying = true;
+      document.getElementById('musicToggle').textContent = '🎵';
+    }).catch(() => {});
+    document.removeEventListener('click', startMusic);
+  }, { once: true });
+}
 
 // ═══════════════════════════════════════════════════════
 // STATE

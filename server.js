@@ -27,6 +27,7 @@ function generateCode() {
 
 // ── Serve static files ──
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/music', express.static(path.join(__dirname, 'music')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'eureka.html'));
