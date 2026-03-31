@@ -710,6 +710,7 @@ body {
   gap: 4px;
   pointer-events: none;
 }
+.gizmo { pointer-events: auto; cursor: pointer; }
 
 /* Speech bubble — appears to the right of Gizmo */
 .gizmo-bubble {
@@ -1836,6 +1837,36 @@ function startGizmoIdle() {
     setTimeout(() => bubble.classList.remove('show'), 3000);
   }, 18000);
 }
+
+// ── Tap Gizmo for hint (3/day) ──
+function getHintCount() {
+  const data = JSON.parse(localStorage.getItem('eureka_hints') || '{}');
+  const today = new Date().toISOString().slice(0, 10);
+  if (data.date !== today) return { date: today, count: 0 };
+  return data;
+}
+function useHint() {
+  const data = getHintCount();
+  data.count++;
+  localStorage.setItem('eureka_hints', JSON.stringify(data));
+}
+
+document.getElementById('gizmo').addEventListener('click', () => {
+  const { count } = getHintCount();
+  if (count >= 3) {
+    gizmoSpeak("I'm all out of hints for today! Come back tomorrow.", 'shrug', false);
+    return;
+  }
+  const hint = findHint();
+  if (!hint) {
+    gizmoSpeak("I've got nothing... you've discovered everything I can think of!", 'shrug', false);
+    return;
+  }
+  const a = E[hint.pair[0]], b = E[hint.pair[1]];
+  useHint();
+  const remaining = 3 - getHintCount().count;
+  gizmoSpeak(`Try combining ${a?.name||hint.pair[0]} with ${b?.name||hint.pair[1]}... ${remaining > 0 ? `(${remaining} hint${remaining===1?'':'s'} left today)` : '(last hint today!)'}`, 'excited', false);
+});
 
 function findHint() {
   const hints = [];
