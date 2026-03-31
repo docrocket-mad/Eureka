@@ -384,7 +384,7 @@ body {
   flex-shrink: 0;
   position: relative;
   z-index: 40;
-  max-height: 45vh;
+  max-height: 38vh;
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none;
@@ -435,9 +435,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
-  touch-action: pan-x pan-y;
+  touch-action: pan-x;
   transition: transform 0.15s;
 }
 .tray-item:active { transform: scale(0.88); }
@@ -698,13 +698,13 @@ body {
 /* ── PROF GIZMO ── */
 .gizmo-wrap {
   position: absolute;
-  bottom: 8px;
-  left: 4px;
+  bottom: 6px;
+  left: 2px;
   z-index: 45;
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 6px;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 4px;
   pointer-events: none;
 }
 
@@ -714,14 +714,14 @@ body {
   border: 1.5px solid rgba(255,210,63,0.3);
   border-radius: 12px;
   border-bottom-left-radius: 3px;
-  padding: 6px 9px;
-  font-size: 10px;
+  padding: 5px 8px;
+  font-size: 9px;
   font-weight: 800;
   color: var(--text);
-  max-width: 180px;
+  max-width: 160px;
   line-height: 1.4;
   opacity: 0;
-  transform: translateX(-6px) scale(0.92);
+  transform: translateY(6px) scale(0.92);
   transition: opacity 0.25s, transform 0.25s;
   text-align: left;
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
@@ -729,7 +729,7 @@ body {
 }
 .gizmo-bubble.show {
   opacity: 1;
-  transform: translateX(0) scale(1);
+  transform: translateY(0) scale(1);
 }
 .gizmo-bubble.danger-bubble-text {
   border-color: rgba(255,34,68,0.4);
@@ -738,8 +738,8 @@ body {
 
 /* Gizmo character — small image */
 .gizmo {
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   position: relative;
   transition: transform 0.3s;
   flex-shrink: 0;
@@ -1000,6 +1000,20 @@ body {
 .report-textarea:focus { border-color: rgba(255,210,63,0.3); }
 .report-textarea::placeholder { color: var(--muted); }
 
+/* ── Small mobile screens ── */
+@media (max-height: 700px) {
+  .tray { max-height: 32vh; }
+  .tray-bubble { min-width: 46px; height: 46px; padding: 0 5px; border-radius: 23px; }
+  .tray-symbol { font-size: 11px; }
+  .tray-name { font-size: 8px; max-width: 50px; }
+  .tray-section-label { padding: 2px 14px 0; font-size: 8px; }
+  .el-bubble { min-width: 56px; height: 56px; padding: 0 6px; border-radius: 28px; }
+  .el-symbol { font-size: 13px; }
+  .el-name { font-size: 9px; max-width: 62px; }
+  .gizmo { width: 34px; height: 34px; }
+  .gizmo-bubble { font-size: 8px; max-width: 140px; padding: 4px 7px; }
+}
+
 </style>
 </head>
 <body>
@@ -1150,7 +1164,7 @@ body {
   <div class="unlock-toast-bubble" id="unlockBubble"></div>
   <div>
     <div class="unlock-toast-text" id="unlockText">Unlocked!</div>
-    <div class="unlock-toast-sub" id="unlockSub">New atom available</div>
+    <div class="unlock-toast-sub" id="unlockSub">New element available</div>
   </div>
 </div>
 
@@ -1269,12 +1283,17 @@ function saveState() {
 
 function renderTray() {
   const scroll = document.getElementById('trayScroll');
+  // Save scroll positions of each tray-row before rebuilding
+  const savedScrolls = {};
+  scroll.querySelectorAll('.tray-row').forEach((row, i) => {
+    savedScrolls[i] = row.scrollLeft;
+  });
   scroll.innerHTML = '';
 
   const sections = [
-    { key:'atom',     label:'⚛️ Atoms' },
-    { key:'molecule', label:'🧪 Molecules' },
-    { key:'compound', label:'🌍 Compounds' },
+    { key:'atom',     label:'⚛️ Elements' },
+    { key:'molecule', label:'🧪 Molecules & Compounds' },
+    { key:'compound', label:'🌍 Complex Discoveries' },
     { key:'danger',   label:'☠️ Danger', danger:true },
   ];
 
@@ -1364,6 +1383,10 @@ function renderTray() {
 
     scroll.appendChild(row);
   });
+  // Restore scroll positions
+  scroll.querySelectorAll('.tray-row').forEach((row, i) => {
+    if (savedScrolls[i]) row.scrollLeft = savedScrolls[i];
+  });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1374,12 +1397,8 @@ function spawnFromTray(elId, event) {
   const rect = canvas.getBoundingClientRect();
   const cx = rect.width/2 - 33 + (Math.random()-0.5)*120;
   const cy = rect.height/2 - 33 + (Math.random()-0.5)*80;
-  const obj = spawnElement(elId, cx, cy);
+  spawnElement(elId, cx, cy);
   SFX.pop();
-  const touch = event.touches?.[0] || event.changedTouches?.[0];
-  const clientX = touch ? touch.clientX : event.clientX;
-  const clientY = touch ? touch.clientY : event.clientY;
-  startDrag(obj, clientX, clientY, 33, 33);
 }
 
 function spawnElement(elId, x, y) {
@@ -1606,7 +1625,7 @@ function showUnlockToast(atomId) {
   bubble.style.boxShadow = `0 0 16px ${el.shadow}`;
   bubble.innerHTML = `<span style="font-size:13px;font-weight:900">${el.symbol}</span>`;
   text.textContent = `${el.name} Unlocked!`;
-  sub.textContent = 'New atom in your tray ⚗️';
+  sub.textContent = 'New element in your tray ⚗️';
   SFX.unlock();
 
   toast.classList.add('show');

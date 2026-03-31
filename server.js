@@ -99,6 +99,7 @@ app.post('/api/report', async (req, res) => {
       const https = require('https');
       const payload = JSON.stringify({
         source: 'eureka',
+        project_id: 14,
         priority: 'medium',
         title: `[Eureka] ${title}`,
         description,
