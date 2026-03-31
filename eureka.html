@@ -1451,11 +1451,13 @@ function spawnElement(elId, x, y) {
     e.preventDefault(); e.stopPropagation();
     const t = e.touches[0];
     const r = dom.getBoundingClientRect();
+    obj._tapStart = { x: t.clientX, y: t.clientY, time: Date.now() };
     startDrag(obj, t.clientX, t.clientY, t.clientX-r.left, t.clientY-r.top);
   }, {passive:false});
   dom.addEventListener('mousedown', e => {
     e.preventDefault();
     const r = dom.getBoundingClientRect();
+    obj._tapStart = { x: e.clientX, y: e.clientY, time: Date.now() };
     startDrag(obj, e.clientX, e.clientY, e.clientX-r.left, e.clientY-r.top);
   });
 
@@ -1509,10 +1511,22 @@ function endDrag(e) {
   const dropped = dragging;
   dragging = null;
 
-  // Check if dropped on trash
-  const trashRect = trash.getBoundingClientRect();
   const cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
   const cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+  // Tap detection — quick tap with no movement = show info
+  if (dropped._tapStart) {
+    const dx = Math.abs(cx - dropped._tapStart.x);
+    const dy = Math.abs(cy - dropped._tapStart.y);
+    const dt = Date.now() - dropped._tapStart.time;
+    if (dx < 8 && dy < 8 && dt < 250) {
+      showPTDetail(dropped.elId);
+      return;
+    }
+  }
+
+  // Check if dropped on trash
+  const trashRect = trash.getBoundingClientRect();
   if (cx >= trashRect.left && cx <= trashRect.right && cy >= trashRect.top && cy <= trashRect.bottom) {
     removeEl(dropped);
     updateHint();
@@ -2236,7 +2250,8 @@ function showPTDetail(sym) {
   document.getElementById('discFactLabel').textContent = isDanger ? '☢️ Hazard Report' : '🧠 Science Fact';
   const btn = document.getElementById('discBtn');
   btn.className = 'disc-btn ' + mode;
-  btn.textContent = 'Back to Table ⚛️';
+  const inLab = document.querySelector('#mode-lab.active');
+  btn.textContent = inLab ? 'Back to Lab ⚗️' : 'Back to Table ⚛️';
   overlay.classList.add('show');
 }
 
