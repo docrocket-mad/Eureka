@@ -343,6 +343,9 @@ const E = {
   B2O3:{ id:'B2O3',name:'Boron Trioxide',    symbol:'B₂O₃',sub:'',  emoji:'🧊', tier:'molecule', color:'#BB9977', shadow:'rgba(187,153,119,0.4)', tc:'white',
          fact:'Makes glass heat-resistant. Pyrex, lab beakers, baking dishes — all contain boron oxide. The reason your casserole dish doesn\'t shatter in the oven.' },
 
+  KMnO4:{ id:'KMnO4',name:'Potassium Permanganate',symbol:'KMnO₄',sub:'',emoji:'💜',tier:'molecule',color:'#8833AA',shadow:'rgba(136,51,170,0.4)',tc:'white',
+         fact:'Deep purple crystals that dissolve into intensely purple water. Powerful oxidizer used in water treatment, wound cleaning, and fire-starting. Chemistry teachers love it for dramatic demos.' },
+
   // ── Dead-end atom products ──
   AuCl3:{ id:'AuCl3',name:'Gold Chloride',    symbol:'AuCl₃',sub:'', emoji:'🥇', tier:'molecule', color:'#CC8800', shadow:'rgba(204,136,0,0.4)', tc:'white',
          fact:'Red-orange crystals. One of the few soluble gold compounds. Used as a catalyst in organic chemistry. Gold that dissolves — alchemy\'s dream made real.' },
@@ -840,6 +843,9 @@ const REACTIONS_RAW = [
   [['Pb','CO2'],         'LEAD_PAINT'],
   [['BENZENE','PROPANE'],'NAPALM'],
   [['HNO3','HCl'],       'AQUA_REGIA'],
+  // ── Potassium permanganate ──
+  [['K','MnO2'],           'KMnO4'],
+  [['KOH','MnO2'],         'KMnO4'],
   // ── Dead-end atom reactions ──
   [['Au','Cl'],          'AuCl3'],
   [['Au','HCl'],         'AuCl3'],
@@ -1027,6 +1033,7 @@ const GIZMO_LINES = {
     BaSO4: "Barium meal! You SWALLOW this for X-rays. Opaque to radiation. The only barium you can safely eat.",
     Na2CO3: "Soda ash! Ancient Egyptians used this for mummies. Now it makes glass. Career change.",
     KNO3: "SALTPETER! Gunpowder ingredient AND fertilizer AND food preservative. One molecule, three jobs.",
+    KMnO4: "POTASSIUM PERMANGANATE! That gorgeous purple! Oxidizes everything it touches. Chemistry teachers' favorite party trick.",
     METHANOL: "Methanol — wood alcohol. Looks like vodka. Causes blindness. The evil twin. DO NOT DRINK.",
     ETHANOL: "ETHANOL! The alcohol. 9,000 years of brewing. Humanity domesticated fungus. We're resourceful.",
     ETHYLENE: "Ethylene! Why one bad apple spoils the bunch. Also where all plastic comes from. Tiny but world-changing.",
