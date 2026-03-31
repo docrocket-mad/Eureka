@@ -1303,12 +1303,16 @@ function renderTray() {
       if (el.danger || el.tier === 'danger') return false;
       return el.tier === sec.key;
     });
-    // Sort: elements by atomic number, others alphabetically by name
-    if (sec.key === 'atom' && typeof PERIODIC_ELEMENTS !== 'undefined') {
-      items.sort((a, b) => ((PERIODIC_ELEMENTS[a.id]?.num || 999) - (PERIODIC_ELEMENTS[b.id]?.num || 999)));
-    } else {
-      items.sort((a, b) => a.name.localeCompare(b.name));
-    }
+    // Sort: discovered first, then locked — within each group: elements by atomic number, others alphabetically
+    items.sort((a, b) => {
+      const aDisc = discovered.has(a.id) ? 0 : 1;
+      const bDisc = discovered.has(b.id) ? 0 : 1;
+      if (aDisc !== bDisc) return aDisc - bDisc;
+      if (sec.key === 'atom' && typeof PERIODIC_ELEMENTS !== 'undefined') {
+        return (PERIODIC_ELEMENTS[a.id]?.num || 999) - (PERIODIC_ELEMENTS[b.id]?.num || 999);
+      }
+      return a.name.localeCompare(b.name);
+    });
     const hasAny = items.some(el => discovered.has(el.id));
     if (!hasAny && sec.key !== 'atom') return;
 
