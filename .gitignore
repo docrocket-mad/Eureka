@@ -6,3 +6,6 @@ android/.gradle/
 android/build/
 *.apk
 *.aab
+ios/App/Pods/
+ios/App/App/public/
+ios/App/output/
