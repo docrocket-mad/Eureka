@@ -476,6 +476,21 @@ body {
 .tray-name { font-size: 9px; font-weight: 800; color: rgba(240,240,255,0.55); text-align: center; max-width: 58px; line-height: 1.2; }
 .tray-name.danger-tray-name { color: rgba(255,100,100,0.7); }
 
+.discovery-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  min-width: 16px; height: 16px;
+  background: var(--gold);
+  color: #111;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+  z-index: 3;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
 .tray-locked { opacity: 0.22; cursor: default; }
 .tray-locked .tray-bubble { filter: grayscale(0.8); }
 
@@ -1327,6 +1342,16 @@ function saveState() {
 // TRAY
 // ═══════════════════════════════════════════════════════
 
+function countRemainingDiscoveries(elId) {
+  let count = 0;
+  for (const [pair, result] of REACTIONS_RAW) {
+    if (discovered.has(result)) continue;
+    if (!pair.includes(elId)) continue;
+    if (pair.every(id => discovered.has(id))) count++;
+  }
+  return count;
+}
+
 function renderTray() {
   const scroll = document.getElementById('trayScroll');
   // Save scroll positions of each tray-row before rebuilding
@@ -1377,12 +1402,14 @@ function renderTray() {
       item.className = 'tray-item' + (isDisc ? '' : ' tray-locked');
 
       const bubbleBg = `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})`;
+      const remaining = isDisc ? countRemainingDiscoveries(el.id) : 0;
       item.innerHTML = `
         <div class="tray-bubble ${isDanger && isDisc ? 'danger-tray' : ''}"
              style="background:${isDisc ? bubbleBg : 'rgba(255,255,255,0.04)'};
                     box-shadow:0 3px 14px ${isDisc ? el.shadow : 'transparent'};
                     color:${el.tc}">
           ${!isDisc ? '<div class="lock-badge">🔒</div>' : ''}
+          ${isDisc && remaining > 0 ? `<span class="discovery-badge">${remaining}</span>` : ''}
           <span class="tray-symbol" style="${isDisc && el.symbol.length > 6 ? 'font-size:7px' : isDisc && el.symbol.length > 3 ? 'font-size:10px' : ''}">${isDisc ? el.symbol : ''}</span>
           <span class="tray-sub">${isDisc ? (el.sub||'') : ''}</span>
         </div>
