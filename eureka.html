@@ -1291,8 +1291,8 @@ function toggleMusic() {
   }
 }
 
-// Restore music preference
-if (localStorage.getItem('eureka_music') === 'on') {
+// Music on by default — start on first user interaction (browser autoplay policy)
+if (localStorage.getItem('eureka_music') !== 'off') {
   document.addEventListener('click', function startMusic() {
     bgMusic.play().then(() => {
       musicPlaying = true;
