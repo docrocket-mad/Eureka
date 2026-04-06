@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build:www": "mkdir -p www && cp eureka.html www/index.html && cp data.js sw.js manifest.json www/ && cp -r icons images music www/",
+    "build:android": "npm run build:www && npx cap copy android && npx cap sync android"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,11 @@
   },
   "homepage": "https://github.com/docrocket-mad/Eureka#readme",
   "dependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
     "express": "^5.2.1",
     "pg": "^8.20.0"
   }

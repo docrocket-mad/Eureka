@@ -1,2 +1,8 @@
 node_modules/
 .env
+www/
+android/app/build/
+android/.gradle/
+android/build/
+*.apk
+*.aab

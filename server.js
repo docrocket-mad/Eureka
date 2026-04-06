@@ -28,6 +28,14 @@ function generateCode() {
 // ── Serve static files ──
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/music', express.static(path.join(__dirname, 'music')));
+app.use('/icons', express.static(path.join(__dirname, 'icons')));
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, 'sw.js'));
+});
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'eureka.html'));
