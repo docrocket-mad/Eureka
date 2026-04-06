@@ -476,17 +476,18 @@ body {
 .tray-name { font-size: 9px; font-weight: 800; color: rgba(240,240,255,0.55); text-align: center; max-width: 58px; line-height: 1.2; }
 .tray-name.danger-tray-name { color: rgba(255,100,100,0.7); }
 
+.tray-item { position: relative; }
 .discovery-badge {
   position: absolute;
-  top: -4px; right: -4px;
-  min-width: 16px; height: 16px;
+  top: -4px; right: -2px;
+  min-width: 18px; height: 18px;
   background: var(--gold);
   color: #111;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 900;
-  border-radius: 8px;
+  border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  padding: 0 3px;
+  padding: 0 4px;
   z-index: 3;
   line-height: 1;
   box-shadow: 0 1px 4px rgba(0,0,0,0.4);
@@ -1404,12 +1405,12 @@ function renderTray() {
       const bubbleBg = `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})`;
       const remaining = isDisc ? countRemainingDiscoveries(el.id) : 0;
       item.innerHTML = `
+        ${isDisc && remaining > 0 ? `<span class="discovery-badge">${remaining}</span>` : ''}
         <div class="tray-bubble ${isDanger && isDisc ? 'danger-tray' : ''}"
              style="background:${isDisc ? bubbleBg : 'rgba(255,255,255,0.04)'};
                     box-shadow:0 3px 14px ${isDisc ? el.shadow : 'transparent'};
                     color:${el.tc}">
           ${!isDisc ? '<div class="lock-badge">🔒</div>' : ''}
-          ${isDisc && remaining > 0 ? `<span class="discovery-badge">${remaining}</span>` : ''}
           <span class="tray-symbol" style="${isDisc && el.symbol.length > 6 ? 'font-size:7px' : isDisc && el.symbol.length > 3 ? 'font-size:10px' : ''}">${isDisc ? el.symbol : ''}</span>
           <span class="tray-sub">${isDisc ? (el.sub||'') : ''}</span>
         </div>
