@@ -145,7 +145,7 @@ body {
   transition: color 0.2s;
 }
 .bottom-nav-icon { font-size: 18px; display: block; margin-bottom: 1px; }
-.bottom-nav-label { font-size: 9px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.bottom-nav-label { font-size: 8px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
 .bottom-nav-item.active .bottom-nav-label { color: var(--gold); }
 
 /* ── PERIODIC MODE ── */
@@ -1100,11 +1100,11 @@ body {
     </div>
   </div><!-- /mode-periodic -->
 
-  <!-- ═══ PERIODIC TABLE MODE ═══ -->
+  <!-- ═══ ENCYCLOPEDIA MODE ═══ -->
   <div class="mode-container" id="mode-encyclo">
     <div style="padding:10px 14px 4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
       <div>
-        <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--gold)">⚛️ Periodic Table</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--gold)">🔬 Encyclopedia</div>
         <div style="font-size:10px;color:var(--muted);font-weight:700" id="ptDiscCount">0 / 75 discovered</div>
       </div>
       <div style="font-size:9px;color:var(--muted);font-weight:800">Tap to learn more</div>
@@ -1115,6 +1115,65 @@ body {
       <div id="ptDiscoveries"></div>
     </div>
   </div><!-- /mode-encyclo -->
+
+  <!-- ═══ SETTINGS MODE ═══ -->
+  <div class="mode-container" id="mode-settings">
+    <div style="padding:20px 16px;overflow-y:auto;flex:1">
+      <div style="font-family:'Fredoka One',cursive;font-size:22px;color:var(--gold);margin-bottom:4px">⚙️ Settings</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:20px">Eureka! · Artificer Studios</div>
+
+      <!-- Music -->
+      <div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:14px;font-weight:800">Background Music</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:700">Lab ambience loop</div>
+        </div>
+        <div style="cursor:pointer;font-size:24px" id="settingsMusicBtn" onclick="toggleMusic()">🔇</div>
+      </div>
+
+      <!-- Cloud Save -->
+      <div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="showSaveModal()">
+        <div>
+          <div style="font-size:14px;font-weight:800">☁️ Cloud Sync</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:700">Save or load progress across devices</div>
+        </div>
+        <div style="font-size:16px;color:var(--muted)">→</div>
+      </div>
+
+      <!-- Stats -->
+      <div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid var(--border);margin-bottom:10px">
+        <div style="font-size:14px;font-weight:800;margin-bottom:10px">📊 Stats</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <div style="flex:1;min-width:120px;background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-family:'Fredoka One',cursive;font-size:24px;color:var(--gold)" id="settingsDiscTotal">0</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:800">Total Discoveries</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-family:'Fredoka One',cursive;font-size:24px;color:var(--teal)" id="settingsAtomCount">0</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:800">Atoms Unlocked</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:var(--card2);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-family:'Fredoka One',cursive;font-size:24px;color:var(--spark)" id="settingsPeriodicScore">0</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:800">Periodic Score</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset -->
+      <div style="background:var(--card);border-radius:16px;padding:14px 16px;border:1px solid rgba(255,34,68,0.2);margin-bottom:10px">
+        <div style="font-size:14px;font-weight:800;color:var(--danger);margin-bottom:6px">☠️ Danger Zone</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:10px">This cannot be undone.</div>
+        <button onclick="confirmReset()" style="background:rgba(255,34,68,0.15);border:1px solid rgba(255,34,68,0.3);border-radius:10px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--danger);cursor:pointer;width:100%">Reset All Progress</button>
+      </div>
+
+      <!-- About -->
+      <div style="text-align:center;margin-top:20px;font-size:10px;color:var(--muted);font-weight:700;line-height:1.6">
+        EUREKA! Science Games<br>
+        Artificer Studios &copy; 2026<br>
+        v2.0 — Lab + Periodic
+      </div>
+    </div>
+  </div><!-- /mode-settings -->
 
   </div><!-- /mode-area -->
 
@@ -1129,8 +1188,12 @@ body {
       <span class="bottom-nav-label">Periodic</span>
     </div>
     <div class="bottom-nav-item" id="nav-encyclo" onclick="switchMode('encyclo')">
-      <span class="bottom-nav-icon">⚛️</span>
-      <span class="bottom-nav-label">Table</span>
+      <span class="bottom-nav-icon">🔬</span>
+      <span class="bottom-nav-label">Encyclopedia</span>
+    </div>
+    <div class="bottom-nav-item" id="nav-settings" onclick="switchMode('settings')">
+      <span class="bottom-nav-icon">⚙️</span>
+      <span class="bottom-nav-label">Settings</span>
     </div>
   </div>
 </div>
@@ -1294,15 +1357,18 @@ let musicPlaying = false;
 
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
+  const settingsBtn = document.getElementById('settingsMusicBtn');
   if (musicPlaying) {
     bgMusic.pause();
     musicPlaying = false;
     btn.textContent = '🔇';
+    if (settingsBtn) settingsBtn.textContent = '🔇';
     localStorage.setItem('eureka_music', 'off');
   } else {
     bgMusic.play().catch(() => {});
     musicPlaying = true;
     btn.textContent = '🎵';
+    if (settingsBtn) settingsBtn.textContent = '🎵';
     localStorage.setItem('eureka_music', 'on');
   }
 }
@@ -1333,6 +1399,28 @@ function loadState() {
     if (s) discovered = new Set(JSON.parse(s));
     // always ensure starters
     STARTER_ATOMS.forEach(a => discovered.add(a));
+
+    // Migrate from old periodic.html standalone (periodic_v1)
+    // Those stored element symbols like ['H','He','C','N','O','Li',...] — same keys we use for atoms
+    try {
+      const oldP = localStorage.getItem('periodic_v1');
+      if (oldP) {
+        const oldSet = JSON.parse(oldP);
+        let migrated = false;
+        oldSet.forEach(sym => {
+          if (E[sym] && !discovered.has(sym)) {
+            discovered.add(sym);
+            migrated = true;
+          }
+        });
+        if (migrated) {
+          saveState();
+          console.log('[Eureka] Migrated periodic_v1 discoveries into eureka_v2');
+        }
+        // Remove old key so migration doesn't run again
+        localStorage.removeItem('periodic_v1');
+      }
+    } catch(e2) {}
   } catch(e) {}
 }
 function saveState() {
@@ -2213,6 +2301,29 @@ function switchMode(mode) {
 
   if (mode === 'periodic') pRenderCurrentTab();
   if (mode === 'encyclo') renderEncycloMode();
+  if (mode === 'settings') renderSettings();
+}
+
+function renderSettings() {
+  document.getElementById('settingsDiscTotal').textContent = discovered.size;
+  const atomCount = [...discovered].filter(id => E[id] && E[id].tier === 'atom').length;
+  document.getElementById('settingsAtomCount').textContent = atomCount;
+  document.getElementById('settingsPeriodicScore').textContent = periodicScore;
+  document.getElementById('settingsMusicBtn').textContent = musicPlaying ? '🎵' : '🔇';
+}
+
+function confirmReset() {
+  if (confirm('Are you sure? This will erase ALL progress — Lab discoveries, Periodic score, everything.')) {
+    if (confirm('Really? Last chance. This cannot be undone.')) {
+      localStorage.removeItem('eureka_v2');
+      localStorage.removeItem('eureka_save_code');
+      localStorage.removeItem('eureka_hints');
+      localStorage.removeItem('eureka_music');
+      localStorage.removeItem('eureka_periodic_score');
+      localStorage.removeItem('periodic_v1');
+      location.reload();
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2337,7 +2448,7 @@ let pMatchCorrect = 0;
 let pHuntScore = 0;
 let pHuntCorrect = 0;
 let pHuntAnswer = null;
-let periodicScore = 0;
+let periodicScore = parseInt(localStorage.getItem('eureka_periodic_score') || '0', 10);
 
 // Elements with periodic-table data (atoms only, with num/mass/cat/clues)
 function pGetDiscoveredAtoms() {
@@ -2458,6 +2569,7 @@ function pMatchAnswer(picked, correct) {
     const pts = 10 + pMatchStreak * 5;
     pMatchScore += pts;
     periodicScore += pts;
+    localStorage.setItem('eureka_periodic_score', periodicScore);
     SFX.discover();
     pCheckUnlock();
   } else {
@@ -2510,6 +2622,7 @@ function pHuntPick(id, cell) {
     pHuntScore += 15;
     pHuntCorrect++;
     periodicScore += 15;
+    localStorage.setItem('eureka_periodic_score', periodicScore);
     SFX.discover();
     pCheckUnlock();
     setTimeout(pRenderHunt, 600);
