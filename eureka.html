@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FFD23F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1026,7 +1026,115 @@ body {
 .report-textarea:focus { border-color: rgba(255,210,63,0.3); }
 .report-textarea::placeholder { color: var(--muted); }
 
-/* ── Small mobile screens ── */
+/* ── Mobile-friendly: phones (max-width 600px) ── */
+@media (max-width: 600px) {
+  /* Header */
+  .header { height: 52px; padding: 0 10px; }
+  .logo { font-size: 22px; }
+  .logo span[style] { font-size: 28px !important; }
+  .stat-pill { font-size: 13px; padding: 7px 12px; min-height: 36px; }
+  .cloud-pill { font-size: 13px; padding: 7px 12px; min-height: 36px; }
+
+  /* Bottom nav */
+  .bottom-nav-icon { font-size: 22px; }
+  .bottom-nav-label { font-size: 10px; }
+  .bottom-nav-item { padding: 10px 4px 8px; }
+
+  /* Periodic mode tabs */
+  .p-tab { font-size: 12px; padding: 12px 4px; }
+
+  /* Periodic table grid — wider cells, bigger text */
+  .pt-grid { gap: 1.5px; }
+  .pt-cell { font-size: max(2.4vw, 8px); }
+  .pt-sym { font-size: max(2.8vw, 10px); }
+  .pt-num { font-size: max(1.6vw, 7px); }
+  .pt-cell.locked::after { font-size: max(2.6vw, 9px); }
+
+  /* Category legend */
+  .p-cat-dot { font-size: 11px; }
+  .p-cat-swatch { width: 12px; height: 12px; }
+
+  /* Learn card */
+  .p-learn-symbol { font-size: 80px; }
+  .p-learn-name { font-size: 24px; }
+  .p-learn-num { font-size: 15px; }
+  .p-learn-fact { font-size: 15px; padding: 14px; }
+  .p-card-btn { font-size: 16px; padding: 12px 22px; min-height: 48px; }
+
+  /* Match game */
+  .p-match-val { font-size: 24px; }
+  .p-match-lbl { font-size: 11px; }
+  .p-match-question { font-size: 52px; }
+  .p-match-prompt { font-size: 14px; }
+  .p-match-opt { padding: 16px; font-size: 17px; min-height: 48px; }
+
+  /* Hunt game */
+  .p-hunt-clue-text { font-size: 17px; }
+  .p-hunt-hint { font-size: 13px; }
+  .p-hunt-cell .p-hunt-sym { font-size: 20px; }
+  .p-hunt-cell .p-hunt-name { font-size: 10px; }
+
+  /* Discovery section below periodic table */
+  .disc-section-title { font-size: 12px; }
+  .disc-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+  .disc-grid-bubble { width: 42px; height: 42px; font-size: 12px; }
+  .disc-grid-name { font-size: 9px; }
+
+  /* Canvas elements */
+  .el-bubble { min-width: 72px; height: 72px; padding: 0 10px; border-radius: 36px; }
+  .el-symbol { font-size: 17px; }
+  .el-symbol.sm { font-size: 13px; }
+  .el-symbol.xs { font-size: 11px; }
+  .el-sub { font-size: 10px; }
+  .el-name { font-size: 12px; max-width: 80px; }
+
+  /* Tray */
+  .tray-bubble { min-width: 58px; height: 58px; padding: 0 7px; border-radius: 29px; }
+  .tray-symbol { font-size: 15px; }
+  .tray-sub { font-size: 9px; }
+  .tray-name { font-size: 11px; max-width: 64px; }
+  .tray-section-label { font-size: 11px; padding: 4px 14px 2px; }
+
+  /* Canvas hint */
+  .canvas-hint-title { font-size: 20px; }
+  .canvas-hint-text { font-size: 14px; }
+
+  /* Discovery overlay */
+  .disc-emoji { font-size: 72px; }
+  .disc-formula { font-size: 36px; }
+  .disc-name { font-size: 22px; }
+  .disc-reaction { font-size: 14px; }
+  .disc-fact-text { font-size: 15px; }
+  .disc-fact-label { font-size: 11px; }
+  .disc-btn { font-size: 17px; padding: 16px; min-height: 52px; }
+
+  /* Encyclopedia */
+  .encyclo-title { font-size: 24px; }
+  .encyclo-sub { font-size: 13px; }
+  .encyclo-close { width: 42px; height: 42px; font-size: 18px; }
+  .encyclo-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .encyclo-bubble { width: 46px; height: 46px; font-size: 14px; }
+  .encyclo-name { font-size: 10px; }
+  .encyclo-section-title { font-size: 12px; }
+
+  /* Cloud save modal */
+  .save-title { font-size: 22px; }
+  .save-sub { font-size: 13px; }
+  .save-btn { font-size: 15px; padding: 14px; min-height: 48px; }
+
+  /* Unlock toast */
+  .unlock-toast { font-size: 15px; padding: 12px 20px; }
+
+  /* Prof Gizmo */
+  .gizmo { width: 68px; height: 68px; }
+  .gizmo-bubble { font-size: 11px; max-width: 180px; padding: 7px 10px; }
+
+  /* Trash & report buttons */
+  .trash-btn { width: 56px; height: 56px; font-size: 24px; }
+  .report-btn { width: 44px; height: 44px; font-size: 18px; }
+}
+
+/* ── Very short phones (keyboard open or small devices) ── */
 @media (max-height: 700px) {
   .tray { max-height: 32vh; }
   .tray-bubble { min-width: 46px; height: 46px; padding: 0 5px; border-radius: 23px; }

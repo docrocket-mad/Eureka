@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Cosmos — Space Exploration</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -371,6 +371,115 @@ body{font-family:'Nunito',sans-serif;background:var(--dark);color:var(--text);he
 /* ── FLASH ── */
 .sf{position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0;animation:sf 0.35s ease forwards;}
 @keyframes sf{0%{opacity:0.15}100%{opacity:0}}
+
+/* ── Mobile-friendly: phones (max-width 600px) ── */
+@media (max-width: 600px) {
+  /* Header */
+  .header { height: 52px; }
+  .logo { font-size: 26px; }
+  .logo-sub { font-size: 11px; }
+  .stat-pill { font-size: 14px; padding: 7px 14px; min-height: 36px; }
+
+  /* Tab bar */
+  .tab { font-size: 12px; padding: 12px 4px; }
+
+  /* Solar system */
+  .planet-name { font-size: 12px; }
+  .planet-chip { font-size: 11px; padding: 3px 10px; }
+
+  /* Body detail sheet */
+  .sheet-name { font-size: 36px; }
+  .sheet-type { font-size: 12px; }
+  .sheet-tagline { font-size: 15px; }
+  .stat-chip-val { font-size: 16px; }
+  .stat-chip-label { font-size: 11px; }
+  .fact-label { font-size: 11px; }
+  .fact-text { font-size: 15px; }
+  .explore-btn { font-size: 17px; padding: 16px; min-height: 52px; }
+  .close-sheet { width: 40px; height: 40px; font-size: 16px; }
+
+  /* Scale screen */
+  .scale-title { font-size: 26px; }
+  .scale-sub { font-size: 14px; }
+  .scale-section-title { font-size: 13px; }
+  .size-label { font-size: 11px; }
+  .distance-bar-name { font-size: 14px; }
+  .distance-bar-val { font-size: 13px; }
+  .mb-title { font-size: 16px; }
+  .mb-text { font-size: 14px; }
+
+  /* Mission screen */
+  .mission-q { font-size: 18px; }
+  .mission-q-label { font-size: 12px; }
+  .mission-opt { font-size: 15px; padding: 18px 12px; min-height: 48px; }
+  .mission-score-label { font-size: 13px; }
+  .mission-score-val { font-size: 24px; }
+  .md-title { font-size: 30px; }
+  .md-score { font-size: 20px; }
+  .md-btn { font-size: 17px; padding: 16px 36px; min-height: 52px; }
+
+  /* Constellation / Stars */
+  .stars-sub { font-size: 12px; padding: 10px 4px; }
+  .stars-title { font-size: 14px; }
+  .stars-info-name { font-size: 24px; }
+  .stars-info-myth { font-size: 14px; }
+  .stars-info-fact { font-size: 14px; }
+  .stars-next-btn { font-size: 16px; padding: 14px; min-height: 48px; }
+  .startype-name { font-size: 18px; }
+  .startype-meta { font-size: 12px; }
+  .startype-fact { font-size: 13px; }
+
+  /* Orbit builder */
+  .orbit-level { font-size: 14px; }
+  .orbit-temp { font-size: 15px; }
+  .orbit-bar-labels { font-size: 11px; }
+  .or-title { font-size: 20px; }
+  .or-text { font-size: 14px; }
+  .or-btn { font-size: 15px; padding: 12px 28px; min-height: 44px; }
+
+  /* Gravity slingshot */
+  .sling-level { font-size: 14px; }
+  .sling-score-val { font-size: 15px; }
+  .sling-hint { font-size: 13px; }
+
+  /* Life finder */
+  .lf-planet-name { font-size: 20px; }
+  .lf-planet-type { font-size: 12px; }
+  .lf-stat { font-size: 12px; }
+  .lf-stat-label { font-size: 10px; }
+  .lf-verdict { font-size: 14px; }
+  .lf-fact { font-size: 13px; }
+  .lf-btn { font-size: 14px; padding: 12px; min-height: 44px; }
+
+  /* Rocket builder */
+  .rk-dest-name { font-size: 22px; }
+  .rk-dest-dv { font-size: 13px; }
+  .rk-section-title { font-size: 12px; }
+  .rk-opt-name { font-size: 13px; }
+  .rk-opt-stat { font-size: 11px; }
+  .rk-dv-label { font-size: 13px; }
+  .rk-dv-explain { font-size: 12px; }
+  .rk-launch-btn { font-size: 17px; padding: 16px; min-height: 52px; }
+
+  /* Rover */
+  .rover-mission { font-size: 13px; }
+  .rover-status { font-size: 14px; }
+  .rover-btn { font-size: 15px; padding: 14px; min-height: 48px; }
+
+  /* Unlock overlay */
+  .uo-name { font-size: 30px; }
+  .uo-type { font-size: 14px; }
+  .uo-fact { font-size: 15px; }
+  .uo-btn { font-size: 17px; padding: 16px; min-height: 52px; }
+  .uo-new { font-size: 12px; }
+
+  /* Timeline */
+  .timeline-title { font-size: 22px; }
+  .timeline-sub { font-size: 13px; }
+  .timeline-when { font-size: 12px; }
+  .timeline-what { font-size: 15px; }
+  .timeline-detail { font-size: 12px; }
+}
 </style>
 </head>
 <body>
