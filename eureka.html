@@ -285,6 +285,105 @@ body {
 }
 .locked-grid-item .disc-grid-name { opacity: 0.2; }
 
+/* ── ENCYCLOPEDIA FILTER BAR ── */
+.encyclo-filter-bar {
+  padding: 0 14px 8px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.encyclo-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.encyclo-search {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px 10px 36px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.encyclo-search::placeholder { color: var(--muted); font-weight: 600; }
+.encyclo-search:focus { border-color: rgba(255,210,63,0.4); box-shadow: 0 0 0 2px rgba(255,210,63,0.1); }
+.encyclo-search-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.encyclo-search-clear {
+  position: absolute;
+  right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.encyclo-search-clear.visible { display: flex; }
+.encyclo-filter-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.encyclo-filter-tabs::-webkit-scrollbar { display: none; }
+.encyclo-filter-tab {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.encyclo-filter-tab:active { transform: scale(0.95); }
+.encyclo-filter-tab.active {
+  background: rgba(255,210,63,0.12);
+  border-color: rgba(255,210,63,0.3);
+  color: var(--gold);
+}
+.encyclo-filter-tab.active[data-filter="danger"] {
+  background: rgba(255,34,68,0.12);
+  border-color: rgba(255,34,68,0.3);
+  color: var(--danger);
+}
+.encyclo-no-results {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.disc-grid-item.highlight-match {
+  border-color: rgba(255,210,63,0.5);
+  box-shadow: 0 0 12px rgba(255,210,63,0.2);
+}
+
 /* ── CANVAS ── */
 .lab-canvas {
   flex: 1;
@@ -1116,6 +1215,8 @@ body {
   .encyclo-bubble { width: 46px; height: 46px; font-size: 14px; }
   .encyclo-name { font-size: 10px; }
   .encyclo-section-title { font-size: 12px; }
+  .encyclo-search { font-size: 15px; padding: 11px 14px 11px 38px; }
+  .encyclo-filter-tab { font-size: 12px; padding: 7px 16px; }
 
   /* Cloud save modal */
   .save-title { font-size: 22px; }
@@ -1218,7 +1319,21 @@ body {
       <div style="font-size:9px;color:var(--muted);font-weight:800">Tap to learn more</div>
     </div>
     <div class="p-cat-legend" id="ptLegend" style="padding:0 14px 6px"></div>
-    <div style="flex:1;overflow-y:auto;padding:0 8px 14px">
+    <div class="encyclo-filter-bar">
+      <div class="encyclo-search-wrap">
+        <span class="encyclo-search-icon">🔍</span>
+        <input type="text" class="encyclo-search" id="encycloSearch" placeholder="Search discoveries..." autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="encyclo-search-clear" id="encycloSearchClear" onclick="clearEncycloSearch()">✕</button>
+      </div>
+      <div class="encyclo-filter-tabs" id="encycloFilterTabs">
+        <div class="encyclo-filter-tab active" data-filter="all" onclick="setEncycloFilter('all')">All</div>
+        <div class="encyclo-filter-tab" data-filter="atom" onclick="setEncycloFilter('atom')">Elements</div>
+        <div class="encyclo-filter-tab" data-filter="molecule" onclick="setEncycloFilter('molecule')">Molecules</div>
+        <div class="encyclo-filter-tab" data-filter="compound" onclick="setEncycloFilter('compound')">Compounds</div>
+        <div class="encyclo-filter-tab" data-filter="danger" onclick="setEncycloFilter('danger')">Danger</div>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 8px 14px" id="encycloScrollArea">
       <div class="pt-grid" id="ptMainGrid"></div>
       <div id="ptDiscoveries"></div>
     </div>
@@ -2437,6 +2552,10 @@ function confirmReset() {
 // ═══════════════════════════════════════════════════════
 // PERIODIC TABLE MODE
 // ═══════════════════════════════════════════════════════
+let encycloFilter = 'all';
+let encycloSearchText = '';
+let encycloSearchTimeout = null;
+
 function renderEncycloMode() {
   // Legend
   const legend = document.getElementById('ptLegend');
@@ -2450,58 +2569,172 @@ function renderEncycloMode() {
   const foundPT = PT_LAYOUT.filter(([sym]) => discovered.has(sym)).length;
   document.getElementById('ptDiscCount').textContent = `${foundPT} / ${totalPT} discovered`;
 
-  // Grid
-  const grid = document.getElementById('ptMainGrid');
-  grid.innerHTML = '';
-  const map = {};
-  PT_LAYOUT.forEach(([sym,col,row]) => { map[`${col},${row}`] = sym; });
-
-  for (let r = 1; r <= 7; r++) {
-    for (let c = 1; c <= 18; c++) {
-      const sym = map[`${c},${r}`];
-      if (!sym) { grid.innerHTML += '<div></div>'; continue; }
-      const el = E[sym];
-      const pe = PERIODIC_ELEMENTS[sym];
-      const unlocked = el && discovered.has(sym);
-      if (unlocked && pe) {
-        const catColor = CAT_COLORS[pe.cat] || '#666';
-        grid.innerHTML += `<div class="pt-cell unlocked" style="background:${catColor};color:white;--cat-color:${catColor}40" onclick="showPTDetail('${sym}')">
-          <span class="pt-num">${pe.num}</span><span class="pt-sym">${sym}</span></div>`;
-      } else {
-        grid.innerHTML += '<div class="pt-cell locked"></div>';
-      }
-    }
+  // Wire up search input if not already wired
+  const searchInput = document.getElementById('encycloSearch');
+  if (searchInput && !searchInput._wired) {
+    searchInput._wired = true;
+    searchInput.addEventListener('input', function() {
+      const clearBtn = document.getElementById('encycloSearchClear');
+      if (clearBtn) clearBtn.classList.toggle('visible', this.value.length > 0);
+      clearTimeout(encycloSearchTimeout);
+      encycloSearchTimeout = setTimeout(() => {
+        encycloSearchText = this.value.trim().toLowerCase();
+        renderEncycloGrid();
+      }, 120);
+    });
   }
 
-  // Discovery encyclopedia below table
+  renderEncycloGrid();
+}
+
+function renderEncycloGrid() {
+  const query = encycloSearchText;
+  const filter = encycloFilter;
+  const showAtoms = filter === 'all' || filter === 'atom';
+  const showMolecules = filter === 'all' || filter === 'molecule';
+  const showCompounds = filter === 'all' || filter === 'compound';
+  const showDanger = filter === 'all' || filter === 'danger';
+
+  // Periodic table grid — only show when atoms are visible and no text search
+  const grid = document.getElementById('ptMainGrid');
+  const legendEl = document.getElementById('ptLegend');
+  if (showAtoms && !query) {
+    grid.style.display = '';
+    legendEl.style.display = '';
+    grid.innerHTML = '';
+    const map = {};
+    PT_LAYOUT.forEach(([sym,col,row]) => { map[`${col},${row}`] = sym; });
+    for (let r = 1; r <= 7; r++) {
+      for (let c = 1; c <= 18; c++) {
+        const sym = map[`${c},${r}`];
+        if (!sym) { grid.innerHTML += '<div></div>'; continue; }
+        const el = E[sym];
+        const pe = PERIODIC_ELEMENTS[sym];
+        const unlocked = el && discovered.has(sym);
+        if (unlocked && pe) {
+          const catColor = CAT_COLORS[pe.cat] || '#666';
+          grid.innerHTML += `<div class="pt-cell unlocked" style="background:${catColor};color:white;--cat-color:${catColor}40" onclick="showPTDetail('${sym}')">
+            <span class="pt-num">${pe.num}</span><span class="pt-sym">${sym}</span></div>`;
+        } else {
+          grid.innerHTML += '<div class="pt-cell locked"></div>';
+        }
+      }
+    }
+  } else if (showAtoms && query) {
+    // When searching with atom filter, show atoms as a flat grid instead of periodic table
+    grid.style.display = 'none';
+    legendEl.style.display = 'none';
+  } else {
+    grid.style.display = 'none';
+    legendEl.style.display = 'none';
+  }
+
+  // Build sections based on filter
   const disc = document.getElementById('ptDiscoveries');
   disc.innerHTML = '';
-  const sections = [
-    { label:'🧪 Molecules', ids: Object.values(E).filter(e=>e.tier==='molecule'&&!e.danger).map(e=>e.id) },
-    { label:'🌍 Compounds', ids: Object.values(E).filter(e=>e.tier==='compound'&&!e.danger).map(e=>e.id) },
-    { label:'☠️ Danger Zone', ids: Object.values(E).filter(e=>e.tier==='danger'||e.danger).map(e=>e.id), danger:true },
-  ];
 
-  sections.forEach(sec => {
+  const allSections = [];
+
+  // When searching, also show matching atoms as a flat grid section
+  if (showAtoms && query) {
+    allSections.push({
+      label: '⚛️ Elements',
+      ids: Object.values(E).filter(e => e.tier === 'atom').map(e => e.id),
+      danger: false
+    });
+  }
+
+  if (showMolecules) {
+    allSections.push({
+      label: '🧪 Molecules',
+      ids: Object.values(E).filter(e => e.tier === 'molecule' && !e.danger).map(e => e.id)
+    });
+  }
+  if (showCompounds) {
+    allSections.push({
+      label: '🌍 Compounds',
+      ids: Object.values(E).filter(e => e.tier === 'compound' && !e.danger).map(e => e.id)
+    });
+  }
+  if (showDanger) {
+    allSections.push({
+      label: '☠️ Danger Zone',
+      ids: Object.values(E).filter(e => e.tier === 'danger' || e.danger).map(e => e.id),
+      danger: true
+    });
+  }
+
+  let totalVisible = 0;
+
+  allSections.forEach(sec => {
+    // Apply text search filter
+    let filteredIds = sec.ids;
+    if (query) {
+      filteredIds = sec.ids.filter(id => {
+        const el = E[id];
+        if (!el) return false;
+        const isDisc = discovered.has(id);
+        if (!isDisc) return false; // only search discovered items
+        const name = (el.name || '').toLowerCase();
+        const symbol = (el.symbol || '').toLowerCase();
+        const eid = (el.id || '').toLowerCase();
+        return name.includes(query) || symbol.includes(query) || eid.includes(query);
+      });
+    }
+
+    if (query && filteredIds.length === 0) return; // skip empty sections when searching
+
     const found = sec.ids.filter(id => discovered.has(id)).length;
-    disc.innerHTML += `<div class="disc-section-title${sec.danger?' danger-title':''}">${sec.label} — ${found}/${sec.ids.length}</div>`;
+    const sectionLabel = query
+      ? `${sec.label} — ${filteredIds.length} match${filteredIds.length !== 1 ? 'es' : ''}`
+      : `${sec.label} — ${found}/${sec.ids.length}`;
+    disc.innerHTML += `<div class="disc-section-title${sec.danger ? ' danger-title' : ''}">${sectionLabel}</div>`;
+
     let gridHtml = '<div class="disc-grid">';
-    sec.ids.forEach(id => {
+    const idsToShow = query ? filteredIds : sec.ids;
+    idsToShow.forEach(id => {
       const el = E[id];
       const isDisc = discovered.has(id);
       const isDanger = el.danger || el.tier === 'danger';
       const bg = isDisc ? `radial-gradient(circle at 35% 35%, ${lighten(el.color)}, ${el.color})` : '';
       const cls = (isDanger ? ' danger-grid-item' : '') + (!isDisc ? ' locked-grid-item' : '');
-      gridHtml += `<div class="disc-grid-item${cls}"${isDisc ? ` onclick="showPTDetail('${id}')"` : ''}>
+      gridHtml += `<div class="disc-grid-item${cls}" data-id="${id}"${isDisc ? ` onclick="showPTDetail('${id}')"` : ''}>
         <div class="disc-grid-bubble" style="background:${isDisc?bg:'rgba(255,255,255,0.04)'};color:${isDisc?el.tc:'transparent'};box-shadow:${isDisc?`0 2px 8px ${el.shadow}`:'none'}">
           <span style="font-size:${el.symbol.length>5?'7px':el.symbol.length>3?'9px':'10px'};font-weight:900">${isDisc?el.symbol:''}</span>
         </div>
         <div class="disc-grid-name">${isDisc ? el.name : '???'}</div>
       </div>`;
+      if (isDisc) totalVisible++;
     });
     gridHtml += '</div>';
     disc.innerHTML += gridHtml;
   });
+
+  // Show no-results message when searching yields nothing
+  if (query && totalVisible === 0) {
+    disc.innerHTML = `<div class="encyclo-no-results">No discovered items matching "${query.replace(/</g,'&lt;')}"</div>`;
+  }
+
+  // Scroll to top of results on filter change
+  const scrollArea = document.getElementById('encycloScrollArea');
+  if (scrollArea) scrollArea.scrollTop = 0;
+}
+
+function setEncycloFilter(filter) {
+  encycloFilter = filter;
+  document.querySelectorAll('.encyclo-filter-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.filter === filter);
+  });
+  renderEncycloGrid();
+}
+
+function clearEncycloSearch() {
+  const input = document.getElementById('encycloSearch');
+  if (input) { input.value = ''; input.focus(); }
+  const clearBtn = document.getElementById('encycloSearchClear');
+  if (clearBtn) clearBtn.classList.remove('visible');
+  encycloSearchText = '';
+  renderEncycloGrid();
 }
 
 function showPTDetail(sym) {
