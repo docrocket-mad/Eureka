@@ -138,5 +138,12 @@ app.post('/api/report', async (req, res) => {
   }
 });
 
+// [ticket-644] Push notifications
+const push = require('./push');
+push.registerRoutes(app, pool);
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Eureka! running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Eureka! running on port ${PORT}`);
+  push.startCron(pool);
+});

@@ -1289,3 +1289,9 @@ const PERIODIC_UNLOCK_THRESHOLDS = [
   [1800,'Au'],[2000,'Hg'],[2500,'Pt'],[3000,'U'],
   [4000,'Pu'],[5000,'Ra'],
 ];
+
+// [ticket-644] Allow Node to require this for the push notification combo generator.
+// Browser ignores `module` (not defined); the script tag still works as before.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { STARTER_ATOMS, ATOM_UNLOCKS, REACTIONS_RAW, REACTIONS, makeKey };
+}

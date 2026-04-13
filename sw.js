@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eureka-v1';
+const CACHE_NAME = 'eureka-v2-push';
 const ASSETS = [
   '/',
   '/data.js',
@@ -25,6 +25,31 @@ self.addEventListener('activate', e => {
     )
   );
   self.clients.claim();
+});
+
+// [ticket-644] Push notifications
+self.addEventListener('push', e => {
+  let data = { title: 'Eureka', body: 'Dr. Rocket has news for you.', url: '/' };
+  try { if (e.data) data = Object.assign(data, e.data.json()); } catch (_) {}
+  e.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-192x192.png',
+    data: { url: data.url || '/' },
+    tag: 'eureka-reengage',
+    renotify: true
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(self.clients.matchAll({ type: 'window' }).then(clients => {
+    for (const c of clients) {
+      if (c.url.includes(self.location.origin)) { c.focus(); if (c.navigate) c.navigate(url); return; }
+    }
+    return self.clients.openWindow(url);
+  }));
 });
 
 // Fetch — network first, fall back to cache

@@ -1491,6 +1491,94 @@ if ('serviceWorker' in navigator) {
 }
 
 // ═══════════════════════════════════════════════════════
+// PUSH NOTIFICATIONS [ticket-644]
+// Ping on launch + offer subscription after first discovery.
+// Permission request is deferred so it doesn't fire on first paint.
+// ═══════════════════════════════════════════════════════
+window.eurekaPush = (function() {
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }
+
+  function getCode() { try { return window.currentSaveCode || localStorage.getItem('eureka_save_code') || null; } catch (e) { return null; } }
+
+  // Bump last_opened_at on every launch
+  function ping() {
+    const code = getCode();
+    if (!code) return;
+    fetch('/api/push/ping', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    }).catch(() => {});
+  }
+
+  async function subscribe() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    const code = getCode();
+    if (!code) return false;
+    try {
+      const keyRes = await fetch('/api/push/vapid-key');
+      if (!keyRes.ok) return false;
+      const { key } = await keyRes.json();
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(key)
+        });
+      }
+      await fetch('/api/push/subscribe', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, subscription: sub.toJSON() })
+      });
+      try { localStorage.setItem('eureka_push_subscribed', '1'); } catch (e) {}
+      return true;
+    } catch (e) {
+      console.warn('[push] subscribe failed:', e.message);
+      return false;
+    }
+  }
+
+  // Show our own gentle prompt before triggering the browser permission dialog
+  function maybePromptAfterDiscovery() {
+    try {
+      if (localStorage.getItem('eureka_push_asked')) return;
+      if (Notification.permission !== 'default') return;
+      localStorage.setItem('eureka_push_asked', '1');
+    } catch (e) { return; }
+
+    setTimeout(async () => {
+      // Lightweight inline confirm — won't render if container missing
+      const ok = window.confirm(
+        "Want Dr. Rocket to ping you when there's something new to discover? You can opt out anytime."
+      );
+      if (!ok) return;
+      const granted = await Notification.requestPermission();
+      if (granted === 'granted') subscribe();
+    }, 1500);
+  }
+
+  // Ping on load + when tab becomes visible
+  window.addEventListener('load', ping);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) ping(); });
+
+  // Re-subscribe silently on launch if previously granted (handles new save codes / cleared subs)
+  window.addEventListener('load', () => {
+    try {
+      if (Notification && Notification.permission === 'granted' && getCode()) subscribe();
+    } catch (e) {}
+  });
+
+  return { ping, subscribe, maybePromptAfterDiscovery };
+})();
+
+// ═══════════════════════════════════════════════════════
 // SOUND ENGINE — Web Audio API synthesis
 // ═══════════════════════════════════════════════════════
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1975,6 +2063,8 @@ function attemptReaction(a, b) {
           spawnConfetti();
           const isMega = ['LIFE','OCEAN','PHOTOSYNTHESIS','ATMOSPHERE'].includes(resultId);
           isMega ? SFX.discoverMega() : SFX.discover();
+          // [ticket-644] After first discovery, gently offer notifications
+          try { window.eurekaPush && window.eurekaPush.maybePromptAfterDiscovery(); } catch(e) {}
         }
       }
       // Gizmo always reacts, new or not
