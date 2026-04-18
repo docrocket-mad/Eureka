@@ -25,6 +25,14 @@ function generateCode() {
   return crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
+// Bug reporter [ticket-904]
+app.use(require('./lib/bug-reporter')({
+  source: 'eureka',
+  webhookUrl: 'https://artificer.systems/api/webhook/bug-report',
+  webhookKey: process.env.WEBHOOK_SECRET || process.env.ARTIFICER_WEBHOOK_KEY || '',
+  anthropicKey: process.env.ANTHROPIC_API_KEY || '',
+}));
+
 // ── Serve static files ──
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/music', express.static(path.join(__dirname, 'music')));
